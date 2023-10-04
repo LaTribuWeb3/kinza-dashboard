@@ -1,6 +1,7 @@
 import { Alert, AlertTitle, Box, CircularProgress, Container, Grid, LinearProgress, Skeleton } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import DataService from '../services/DataService';
+import { SimpleAlert } from './SimpleAlert';
 
 function OverviewSkeleton() {
   const nbSkeletons = 8;
@@ -62,18 +63,7 @@ export function Overview() {
     <Grid container spacing={2}>
       <h1>This is the overview</h1>
       {isLoading && !openAlert ? <OverviewSkeleton /> : <p>{overviewData.join(', ')}</p>}
-      {openAlert ? (
-        <Alert
-          sx={{ position: 'absolute', bottom: 10, right: 1 }}
-          variant="filled"
-          severity="error"
-          onClose={handleCloseAlert}
-        >
-          {alertMsg}
-        </Alert>
-      ) : (
-        <></>
-      )}
+      <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>
   );
 }
