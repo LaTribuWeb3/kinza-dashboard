@@ -1,15 +1,28 @@
-import { Alert, AlertTitle, Box, CircularProgress, Container, Grid, LinearProgress, Skeleton } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  LinearProgress,
+  Skeleton,
+  Typography
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import DataService from '../services/DataService';
 import { SimpleAlert } from './SimpleAlert';
+import { DATA_SOURCES } from '../utils/Contants';
+import { OverviewData } from '../models/OverviewData';
+import { OverviewTable } from './OverviewTable';
 
 function OverviewSkeleton() {
-  const nbSkeletons = 8;
+  const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
       {Array.from({ length: nbSkeletons }).map((v, i) => (
         <Grid key={i} item xs={12} md={6}>
-          <Skeleton height={200} variant="rectangular" />
+          <Skeleton height={250} variant="rectangular" />
         </Grid>
       ))}
     </Grid>
@@ -18,7 +31,7 @@ function OverviewSkeleton() {
 
 export function Overview() {
   const [isLoading, setIsLoading] = useState(true);
-  const [overviewData, setOverviewData] = useState<string[]>([]);
+  const [overviewData, setOverviewData] = useState<OverviewData[]>([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
 
@@ -61,8 +74,15 @@ export function Overview() {
 
   return (
     <Grid container spacing={2}>
-      <h1>This is the overview</h1>
-      {isLoading && !openAlert ? <OverviewSkeleton /> : <p>{overviewData.join(', ')}</p>}
+      <Grid item xs={12}>
+        <Container sx={{ textAlign: 'center' }}>
+          <Typography variant="h4" gutterBottom>
+            Overview
+          </Typography>
+        </Container>
+      </Grid>
+      {isLoading ? <OverviewSkeleton /> : <OverviewTable data={overviewData} />}
+
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>
   );

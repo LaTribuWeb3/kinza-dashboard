@@ -1,15 +1,6 @@
-import { Divider, Link, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
+import { List, ListItemButton, ListSubheader } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-
-const dataSources = ['All sources', 'Uniswap v2', 'Uniswap v3', 'Curve', 'Sushiswap v2'];
-
-const dataSourcePageMap = {
-  'All sources': 'all',
-  'Uniswap v2': 'univ2',
-  'Uniswap v3': 'univ3',
-  Curve: 'curve',
-  'Sushiswap v2': 'sushiv2'
-};
+import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Contants';
 
 export function NavCategories() {
   return (
@@ -18,11 +9,11 @@ export function NavCategories() {
         Overview
       </ListItemButton>
       <ListSubheader inset>Datasources</ListSubheader>
-      {dataSources.map((_, index) => (
+      {DATA_SOURCES.map((_, index) => (
         <ListItemButton
           key={index}
           component={RouterLink}
-          to={`/datasource/${dataSourcePageMap[_ as keyof typeof dataSourcePageMap]}`}
+          to={`/datasource/${DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]}`}
         >
           {_}
         </ListItemButton>
