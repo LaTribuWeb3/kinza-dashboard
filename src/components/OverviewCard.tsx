@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, Tooltip, Typography } from '@mui/material';
+import { Card, CardContent, Grid, Tooltip, Typography } from '@mui/material';
 import { OverviewData } from '../models/OverviewData';
 import moment from 'moment';
 
