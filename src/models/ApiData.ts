@@ -4,7 +4,7 @@ export interface Pair {
 }
 
 export interface LiquidityData {
-  [blockNumber: number]: DataAtBlock;
+  [blockNumber: string]: DataAtBlock;
 }
 
 export interface DataAtBlock {

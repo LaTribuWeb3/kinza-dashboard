@@ -228,13 +228,6 @@ const overviewDummy: OverviewData[] = [
     ]
   }
 ];
-interface GetAvailableResponse {
-  data: Pair[];
-}
-
-interface GetLiquidityDataResponse {
-  data: LiquidityData;
-}
 
 const apiUrl: string = import.meta.env.VITE_API_URL as string;
 export default class DataService {
@@ -246,6 +239,7 @@ export default class DataService {
 
   static async GetAvailablePairs(platform: string): Promise<Pair[]> {
     console.log(`getting available pairs for ${platform}`);
+    await sleep(2000); // add sleep to simulate waiting
     const fullUrl = apiUrl + `/api/dashboard/available/${platform}`;
     try {
       const response: AxiosResponse<Pair[]> = await axios.get(fullUrl);
@@ -263,10 +257,16 @@ export default class DataService {
   }
 
   static async GetLiquidityData(platform: string, base: string, quote: string): Promise<LiquidityData> {
-    const fullUrl = apiUrl + `/api/dashboard/available/${platform}/${base}/${quote}`;
+    console.log(`getting liquidity data for for ${platform} ${base} ${quote}`);
+    await sleep(2000); // add sleep to simulate waiting
+    const fullUrl = apiUrl + `/api/dashboard/${platform}/${base}/${quote}`;
     try {
-      const { data } = await axios.get<GetLiquidityDataResponse>(fullUrl);
-      return data.data;
+      const response: AxiosResponse<LiquidityData> = await axios.get(fullUrl);
+      console.log(
+        `found ${Object.keys(response.data).length} block data for pair ${base} ${quote} on platform ${platform}`
+      );
+
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('error message: ', error.message);

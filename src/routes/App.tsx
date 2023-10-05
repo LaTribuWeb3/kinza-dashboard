@@ -16,7 +16,6 @@ function App() {
   };
 
   const pathName = useLocation().pathname;
-  console.log('pathName', pathName);
 
   return (
     <Box sx={{ display: 'flex' }}>

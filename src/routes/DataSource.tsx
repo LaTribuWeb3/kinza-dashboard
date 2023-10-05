@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DataService from '../services/DataService';
 import { Pair } from '../models/ApiData';
-import { Grid, LinearProgress, MenuItem, Select, SelectChangeEvent, Skeleton } from '@mui/material';
+import { Grid, LinearProgress, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../components/SimpleAlert';
 import { SLIPPAGES_BPS } from '../utils/Contants';
+import { DataSourceGraphs } from '../components/DataSourceGraphs';
 
 function DataSourceSkeleton() {
   const nbSkeletons = 2; // -1 because "all" sources will not be displaying data
@@ -31,7 +32,6 @@ export default function DataSource() {
 
   const pathName = useLocation().pathname;
   const platform = pathName.split('/')[2];
-  console.log(platform);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -41,18 +41,20 @@ export default function DataSource() {
     setSelectedSlippage(Number(event.target.value));
   };
 
+  const handleChangePair = (event: SelectChangeEvent) => {
+    console.log(`handleChangePair: ${event.target.value}`);
+    setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
+  };
+
   useEffect(() => {
     setIsLoading(true);
     // Define an asynchronous function
     async function fetchData() {
       try {
-        // Perform async operations (e.g., fetch data from an API)
-        const availablePairs = await DataService.GetAvailablePairs(platform);
+        const data = await DataService.GetAvailablePairs(platform);
 
-        // Update component state or perform other actions with the data
-        console.log(availablePairs);
-        setAvailablePairs(availablePairs);
-        setSelectedPair(availablePairs[0]);
+        setAvailablePairs(data);
+        setSelectedPair(data[0]);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -73,16 +75,39 @@ export default function DataSource() {
     return () => {
       // Perform cleanup if necessary
     };
-  }, [platform]); // Empty dependency array means this effect runs once, similar to componentDidMount
+  }, [platform]);
 
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading ? (
+      {isLoading || !selectedPair ? (
         <DataSourceSkeleton />
       ) : (
-        <Grid container spacing={1}>
+        <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6} sm={3}>
+            <Typography sx={{ verticalAlign: 'middle' }}>Pair: </Typography>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Select
+              labelId="pair-select"
+              id="pair-select"
+              value={`${selectedPair.base}/${selectedPair.quote}`}
+              label="Pair"
+              onChange={handleChangePair}
+            >
+              {availablePairs.map((pair, index) => (
+                <MenuItem key={index} value={`${pair.base}/${pair.quote}`}>
+                  {`${pair.base}/${pair.quote}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+
+          <Grid item xs={6} sm={3}>
+            <Typography gutterBottom>Slippage: </Typography>
+          </Grid>
+
+          <Grid item xs={6} sm={3}>
             <Select
               labelId="slippage-select"
               id="slippage-select"
@@ -97,6 +122,8 @@ export default function DataSource() {
               ))}
             </Select>
           </Grid>
+
+          <DataSourceGraphs pair={selectedPair} platform={platform} targetSlippage={selectedSlippage} />
         </Grid>
       )}
 
