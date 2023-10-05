@@ -1,10 +1,11 @@
 import { List, ListItemButton, ListSubheader } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Contants';
 import { useState } from 'react';
 
 export function NavCategories() {
-  const [selectedButton, setSelectedButton] = useState<string>('overview');
+  const pathName = useLocation().pathname;
+  const [selectedButton, setSelectedButton] = useState<string>(pathName == '/' ? 'overview' : pathName.split('/')[2]);
 
   function handleClick(buttonName: string) {
     setSelectedButton(buttonName);
@@ -30,49 +31,24 @@ export function NavCategories() {
         <ListItemButton
           key={index}
           sx={{
-            backgroundColor: selectedButton == _ ? 'primary.main' : 'background.default',
-            color: selectedButton == _ ? 'primary.contrastText' : 'primary.main',
+            backgroundColor:
+              selectedButton == DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]
+                ? 'primary.main'
+                : 'background.default',
+            color:
+              selectedButton == DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]
+                ? 'primary.contrastText'
+                : 'primary.main',
             '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
           }}
           component={RouterLink}
-          onClick={() => handleClick(_)}
+          onClick={() => handleClick(DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP])}
           to={`/datasource/${DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]}`}
         >
           {_}
         </ListItemButton>
       ))}
-      {/* <Divider sx={{ my: 1 }} />
-          <ListSubheader component="div" inset>
-            By Status
-          </ListSubheader>
-          <ListItemButton onClick={() => statusFilterFct(MonitoringStatusEnum.ERROR)}>
-            <ListItemIcon>
-              <ErrorIcon />
-            </ListItemIcon>
-            <ListItemText primary="Error" />
-          </ListItemButton>
-          <ListItemButton onClick={() => statusFilterFct(MonitoringStatusEnum.STALE)}>
-            <ListItemIcon>
-              <StaleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Stale" />
-          </ListItemButton>
-          <ListItemButton onClick={() => statusFilterFct(MonitoringStatusEnum.RUNNING)}>
-            <ListItemIcon>
-              <LoopIcon />
-            </ListItemIcon>
-            <ListItemText primary="Running" />
-          </ListItemButton>
-          <ListItemButton onClick={() => statusFilterFct(MonitoringStatusEnum.SUCCESS)}>
-            <ListItemIcon>
-              <DoneIcon />
-            </ListItemIcon>
-            <ListItemText primary="Success" />
-          </ListItemButton>
-          <Divider sx={{ my: 1 }} />
-          <ListItemButton onClick={() => displayAllFct()}>
-            <ListItemText primary="All" />
-          </ListItemButton> */}
+      {/* <Divider sx={{ my: 1 }} /> */}
     </List>
   );
 }

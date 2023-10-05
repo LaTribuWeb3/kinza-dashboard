@@ -1,3 +1,5 @@
+import axios, { AxiosResponse } from 'axios';
+import { LiquidityData, Pair } from '../models/ApiData';
 import { OverviewData } from '../models/OverviewData';
 import { sleep } from '../utils/Utils';
 
@@ -226,11 +228,53 @@ const overviewDummy: OverviewData[] = [
     ]
   }
 ];
+interface GetAvailableResponse {
+  data: Pair[];
+}
 
+interface GetLiquidityDataResponse {
+  data: LiquidityData;
+}
+
+const apiUrl: string = import.meta.env.VITE_API_URL as string;
 export default class DataService {
   static async GetOverview(): Promise<OverviewData[]> {
     await sleep(2000);
     // throw new Error('Could not reach data');
     return overviewDummy;
+  }
+
+  static async GetAvailablePairs(platform: string): Promise<Pair[]> {
+    console.log(`getting available pairs for ${platform}`);
+    const fullUrl = apiUrl + `/api/dashboard/available/${platform}`;
+    try {
+      const response: AxiosResponse<Pair[]> = await axios.get(fullUrl);
+      console.log(`found ${response.data.length} available pairs`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('error message: ', error.message);
+        throw new Error(`Error fetching data on ${fullUrl}: ${error.message}`);
+      } else {
+        console.error('unexpected error: ', error);
+        throw new Error(`Error fetching data on ${fullUrl}`);
+      }
+    }
+  }
+
+  static async GetLiquidityData(platform: string, base: string, quote: string): Promise<LiquidityData> {
+    const fullUrl = apiUrl + `/api/dashboard/available/${platform}/${base}/${quote}`;
+    try {
+      const { data } = await axios.get<GetLiquidityDataResponse>(fullUrl);
+      return data.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('error message: ', error.message);
+        throw new Error(`Error fetching data on ${fullUrl}: ${error.message}`);
+      } else {
+        console.error('unexpected error: ', error);
+        throw new Error(`Error fetching data on ${fullUrl}`);
+      }
+    }
   }
 }
