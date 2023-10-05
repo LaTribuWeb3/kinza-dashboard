@@ -35,11 +35,8 @@ export function Overview() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        // Perform async operations (e.g., fetch data from an API)
         const overviewData = await DataService.GetOverview();
 
-        // Update component state or perform other actions with the data
-        console.log(overviewData);
         setOverviewData(overviewData);
         setIsLoading(false);
       } catch (error) {
