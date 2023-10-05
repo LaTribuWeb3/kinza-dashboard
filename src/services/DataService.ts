@@ -35,6 +35,195 @@ const overviewDummy: OverviewData[] = [
         label: 'Tricrypto2'
       }
     ]
+  },
+  {
+    dataSourceName: 'Uniswap V3',
+    lastBlockFetched: 19_100_000,
+    lastRunTimestampMs: Date.now(),
+    poolsFetched: [
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.1% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 0.3% fee'
+      },
+      {
+        address: '0x1234597',
+        tokens: ['wstETH', 'WETH'],
+        label: 'wstETH-WETH 1% fee'
+      }
+    ]
+  },
+  {
+    dataSourceName: 'Sushiswap V2',
+    lastBlockFetched: 19_100_000,
+    lastRunTimestampMs: Date.now(),
+    poolsFetched: [
+      {
+        address: '0x1234597',
+        tokens: ['WETH', 'USDC'],
+        label: ''
+      },
+      {
+        address: '0x1234597',
+        tokens: ['WBTC', 'USDT'],
+        label: ''
+      }
+    ]
   }
 ];
 

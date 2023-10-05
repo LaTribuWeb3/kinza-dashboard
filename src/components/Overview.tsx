@@ -1,26 +1,16 @@
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  CircularProgress,
-  Container,
-  Grid,
-  LinearProgress,
-  Skeleton,
-  Typography
-} from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Container, Grid, Skeleton, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import DataService from '../services/DataService';
 import { SimpleAlert } from './SimpleAlert';
 import { DATA_SOURCES } from '../utils/Contants';
 import { OverviewData } from '../models/OverviewData';
-import { OverviewTable } from './OverviewTable';
+import { OverviewCard } from './OverviewCard';
 
 function OverviewSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
-      {Array.from({ length: nbSkeletons }).map((v, i) => (
+      {Array.from({ length: nbSkeletons }).map((_, i) => (
         <Grid key={i} item xs={12} md={6}>
           <Skeleton height={250} variant="rectangular" />
         </Grid>
@@ -81,7 +71,7 @@ export function Overview() {
           </Typography>
         </Container>
       </Grid>
-      {isLoading ? <OverviewSkeleton /> : <OverviewTable data={overviewData} />}
+      {isLoading ? <OverviewSkeleton /> : <OverviewCard data={overviewData} />}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>

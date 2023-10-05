@@ -1,22 +1,21 @@
-import { createTheme } from '@mui/material/styles';
-import { red, common } from '@mui/material/colors';
+import { ThemeOptions, createTheme } from '@mui/material/styles';
 
-// A custom theme for this app
-const theme = createTheme({
+export const themeOptions: ThemeOptions = {
   palette: {
+    mode: 'light',
     primary: {
-      main: common.black
+      main: '#000000'
     },
     secondary: {
-      main: '#19857b'
+      main: '#0023f5'
     },
-    error: {
-      main: red.A400
-    }
+    divider: '#fafafa'
   },
   typography: {
     fontFamily: 'monospace'
   }
-});
+};
+
+const theme = createTheme(themeOptions);
 
 export default theme;
