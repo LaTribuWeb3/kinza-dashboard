@@ -1,4 +1,4 @@
-import { Container, Grid, Skeleton, Typography } from '@mui/material';
+import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DataService from '../services/DataService';
 import { SimpleAlert } from './SimpleAlert';
@@ -10,9 +10,10 @@ function OverviewSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
+      <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />
       {Array.from({ length: nbSkeletons }).map((_, i) => (
         <Grid key={i} item xs={12} md={6}>
-          <Skeleton height={250} variant="rectangular" />
+          <Skeleton height={175} variant="rectangular" />
         </Grid>
       ))}
     </Grid>
@@ -63,14 +64,14 @@ export function Overview() {
   }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
+    <Grid sx={{ mt: 10 }} container spacing={2}>
+      {/* <Grid item xs={12}>
         <Container sx={{ textAlign: 'center' }}>
           <Typography variant="h4" gutterBottom>
             Overview
           </Typography>
         </Container>
-      </Grid>
+      </Grid> */}
       {isLoading ? <OverviewSkeleton /> : <OverviewCard data={overviewData} />}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
