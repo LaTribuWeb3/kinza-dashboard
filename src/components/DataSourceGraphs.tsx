@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../models/ApiData';
 import DataService from '../services/DataService';
-import { LinearProgress } from '@mui/material';
+import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 import { SimpleAlert } from './SimpleAlert';
 
@@ -9,6 +9,17 @@ export interface DataSourceGraphsInterface {
   pair: Pair;
   platform: string;
   targetSlippage: number;
+}
+
+function DataSourceGraphsSkeleton() {
+  return (
+    <Grid mt={5} container spacing={0}>
+      <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />
+      <Grid item xs={12}>
+        <Skeleton height={500} variant="rectangular" />
+      </Grid>
+    </Grid>
+  );
 }
 
 export function DataSourceGraphs(props: DataSourceGraphsInterface) {
@@ -52,12 +63,12 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   }, [props.pair.base, props.pair.quote, props.platform]);
 
   if (!liquidityData) {
-    return <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />;
+    return <DataSourceGraphsSkeleton />;
   }
   return (
     <>
       {isLoading ? (
-        <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />
+        <DataSourceGraphsSkeleton />
       ) : (
         <LineChart
           xAxis={[

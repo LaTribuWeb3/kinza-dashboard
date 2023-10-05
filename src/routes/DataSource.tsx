@@ -9,15 +9,18 @@ import { SLIPPAGES_BPS } from '../utils/Contants';
 import { DataSourceGraphs } from '../components/DataSourceGraphs';
 
 function DataSourceSkeleton() {
-  const nbSkeletons = 2; // -1 because "all" sources will not be displaying data
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={0}>
       <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />
-      {Array.from({ length: nbSkeletons }).map((_, i) => (
-        <Grid key={i} item xs={12} md={6}>
-          <Skeleton height={250} variant="rectangular" />
-        </Grid>
-      ))}
+      <Grid item xs={12} md={6}>
+        <Skeleton height={80} variant="rectangular" />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Skeleton height={80} variant="rectangular" />
+      </Grid>
+      <Grid item xs={12}>
+        <Skeleton height={500} variant="rectangular" />
+      </Grid>
     </Grid>
   );
 }
@@ -77,9 +80,12 @@ export default function DataSource() {
     };
   }, [platform]);
 
+  if (!selectedPair) {
+    return <DataSourceSkeleton />;
+  }
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading || !selectedPair ? (
+      {isLoading ? (
         <DataSourceSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline">

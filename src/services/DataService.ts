@@ -232,14 +232,14 @@ const overviewDummy: OverviewData[] = [
 const apiUrl: string = import.meta.env.VITE_API_URL as string;
 export default class DataService {
   static async GetOverview(): Promise<OverviewData[]> {
-    await sleep(2000);
+    await sleep(500);
     // throw new Error('Could not reach data');
     return overviewDummy;
   }
 
   static async GetAvailablePairs(platform: string): Promise<Pair[]> {
     console.log(`getting available pairs for ${platform}`);
-    await sleep(2000); // add sleep to simulate waiting
+    await sleep(500); // add sleep to simulate waiting
     const fullUrl = apiUrl + `/api/dashboard/available/${platform}`;
     try {
       const response: AxiosResponse<Pair[]> = await axios.get(fullUrl);
@@ -258,7 +258,7 @@ export default class DataService {
 
   static async GetLiquidityData(platform: string, base: string, quote: string): Promise<LiquidityData> {
     console.log(`getting liquidity data for for ${platform} ${base} ${quote}`);
-    await sleep(2000); // add sleep to simulate waiting
+    await sleep(1000); // add sleep to simulate waiting
     const fullUrl = apiUrl + `/api/dashboard/${platform}/${base}/${quote}`;
     try {
       const response: AxiosResponse<LiquidityData> = await axios.get(fullUrl);
