@@ -97,7 +97,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                 {
                   label: 'Block',
                   data: Object.keys(liquidityData).map((_) => Number(_)),
-                  tickMinStep: 50000,
+                  tickMinStep: 250000,
                   min: Object.keys(liquidityData).map((_) => Number(_))[0],
                   max: Object.keys(liquidityData)
                     .map((_) => Number(_))
@@ -143,7 +143,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                 {
                   label: 'Block',
                   data: Object.keys(liquidityData).map((_) => Number(_)),
-                  tickMinStep: 50000,
+                  tickMinStep: 250000,
                   min: Object.keys(liquidityData).map((_) => Number(_))[0],
                   max: Object.keys(liquidityData)
                     .map((_) => Number(_))
