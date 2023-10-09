@@ -71,6 +71,13 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
         <DataSourceGraphsSkeleton />
       ) : (
         <Grid width={'100vw'} container spacing={0}>
+          <Grid item xs={12}>
+            <Typography
+              textAlign={'center'}
+              mt={2}
+            >{`${props.pair.base}/${props.pair.quote} data over 180 days`}</Typography>
+          </Grid>
+
           <Grid item xs={12} md={6}>
             <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} liquidity`}</Typography>
             <LineChart
