@@ -46,7 +46,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
         setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
-          setAlertMsg(`Error fetching data: ${error.toString()}`);
+          setAlertMsg(`${error.toString()}`);
         } else {
           setAlertMsg(`Unknown error`);
         }
@@ -145,7 +145,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               ]}
               yAxis={[
                 {
-                  min: Math.min(...Object.values(liquidityData).map((_) => _.price)) / 2,
+                  max: Math.max(...Object.values(liquidityData).map((_) => _.price)) * 1.1,
+                  min: Math.min(...Object.values(liquidityData).map((_) => _.price)) * 0.9,
                   valueFormatter: FriendlyFormatNumber
                 }
               ]}
