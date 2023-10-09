@@ -38,7 +38,7 @@ export function OverviewCard(props: OverviewCardInterface) {
                 <Grid item xs={0} sm={4}></Grid>
                 <Grid item xs={12} sm={8}>
                   <Typography sx={{ fontSize: 14, textAlign: 'right' }} color="text.secondary">
-                    Block {overviewData.lastBlockFetched}
+                    Up to block {overviewData.lastBlockFetched}
                   </Typography>
 
                   <Tooltip title={moment(overviewData.lastRunTimestampMs).toISOString()}>
@@ -48,21 +48,6 @@ export function OverviewCard(props: OverviewCardInterface) {
                   </Tooltip>
                 </Grid>
               </Grid>
-
-              {/* <Grid container spacing={1} sx={{ mt: 5 }}>
-                  <Grid key={i} item xs={12} md={6}>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                      Last block fetched: {overviewData.lastBlockFetched}
-                    </Typography>
-                  </Grid>
-                  <Grid key={i} item xs={12} md={6}>
-                    <Tooltip title={moment(overviewData.lastRunTimestampMs).toISOString()}>
-                      <Typography sx={{ fontSize: 14 }} textAlign={'right'} color="text.secondary">
-                        Updated {moment(overviewData.lastRunTimestampMs).fromNow()}
-                      </Typography>
-                    </Tooltip>
-                  </Grid>
-                </Grid> */}
             </CardContent>
           </Card>
         </Grid>
