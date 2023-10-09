@@ -25,6 +25,6 @@ export function FriendlyFormatNumber(num: number): string {
   } else if (num < 1 / 1e6) {
     return roundTo(num * 10000000, 2).toString() + 'e-7';
   } else {
-    return `${roundTo(num, 2).toString()}`;
+    return `${roundTo(num, 4).toString()}`;
   }
 }

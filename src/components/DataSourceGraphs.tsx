@@ -4,7 +4,7 @@ import DataService from '../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 import { SimpleAlert } from './SimpleAlert';
-import { FriendlyFormatNumber } from '../utils/Utils';
+import { FriendlyFormatNumber, sleep } from '../utils/Utils';
 export interface DataSourceGraphsInterface {
   pair: Pair;
   platform: string;
@@ -40,6 +40,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
 
         setLiquidityData(data);
+        await sleep(1);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
