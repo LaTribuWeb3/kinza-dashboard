@@ -7,6 +7,7 @@ import { Grid, LinearProgress, MenuItem, Select, SelectChangeEvent, Skeleton, Ty
 import { SimpleAlert } from '../components/SimpleAlert';
 import { SLIPPAGES_BPS } from '../utils/Contants';
 import { DataSourceGraphs } from '../components/DataSourceGraphs';
+import { sleep } from '../utils/Utils';
 
 function DataSourceSkeleton() {
   return (
@@ -56,8 +57,9 @@ export default function DataSource() {
       try {
         const data = await DataService.GetAvailablePairs(platform);
 
-        setAvailablePairs(data);
         setSelectedPair(data[0]);
+        setAvailablePairs(data);
+        await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);

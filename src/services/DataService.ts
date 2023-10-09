@@ -233,7 +233,7 @@ const overviewDummy: OverviewData[] = [
 const apiUrl: string = import.meta.env.VITE_API_URL as string;
 export default class DataService {
   static async GetOverview(): Promise<OverviewData[]> {
-    const overviewData = SimpleCacheService.GetAndCache(
+    const overviewData = await SimpleCacheService.GetAndCache(
       'GetOverview',
       async () => {
         await sleep(500);
@@ -266,7 +266,7 @@ export default class DataService {
       }
     };
 
-    const availablePairs = SimpleCacheService.GetAndCache(
+    const availablePairs = await SimpleCacheService.GetAndCache(
       `GetAvailablePairs-${platform}`,
       pairLoadingFunction,
       600 * 1000
@@ -299,7 +299,7 @@ export default class DataService {
       }
     };
 
-    const liquidityData = SimpleCacheService.GetAndCache(
+    const liquidityData = await SimpleCacheService.GetAndCache(
       `GetLiquidityData-${platform}-${base}-${quote}`,
       liquidityDataLoadingFunction,
       600 * 1000
