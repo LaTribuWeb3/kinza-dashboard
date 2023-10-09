@@ -145,7 +145,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               ]}
               yAxis={[
                 {
-                  // min: 0,
+                  min: Math.min(...Object.values(liquidityData).map((_) => _.price)) / 2,
                   valueFormatter: FriendlyFormatNumber
                 }
               ]}
