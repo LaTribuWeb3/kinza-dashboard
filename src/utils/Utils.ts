@@ -10,6 +10,10 @@ export function roundTo(num: number, dec: number): number {
 }
 
 export function FriendlyFormatNumber(num: number): string {
+  if (num == 0) {
+    return '0';
+  }
+
   if (num > 1e9) {
     return `${roundTo(num / 1e9, 2)}B`;
   } else if (num > 1e6) {
