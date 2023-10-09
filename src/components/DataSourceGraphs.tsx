@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../models/ApiData';
 import DataService from '../services/DataService';
-import { Grid, LinearProgress, Skeleton } from '@mui/material';
+import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 import { SimpleAlert } from './SimpleAlert';
-
+import { FriendlyFormatNumber } from '../utils/Utils';
 export interface DataSourceGraphsInterface {
   pair: Pair;
   platform: string;
@@ -70,26 +70,97 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
       {isLoading ? (
         <DataSourceGraphsSkeleton />
       ) : (
-        <LineChart
-          xAxis={[
-            {
-              data: Object.keys(liquidityData).map((_) => Number(_)),
-              tickMinStep: 50000,
-              min: Object.keys(liquidityData).map((_) => Number(_))[0],
-              max: Object.keys(liquidityData)
-                .map((_) => Number(_))
-                .at(-1)
-            }
-          ]}
-          series={[
-            {
-              data: Object.values(liquidityData).map((_) => _.slippageMap[props.targetSlippage]),
-              showMark: false
-            }
-          ]}
-          width={1000}
-          height={500}
-        />
+        <Grid width={'100vw'} container spacing={0}>
+          <Grid item xs={12} md={6}>
+            <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} liquidity`}</Typography>
+            <LineChart
+              legend={{
+                direction: 'column',
+                position: {
+                  vertical: 'top',
+                  horizontal: 'middle'
+                }
+              }}
+              sx={{
+                marginTop: '-100px',
+                '--ChartsLegend-rootOffsetX': '0px',
+                '--ChartsLegend-rootOffsetY': '0px'
+              }}
+              xAxis={[
+                {
+                  label: 'Block',
+                  data: Object.keys(liquidityData).map((_) => Number(_)),
+                  tickMinStep: 50000,
+                  min: Object.keys(liquidityData).map((_) => Number(_))[0],
+                  max: Object.keys(liquidityData)
+                    .map((_) => Number(_))
+                    .at(-1)
+                }
+              ]}
+              yAxis={[
+                {
+                  min: 0,
+                  valueFormatter: FriendlyFormatNumber
+                }
+              ]}
+              series={[
+                {
+                  label: 'liquidity',
+                  data: Object.values(liquidityData).map((_) => _.slippageMap[props.targetSlippage]),
+                  valueFormatter: FriendlyFormatNumber,
+                  showMark: false
+                }
+              ]}
+              height={450}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} price`}</Typography>
+
+            <LineChart
+              legend={{
+                direction: 'column',
+                position: {
+                  vertical: 'top',
+                  horizontal: 'middle'
+                }
+              }}
+              sx={{
+                width: '150%',
+                marginTop: '-100px',
+                '--ChartsLegend-rootOffsetX': '0px',
+                '--ChartsLegend-rootOffsetY': '0px'
+              }}
+              xAxis={[
+                {
+                  label: 'Block',
+                  data: Object.keys(liquidityData).map((_) => Number(_)),
+                  tickMinStep: 50000,
+                  min: Object.keys(liquidityData).map((_) => Number(_))[0],
+                  max: Object.keys(liquidityData)
+                    .map((_) => Number(_))
+                    .at(-1)
+                }
+              ]}
+              yAxis={[
+                {
+                  // min: 0,
+                  valueFormatter: FriendlyFormatNumber
+                }
+              ]}
+              series={[
+                {
+                  label: 'price',
+                  data: Object.values(liquidityData).map((_) => _.price),
+                  valueFormatter: FriendlyFormatNumber,
+                  showMark: false
+                }
+              ]}
+              height={450}
+            />
+          </Grid>
+        </Grid>
       )}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />

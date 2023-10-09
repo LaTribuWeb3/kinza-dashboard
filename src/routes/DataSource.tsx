@@ -91,7 +91,7 @@ export default function DataSource() {
         <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
           <Grid item xs={6} sm={3}>
-            <Typography sx={{ verticalAlign: 'middle' }}>Pair: </Typography>
+            <Typography textAlign={'right'}>Pair: </Typography>
           </Grid>
           <Grid item xs={6} sm={3}>
             <Select
@@ -110,7 +110,7 @@ export default function DataSource() {
           </Grid>
 
           <Grid item xs={6} sm={3}>
-            <Typography gutterBottom>Slippage: </Typography>
+            <Typography textAlign={'right'}>Slippage: </Typography>
           </Grid>
 
           <Grid item xs={6} sm={3}>
