@@ -60,7 +60,6 @@ export default function DataSource() {
         setSelectedPair(data[0]);
         setAvailablePairs(data);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
-        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setOpenAlert(true);
@@ -74,7 +73,9 @@ export default function DataSource() {
     }
 
     // Call the asynchronous function
-    fetchData().catch(console.error);
+    fetchData()
+      .then(() => setIsLoading(false))
+      .catch(console.error);
 
     // You can also return a cleanup function from useEffect if needed
     return () => {

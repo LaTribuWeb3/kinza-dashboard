@@ -41,7 +41,6 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
 
         setLiquidityData(data);
         await sleep(1);
-        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setOpenAlert(true);
@@ -55,13 +54,18 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
     }
 
     // Call the asynchronous function
-    fetchDataForPair().catch(console.error);
+    fetchDataForPair()
+      .then(() => setIsLoading(false))
+      .catch(console.error);
 
     // You can also return a cleanup function from useEffect if needed
     return () => {
       // Perform cleanup if necessary
     };
-  }, [props.pair.base, props.pair.quote, props.platform]);
+    // platform is not in the deps for this hooks because we only need to reload the data
+    // if the pair is changing
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.pair.base, props.pair.quote]);
 
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
