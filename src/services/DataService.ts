@@ -236,8 +236,21 @@ export default class DataService {
     const overviewData = await SimpleCacheService.GetAndCache(
       'GetOverview',
       async () => {
-        await sleep(500);
-        return overviewDummy;
+        await sleep(500); // add sleep to simulate waiting
+        const fullUrl = apiUrl + `/api/dashboard/overview`;
+        try {
+          const response: AxiosResponse<OverviewData[]> = await axios.get(fullUrl);
+          console.log(`found ${response.data.length} overview data`);
+          return response.data;
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.error('error message: ', error.message);
+            throw new Error(`Error fetching data on ${fullUrl}: ${error.message}`);
+          } else {
+            console.error('unexpected error: ', error);
+            throw new Error(`Error fetching data on ${fullUrl}`);
+          }
+        }
       },
       600 * 1000
     );
