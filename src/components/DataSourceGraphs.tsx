@@ -117,6 +117,12 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                   data: Object.values(liquidityData).map((_) => _.slippageMap[props.targetSlippage]),
                   valueFormatter: FriendlyFormatNumber,
                   showMark: false
+                },
+                {
+                  label: 'Average Liquidity (30d)',
+                  data: Object.values(liquidityData).map((_) => _.avgSlippageMap[props.targetSlippage]),
+                  valueFormatter: FriendlyFormatNumber,
+                  showMark: false
                 }
               ]}
               height={450}
@@ -128,14 +134,13 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
 
             <LineChart
               legend={{
-                direction: 'column',
+                direction: 'row',
                 position: {
                   vertical: 'top',
                   horizontal: 'middle'
                 }
               }}
               sx={{
-                width: '150%',
                 marginTop: '-100px',
                 '--ChartsLegend-rootOffsetX': '0px',
                 '--ChartsLegend-rootOffsetY': '0px'
