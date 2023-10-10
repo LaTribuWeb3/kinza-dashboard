@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { LiquidityData, Pair } from '../models/ApiData';
 import { OverviewData } from '../models/OverviewData';
-import { sleep } from '../utils/Utils';
 import SimpleCacheService from './CacheService';
 
 const apiUrl: string = import.meta.env.VITE_API_URL as string;
