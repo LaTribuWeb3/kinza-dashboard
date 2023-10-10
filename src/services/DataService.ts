@@ -10,7 +10,7 @@ export default class DataService {
     const overviewData = await SimpleCacheService.GetAndCache(
       'GetOverview',
       async () => {
-        await sleep(500); // add sleep to simulate waiting
+        // await sleep(500); // add sleep to simulate waiting
         const fullUrl = apiUrl + `/api/dashboard/overview`;
         try {
           const response: AxiosResponse<OverviewData[]> = await axios.get(fullUrl);
@@ -36,7 +36,7 @@ export default class DataService {
   static async GetAvailablePairs(platform: string): Promise<Pair[]> {
     console.log(`getting available pairs for ${platform}`);
     const pairLoadingFunction = async () => {
-      await sleep(500); // add sleep to simulate waiting
+      // await sleep(500); // add sleep to simulate waiting
       const fullUrl = apiUrl + `/api/dashboard/available/${platform}`;
       try {
         const response: AxiosResponse<Pair[]> = await axios.get(fullUrl);
@@ -66,7 +66,7 @@ export default class DataService {
     console.log(`getting liquidity data for for ${platform} ${base} ${quote}`);
 
     const liquidityDataLoadingFunction = async () => {
-      await sleep(1000); // add sleep to simulate waiting
+      // await sleep(1000); // add sleep to simulate waiting
       const fullUrl = apiUrl + `/api/dashboard/${platform}/${base}/${quote}`;
       try {
         const response: AxiosResponse<LiquidityData> = await axios.get(fullUrl);
