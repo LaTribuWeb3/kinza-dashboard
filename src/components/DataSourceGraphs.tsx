@@ -113,7 +113,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               ]}
               series={[
                 {
-                  label: 'liquidity',
+                  label: 'Liquidity',
                   data: Object.values(liquidityData).map((_) => _.slippageMap[props.targetSlippage]),
                   valueFormatter: FriendlyFormatNumber,
                   showMark: false
