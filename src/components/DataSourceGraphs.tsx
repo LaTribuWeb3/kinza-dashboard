@@ -5,6 +5,7 @@ import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 import { SimpleAlert } from './SimpleAlert';
 import { FriendlyFormatNumber, sleep } from '../utils/Utils';
+import moment from 'moment';
 export interface DataSourceGraphsInterface {
   pair: Pair;
   platform: string;
@@ -70,6 +71,9 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
   }
+  
+  const updated = moment(liquidityData.updated).fromNow()
+
   return (
     <>
       {isLoading ? (
@@ -80,7 +84,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             <Typography
               textAlign={'center'}
               mt={2}
-            >{`${props.pair.base}/${props.pair.quote} data over 180 days`}</Typography>
+            >{`${props.pair.base}/${props.pair.quote} data over 180 days (updated ${updated})`}</Typography>
           </Grid>
 
           <Grid item xs={12} lg={6}>
@@ -101,10 +105,10 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               xAxis={[
                 {
                   label: 'Block',
-                  data: Object.keys(liquidityData).map((_) => Number(_)),
+                  data: Object.keys(liquidityData.liquidity).map((_) => Number(_)),
                   tickMinStep: 250000,
-                  min: Object.keys(liquidityData).map((_) => Number(_))[0],
-                  max: Object.keys(liquidityData)
+                  min: Object.keys(liquidityData.liquidity).map((_) => Number(_))[0],
+                  max: Object.keys(liquidityData.liquidity)
                     .map((_) => Number(_))
                     .at(-1)
                 }
@@ -118,13 +122,13 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               series={[
                 {
                   label: 'Liquidity',
-                  data: Object.values(liquidityData).map((_) => _.slippageMap[props.targetSlippage]),
+                  data: Object.values(liquidityData.liquidity).map((_) => _.slippageMap[props.targetSlippage]),
                   valueFormatter: FriendlyFormatNumber,
                   showMark: false
                 },
                 {
                   label: 'Avg (30d)',
-                  data: Object.values(liquidityData).map((_) => _.avgSlippageMap[props.targetSlippage]),
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[props.targetSlippage]),
                   valueFormatter: FriendlyFormatNumber,
                   showMark: false
                 }
@@ -152,25 +156,25 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               xAxis={[
                 {
                   label: 'Block',
-                  data: Object.keys(liquidityData).map((_) => Number(_)),
+                  data: Object.keys(liquidityData.liquidity).map((_) => Number(_)),
                   tickMinStep: 250000,
-                  min: Object.keys(liquidityData).map((_) => Number(_))[0],
-                  max: Object.keys(liquidityData)
+                  min: Object.keys(liquidityData.liquidity).map((_) => Number(_))[0],
+                  max: Object.keys(liquidityData.liquidity)
                     .map((_) => Number(_))
                     .at(-1)
                 }
               ]}
               yAxis={[
                 {
-                  max: Math.max(...Object.values(liquidityData).map((_) => _.price)) * 1.1,
-                  min: Math.min(...Object.values(liquidityData).map((_) => _.price)) * 0.9,
+                  max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 1.1,
+                  min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 0.9,
                   valueFormatter: FriendlyFormatNumber
                 }
               ]}
               series={[
                 {
                   label: 'price',
-                  data: Object.values(liquidityData).map((_) => _.price),
+                  data: Object.values(liquidityData.liquidity).map((_) => _.price),
                   valueFormatter: FriendlyFormatNumber,
                   showMark: false
                 }
