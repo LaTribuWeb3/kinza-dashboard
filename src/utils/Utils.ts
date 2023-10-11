@@ -21,9 +21,7 @@ export function FriendlyFormatNumber(num: number): string {
   } else if (num > 1e3) {
     return `${roundTo(num / 1e3, 2)}K`;
   } else if (num < 1 / 1e3) {
-    return roundTo(num * 10000, 2).toString() + 'e-4';
-  } else if (num < 1 / 1e6) {
-    return roundTo(num * 10000000, 2).toString() + 'e-7';
+    return num.toExponential()
   } else {
     return `${roundTo(num, 4).toString()}`;
   }
