@@ -71,8 +71,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
   }
-  
-  const updated = moment(liquidityData.updated).fromNow()
+
+  const updated = moment(liquidityData.updated).fromNow();
 
   return (
     <>

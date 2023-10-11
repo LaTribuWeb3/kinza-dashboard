@@ -33,7 +33,7 @@ export function ResponsiveNavBar(props: ResponsiveNavBarProperties) {
         }}
         open
       >
-        <NavCategories toggleDrawerFct={props.toggleDrawerFct}/>
+        <NavCategories toggleDrawerFct={props.toggleDrawerFct} />
       </Drawer>
     </Box>
   );

@@ -5,7 +5,7 @@ export interface Pair {
 
 export interface LiquidityData {
   updated: number; // timestamp ms
-  liquidity: {[blockNumber: string]: DataAtBlock};
+  liquidity: { [blockNumber: string]: DataAtBlock };
 }
 
 export interface DataAtBlock {
