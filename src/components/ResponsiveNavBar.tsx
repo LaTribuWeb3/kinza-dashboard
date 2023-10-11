@@ -23,7 +23,7 @@ export function ResponsiveNavBar(props: ResponsiveNavBarProperties) {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: props.drawerWidth }
         }}
       >
-        <NavCategories />
+        <NavCategories toggleDrawerFct={props.toggleDrawerFct} />
       </Drawer>
       <Drawer
         variant="permanent"
@@ -33,7 +33,7 @@ export function ResponsiveNavBar(props: ResponsiveNavBarProperties) {
         }}
         open
       >
-        <NavCategories />
+        <NavCategories toggleDrawerFct={props.toggleDrawerFct}/>
       </Drawer>
     </Box>
   );

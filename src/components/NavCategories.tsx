@@ -3,12 +3,18 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Contants';
 import { useState } from 'react';
 
-export function NavCategories() {
+
+export interface NavCategoriesProperties {
+  toggleDrawerFct: () => void;
+}
+
+export function NavCategories(props: NavCategoriesProperties) {
   const pathName = useLocation().pathname;
   const [selectedButton, setSelectedButton] = useState<string>(pathName == '/' ? 'overview' : pathName.split('/')[2]);
 
   function handleClick(buttonName: string) {
     setSelectedButton(buttonName);
+    props.toggleDrawerFct();
   }
 
   return (
