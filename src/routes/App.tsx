@@ -33,7 +33,7 @@ function App() {
           direction: 'row'
         }}
       >
-        <Box sx={{ mt: 8, ml: 8, mr: 4 }}>
+        <Box sx={{ mt: 8, ml: 1.5 }}>
           {pathName == '/' && <Overview />}
           <Outlet />
         </Box>

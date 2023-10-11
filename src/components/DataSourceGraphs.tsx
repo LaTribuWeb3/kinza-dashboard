@@ -83,7 +83,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             >{`${props.pair.base}/${props.pair.quote} data over 180 days`}</Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} lg={6}>
             <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} liquidity`}</Typography>
             <LineChart
               legend={{
@@ -123,7 +123,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                   showMark: false
                 },
                 {
-                  label: 'Average Liquidity (30d)',
+                  label: 'Avg (30d)',
                   data: Object.values(liquidityData).map((_) => _.avgSlippageMap[props.targetSlippage]),
                   valueFormatter: FriendlyFormatNumber,
                   showMark: false
@@ -133,7 +133,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} lg={6}>
             <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} price`}</Typography>
 
             <LineChart
