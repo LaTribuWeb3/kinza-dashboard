@@ -4,7 +4,7 @@ import DataService from '../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 import { SimpleAlert } from './SimpleAlert';
-import { FriendlyFormatNumber, sleep } from '../utils/Utils';
+import { FriendlyFormatNumber, PercentageFormatter, roundTo, sleep } from '../utils/Utils';
 import moment from 'moment';
 export interface DataSourceGraphsInterface {
   pair: Pair;
@@ -91,7 +91,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} liquidity`}</Typography>
             <LineChart
               legend={{
-                direction: 'column',
+                direction: 'row',
                 position: {
                   vertical: 'top',
                   horizontal: 'middle'
@@ -100,7 +100,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               sx={{
                 marginTop: '-100px',
                 '--ChartsLegend-rootOffsetX': '0px',
-                '--ChartsLegend-rootOffsetY': '0px'
+                '--ChartsLegend-rootOffsetY': '0px',
+                '--ChartsLegend-rootSpacing': '12px'
               }}
               xAxis={[
                 {
@@ -166,17 +167,31 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               ]}
               yAxis={[
                 {
+                  id: 'leftAxisId',
                   max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 1.1,
                   min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 0.9,
                   valueFormatter: FriendlyFormatNumber
+                },
+                {
+                  id: 'rightAxisId',
+                  valueFormatter: PercentageFormatter
                 }
               ]}
+              rightAxis="rightAxisId"
               series={[
                 {
                   label: 'price',
                   data: Object.values(liquidityData.liquidity).map((_) => _.price),
                   valueFormatter: FriendlyFormatNumber,
-                  showMark: false
+                  showMark: false,
+                  yAxisKey: 'leftAxisId'
+                },
+                {
+                  label: 'volatility (30d)',
+                  data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
+                  valueFormatter: PercentageFormatter,
+                  showMark: false,
+                  yAxisKey: 'rightAxisId'
                 }
               ]}
               height={450}

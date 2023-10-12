@@ -12,4 +12,5 @@ export interface DataAtBlock {
   price: number;
   slippageMap: { [slippageBps: number]: number };
   avgSlippageMap: { [slippageBps: number]: number };
+  volatility: number;
 }

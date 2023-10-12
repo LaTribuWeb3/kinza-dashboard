@@ -26,3 +26,7 @@ export function FriendlyFormatNumber(num: number): string {
     return `${roundTo(num, 4).toString()}`;
   }
 }
+
+export function PercentageFormatter(num: number): string {
+  return `${roundTo(num * 100, 2)}%`;
+}
