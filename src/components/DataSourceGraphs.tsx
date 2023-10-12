@@ -4,7 +4,7 @@ import DataService from '../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 import { SimpleAlert } from './SimpleAlert';
-import { FriendlyFormatNumber, PercentageFormatter, roundTo, sleep } from '../utils/Utils';
+import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../utils/Utils';
 import moment from 'moment';
 export interface DataSourceGraphsInterface {
   pair: Pair;
