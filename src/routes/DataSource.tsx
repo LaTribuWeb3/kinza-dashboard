@@ -56,9 +56,15 @@ export default function DataSource() {
     async function fetchData() {
       try {
         const data = await DataService.GetAvailablePairs(platform);
-
-        setSelectedPair(data[0]);
         setAvailablePairs(data);
+
+        const oldPair = selectedPair;
+
+        if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
+          setSelectedPair(oldPair);
+        } else {
+          setSelectedPair(data[0]);
+        }
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
