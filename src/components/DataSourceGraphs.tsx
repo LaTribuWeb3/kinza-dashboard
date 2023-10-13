@@ -174,6 +174,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                 },
                 {
                   id: 'rightAxisId',
+                  max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 2,
+                  min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 0.5,
                   valueFormatter: PercentageFormatter
                 }
               ]}
