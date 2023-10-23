@@ -91,17 +91,17 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             <Typography textAlign={'center'} mt={5}>{`${props.pair.base}/${props.pair.quote} liquidity`}</Typography>
             <LineChart
               legend={{
-                direction: 'row',
+                direction: 'column',
                 position: {
                   vertical: 'top',
                   horizontal: 'middle'
                 }
               }}
               sx={{
-                marginTop: '-100px',
+                marginTop: '-50px',
                 '--ChartsLegend-rootOffsetX': '0px',
                 '--ChartsLegend-rootOffsetY': '0px',
-                '--ChartsLegend-rootSpacing': '12px'
+                '--ChartsLegend-rootSpacing': '3px'
               }}
               xAxis={[
                 {
@@ -114,24 +114,46 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                     .at(-1)
                 }
               ]}
+              // yAxis={[
+              //   {
+              //     min: 0,
+              //     valueFormatter: FriendlyFormatNumber
+              //   }
+              // ]}
               yAxis={[
                 {
+                  id: 'leftAxisId',
+                  min: 0,
+                  valueFormatter: FriendlyFormatNumber
+                },
+                {
+                  id: 'rightAxisId',
                   min: 0,
                   valueFormatter: FriendlyFormatNumber
                 }
               ]}
+              rightAxis="rightAxisId"
               series={[
                 {
-                  label: 'Liquidity',
-                  data: Object.values(liquidityData.liquidity).map((_) => _.slippageMap[props.targetSlippage]),
+                  label: `Amount ${props.pair.base} sold`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.slippageMap[props.targetSlippage].base),
                   valueFormatter: FriendlyFormatNumber,
-                  showMark: false
+                  showMark: false,
+                  yAxisKey: 'leftAxisId'
                 },
                 {
-                  label: 'Avg (30d)',
-                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[props.targetSlippage]),
+                  label: `Avg (30d) ${props.pair.base}`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[props.targetSlippage].base),
                   valueFormatter: FriendlyFormatNumber,
-                  showMark: false
+                  showMark: false,
+                  yAxisKey: 'leftAxisId'
+                },
+                {
+                  label: `Amount ${props.pair.quote} received`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.slippageMap[props.targetSlippage].quote),
+                  valueFormatter: FriendlyFormatNumber,
+                  showMark: false,
+                  yAxisKey: 'rightAxisId'
                 }
               ]}
               height={450}
@@ -143,16 +165,17 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
 
             <LineChart
               legend={{
-                direction: 'row',
+                direction: 'column',
                 position: {
                   vertical: 'top',
                   horizontal: 'middle'
                 }
               }}
               sx={{
-                marginTop: '-100px',
+                marginTop: '-50px',
                 '--ChartsLegend-rootOffsetX': '0px',
-                '--ChartsLegend-rootOffsetY': '0px'
+                '--ChartsLegend-rootOffsetY': '0px',
+                '--ChartsLegend-rootSpacing': '3px'
               }}
               xAxis={[
                 {

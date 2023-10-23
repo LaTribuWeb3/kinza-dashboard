@@ -10,7 +10,7 @@ export interface LiquidityData {
 
 export interface DataAtBlock {
   price: number;
-  slippageMap: { [slippageBps: number]: number };
-  avgSlippageMap: { [slippageBps: number]: number };
+  slippageMap: { [slippageBps: number]: {base: number, quote: number, avgSlippage: number} };
+  avgSlippageMap: { [slippageBps: number]: {base: number, quote: number} };
   volatility: number;
 }
