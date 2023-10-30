@@ -1,13 +1,13 @@
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import DataService from '../services/DataService';
-import { Pair } from '../models/ApiData';
+import DataService from '../../services/DataService';
+import { Pair } from '../../models/ApiData';
 import { Grid, LinearProgress, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material';
-import { SimpleAlert } from '../components/SimpleAlert';
-import { SLIPPAGES_BPS } from '../utils/Contants';
-import { DataSourceGraphs } from '../components/DataSourceGraphs';
-import { sleep } from '../utils/Utils';
+import { SimpleAlert } from '../../components/SimpleAlert';
+import { SLIPPAGES_BPS } from '../../utils/Contants';
+import { DataSourceGraphs } from './DataSourceGraphs';
+import { sleep } from '../../utils/Utils';
 
 function DataSourceSkeleton() {
   return (
