@@ -4,7 +4,7 @@ import { ResponsiveNavBar } from '../components/ResponsiveNavBar';
 import { MainAppBar } from '../components/MainAppBar';
 import { Outlet } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { Overview } from '../components/Overview';
+import { Overview } from './overview/Overview';
 
 const drawerWidth = 240;
 

@@ -1,10 +1,10 @@
 import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { useEffect, useState } from 'react';
-import DataService from '../services/DataService';
-import { SimpleAlert } from './SimpleAlert';
-import { DATA_SOURCES } from '../utils/Contants';
-import { OverviewData } from '../models/OverviewData';
-import { OverviewCard } from './OverviewCard';
+import DataService from '../../services/DataService';
+import { SimpleAlert } from '../../components/SimpleAlert';
+import { DATA_SOURCES } from '../../utils/Contants';
+import { OverviewData } from '../../models/OverviewData';
+import { OverviewCard } from '../../components/OverviewCard';
 
 function OverviewSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
