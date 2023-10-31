@@ -149,6 +149,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                 formatter: FriendlyFormatNumber
               }}
               rightYAxis={{
+                min: 0,
+                max: Math.max(10/100, Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1),
                 formatter: PercentageFormatter
               }}
               leftAxisSeries={[
