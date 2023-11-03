@@ -150,12 +150,15 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               }}
               rightYAxis={{
                 min: 0,
-                max: Math.max(10/100, Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1),
+                max: Math.max(
+                  10 / 100,
+                  Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1
+                ),
                 formatter: PercentageFormatter
               }}
               leftAxisSeries={[
                 {
-                  label: `price`,
+                  label: `price (last)`,
                   data: Object.values(liquidityData.liquidity).map((_) => _.price),
                   formatter: FriendlyFormatNumber
                 }
@@ -165,6 +168,91 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
                   label: 'volatility (30d)',
                   data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
                   formatter: PercentageFormatter
+                }
+              ]}
+            />
+          </Grid>
+
+          {/* biggest daily change graph */}
+          <Grid item xs={12} lg={6}>
+            <Graph
+              title={`${props.pair.base}/${props.pair.quote} biggest daily price change (3 months)`}
+              xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
+              xAxisLabel="Block"
+              leftYAxis={{
+                max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 1.1,
+                min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 0.9,
+                formatter: FriendlyFormatNumber
+              }}
+              rightYAxis={{
+                min: 0,
+                max: Math.max(
+                  10 / 100,
+                  Math.max(...Object.values(liquidityData.liquidity).map((_) => _.biggestDailyChange)) * 1.1
+                ),
+                formatter: PercentageFormatter
+              }}
+              leftAxisSeries={[
+                {
+                  label: `price (last)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.price),
+                  formatter: FriendlyFormatNumber
+                }
+              ]}
+              rightAxisSeries={[
+                {
+                  label: `Biggest daily price change (3 months)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.biggestDailyChange),
+                  formatter: PercentageFormatter
+                }
+              ]}
+            />
+          </Grid>
+
+          {/* fun with prices */}
+          <Grid item xs={12} lg={6}>
+            <Graph
+              title={`${props.pair.base}/${props.pair.quote} price`}
+              xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
+              xAxisLabel="Block"
+              leftYAxis={{
+                max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 1.1,
+                min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 0.9,
+                formatter: FriendlyFormatNumber
+              }}
+              leftAxisSeries={[
+                {
+                  label: `price (avg 1d)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.priceAvg),
+                  formatter: FriendlyFormatNumber
+                },
+                {
+                  label: `price (median 1d)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.priceMedian),
+                  formatter: FriendlyFormatNumber
+                }
+              ]}
+            />
+          </Grid>
+
+          <Grid item xs={12} lg={6}>
+            <Graph
+              title={`${props.pair.base}/${props.pair.quote} price`}
+              xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
+              xAxisLabel="Block"
+              leftYAxis={{
+                formatter: FriendlyFormatNumber
+              }}
+              leftAxisSeries={[
+                {
+                  label: `price (Q10 1d)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.priceQ10),
+                  formatter: FriendlyFormatNumber
+                },
+                {
+                  label: `price (Q90 1d)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.priceQ90),
+                  formatter: FriendlyFormatNumber
                 }
               ]}
             />
