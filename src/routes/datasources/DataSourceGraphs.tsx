@@ -180,8 +180,6 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
               xAxisLabel="Block"
               leftYAxis={{
-                max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 1.1,
-                min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.price)) * 0.9,
                 formatter: FriendlyFormatNumber
               }}
               rightYAxis={{
@@ -194,8 +192,13 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               }}
               leftAxisSeries={[
                 {
-                  label: `price (last)`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.price),
+                  label: `price min (1d)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.priceMin),
+                  formatter: FriendlyFormatNumber
+                },
+                {
+                  label: `price max (1d)`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.priceMax),
                   formatter: FriendlyFormatNumber
                 }
               ]}

@@ -10,6 +10,8 @@ export interface LiquidityData {
 
 export interface DataAtBlock {
   price: number;
+  priceMin: number;
+  priceMax: number;
   priceAvg: number;
   priceMedian: number;
   priceQ10: number;
