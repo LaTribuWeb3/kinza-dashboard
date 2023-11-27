@@ -1,6 +1,6 @@
 import { Divider, List, ListItemButton, ListSubheader } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Contants';
+import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Constants';
 import { useState } from 'react';
 
 export interface NavCategoriesProperties {

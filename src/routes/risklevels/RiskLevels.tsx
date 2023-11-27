@@ -14,37 +14,6 @@ export default function RiskLevels() {
     const [alertMsg, setAlertMsg] = useState('');
     const [supplyCap, setSupplyCap] = useState(100);
 
-    const parametersMap = [
-        {
-            ltv: 0.625,
-            bonus: 1250
-        },
-        {
-            ltv: 0.77,
-            bonus: 700
-        },
-        {
-            ltv: 0.86,
-            bonus: 400
-        },
-        {
-            ltv: 0.915,
-            bonus: 250
-        },
-        {
-            ltv: 0.945,
-            bonus: 150
-        },
-        {
-            ltv: 0.965,
-            bonus: 100
-        },
-        {
-            ltv: 0.98,
-            bonus: 50
-        }
-    ]
-
     const handleCloseAlert = () => {
         setOpenAlert(false);
     };
@@ -57,7 +26,6 @@ export default function RiskLevels() {
             setSupplyCap(Number(event.target.value));
         }
     }
-
 
     //// useEffect to load data
     useEffect(() => {

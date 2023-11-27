@@ -5,7 +5,7 @@ import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
 import { Grid, LinearProgress, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { SLIPPAGES_BPS } from '../../utils/Contants';
+import { SLIPPAGES_BPS } from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
 import { sleep } from '../../utils/Utils';
 
