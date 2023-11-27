@@ -2,7 +2,7 @@
 import { Box, Typography } from '@mui/material';
 import { AxisConfig, LineChart, LineSeriesType } from '@mui/x-charts';
 
-export interface GraphProperies {
+export interface GraphProperties {
   title: string;
   xAxisLabel: string;
   xAxisData: number[];
@@ -28,7 +28,7 @@ export interface GraphProperies {
   }[];
 }
 
-export default function Graph(props: GraphProperies) {
+export default function Graph(props: GraphProperties) {
   const yAxisConfigs: AxisConfig[] = [
     {
       id: 'leftAxisId',
