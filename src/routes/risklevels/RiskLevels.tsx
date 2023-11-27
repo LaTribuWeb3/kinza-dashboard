@@ -11,6 +11,7 @@ export default function RiskLevels() {
     const [selectedPair, setSelectedPair] = useState<Pair>();
     const [openAlert, setOpenAlert] = useState(false);
     const [alertMsg, setAlertMsg] = useState('');
+    const [supplyCap, setSupplyCap] = useState(100);
 
     const handleCloseAlert = () => {
         setOpenAlert(false);
@@ -19,6 +20,11 @@ export default function RiskLevels() {
         console.log(`handleChangePair: ${event.target.value}`);
         setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
     };
+    const handleChangeSupplyCap = (event : React.ChangeEvent<HTMLInputElement>) => {
+        if(event.target && event.target.value){
+        setSupplyCap(Number(event.target.value));
+    }
+    }
 
     useEffect(() => {
         setIsLoading(true);
@@ -89,7 +95,8 @@ export default function RiskLevels() {
                         id="supply-cap-input"
                         type="number"
                         label="Required"
-                        defaultValue="100"
+                        value={supplyCap}
+                        onChange={handleChangeSupplyCap}
                         InputProps={{
                             startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                             endAdornment: <InputAdornment position='end'>M</InputAdornment>
