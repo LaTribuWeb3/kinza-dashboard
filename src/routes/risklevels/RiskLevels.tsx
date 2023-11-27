@@ -4,6 +4,7 @@ import DataService from "../../services/DataService";
 import { Pair } from "../../models/ApiData";
 import { sleep } from "../../utils/Utils";
 import { SimpleAlert } from "../../components/SimpleAlert";
+import { RiskLevelGraphs } from "./RiskLevelGraph";
 
 export default function RiskLevels() {
     const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +14,37 @@ export default function RiskLevels() {
     const [alertMsg, setAlertMsg] = useState('');
     const [supplyCap, setSupplyCap] = useState(100);
 
+    const parametersMap = [
+        {
+            ltv: 0.625,
+            bonus: 1250
+        },
+        {
+            ltv: 0.77,
+            bonus: 700
+        },
+        {
+            ltv: 0.86,
+            bonus: 400
+        },
+        {
+            ltv: 0.915,
+            bonus: 250
+        },
+        {
+            ltv: 0.945,
+            bonus: 150
+        },
+        {
+            ltv: 0.965,
+            bonus: 100
+        },
+        {
+            ltv: 0.98,
+            bonus: 50
+        }
+    ]
+
     const handleCloseAlert = () => {
         setOpenAlert(false);
     };
@@ -20,12 +52,14 @@ export default function RiskLevels() {
         console.log(`handleChangePair: ${event.target.value}`);
         setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
     };
-    const handleChangeSupplyCap = (event : React.ChangeEvent<HTMLInputElement>) => {
-        if(event.target && event.target.value){
-        setSupplyCap(Number(event.target.value));
-    }
+    const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target && event.target.value) {
+            setSupplyCap(Number(event.target.value));
+        }
     }
 
+
+    //// useEffect to load data
     useEffect(() => {
         setIsLoading(true);
         // Define an asynchronous function
@@ -57,6 +91,7 @@ export default function RiskLevels() {
             .then(() => setIsLoading(false))
             .catch(console.error);
     }, []);
+
     if (!selectedPair) {
         return <Box>BITCONNNEEEEEEEEEEECT</Box>;
     }
@@ -87,10 +122,10 @@ export default function RiskLevels() {
 
                 <Grid item xs={6} sm={3}>
                     <Typography textAlign={'right'}>Supply Cap ($M): </Typography>
-                   
+
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                <TextField
+                    <TextField
                         required
                         id="supply-cap-input"
                         type="number"
@@ -103,6 +138,7 @@ export default function RiskLevels() {
                         }}
                     />
                 </Grid>
+          <RiskLevelGraphs pair={selectedPair} platform={'all'} />
             </Grid>
         )}
 
