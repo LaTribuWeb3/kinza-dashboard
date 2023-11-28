@@ -34,7 +34,7 @@ export default function RiskLevels() {
     async function fetchData() {
       try {
         const data = await DataService.GetAvailablePairs('all');
-        setAvailablePairs(data);
+        setAvailablePairs(data.filter((_) => _.quote === 'USDC' || _.quote === 'WETH'));
 
         const oldPair = selectedPair;
 

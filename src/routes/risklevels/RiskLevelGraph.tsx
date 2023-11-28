@@ -77,6 +77,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
         const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
         const maxBlock = Math.max.apply(null, liquidityObjectToArray).toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
+        console.log('tokenPrice', tokenPrice);
 
         /// for each block
         for (const [block, blockData] of Object.entries(data.liquidity)) {
@@ -149,7 +150,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
                 const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
                 return {
-                  label: `Bonus: ${_.bonus} -- LTV: ${_.ltv}`,
+                  label: `Bonus: ${_.bonus} & LTV: ${_.ltv}`,
                   data: data,
                   formatter: FriendlyFormatNumber
                 };
