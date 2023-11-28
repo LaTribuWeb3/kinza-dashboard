@@ -69,7 +69,7 @@ export default function RiskLevels() {
       {isLoading ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid container spacing={1} alignItems="baseline">
+        <Grid container spacing={1} alignItems="center">
           {/* First row: pairs select and slippage select */}
           <Grid item xs={6} sm={3}>
             <Typography textAlign={'right'}>Pair: </Typography>
@@ -102,7 +102,6 @@ export default function RiskLevels() {
               value={supplyCap}
               onChange={handleChangeSupplyCap}
               InputProps={{
-                // startAdornment: <InputAdornment position='start'>$</InputAdornment>,
                 endAdornment: <InputAdornment position="end">{selectedPair.base}</InputAdornment>
               }}
             />
