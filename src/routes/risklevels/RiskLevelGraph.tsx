@@ -146,7 +146,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.blockNumber)}
               xAxisLabel="Block"
-              leftYAxis={{ min: 0, max: 1, formatter: FriendlyFormatNumber }}
+              leftYAxis={{ min: 0, max: 100, formatter: FriendlyFormatNumber }}
               leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
                 const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
                 return {

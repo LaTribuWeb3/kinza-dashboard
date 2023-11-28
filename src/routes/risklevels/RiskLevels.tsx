@@ -43,6 +43,12 @@ export default function RiskLevels() {
         } else {
           setSelectedPair(data[0]);
         }
+        if (selectedPair?.quote === 'USDC') {
+          setSupplyCap(100000000);
+        }
+        if (selectedPair?.quote === 'WETH') {
+          setSupplyCap(50000);
+        }
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -102,7 +108,7 @@ export default function RiskLevels() {
               value={supplyCap}
               onChange={handleChangeSupplyCap}
               InputProps={{
-                endAdornment: <InputAdornment position="end">{selectedPair.base}</InputAdornment>
+                endAdornment: <InputAdornment position="end">{selectedPair.quote}</InputAdornment>
               }}
             />
           </Grid>
