@@ -18,7 +18,7 @@ export interface GraphDataAtBlock {
   [property: string]: number;
 }
 
-function RiskLevelGraphsSkeleton() {
+export function RiskLevelGraphsSkeleton() {
   return (
     <Grid mt={5} container spacing={0}>
       <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />
@@ -35,6 +35,11 @@ function findRiskLevelFromParameters(
   ltv: number,
   borrowCap: number
 ) {
+  console.log('volatility', volatility);
+  console.log('liquidity', liquidity);
+  console.log('liquidationBonus', liquidationBonus);
+  console.log('ltv', ltv);
+  console.log('borrowCap', borrowCap);
   const sigma = volatility;
   const d = borrowCap;
   const beta = liquidationBonus;
@@ -86,7 +91,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             currentBlockData[`${_.bonus}_${_.ltv}`] = findRiskLevelFromParameters(
               blockData.volatility,
               liquidity,
-              liquidationBonus,
+              liquidationBonus / 1000,
               ltv,
               borrowCap
             );
@@ -141,7 +146,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               xAxisData={graphData.map((_) => _.blockNumber)}
               xAxisLabel="Block"
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
-              rightYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
                 const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
                 return {

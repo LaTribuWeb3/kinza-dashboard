@@ -4,7 +4,7 @@ import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
 import { sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { RiskLevelGraphs } from './RiskLevelGraph';
+import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 
 export default function RiskLevels() {
   const [isLoading, setIsLoading] = useState(true);
@@ -61,12 +61,13 @@ export default function RiskLevels() {
   }, []);
 
   if (!selectedPair) {
-    return <Box>BITCONNNEEEEEEEEEEECT</Box>;
+    return;
+    <RiskLevelGraphsSkeleton />;
   }
   return (
     <Box sx={{ mt: 10 }}>
       {isLoading ? (
-        <Box>BITCONNNEEEEEEEEEEECT</Box>
+        <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
