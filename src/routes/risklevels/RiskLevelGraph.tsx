@@ -5,11 +5,19 @@ import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { sleep } from '../../utils/Utils';
 import moment from 'moment';
+import { MORPHO_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
 export interface RiskLevelGraphsInterface {
     pair: Pair;
     platform: string;
+    supplyCap: number
 }
 
+
+export interface GraphDataAtBlock {
+    blockNumber: number,
+    [property:string]: number
+    
+}
 function RiskLevelGraphsSkeleton() {
     return (
         <Grid mt={5} container spacing={0}>
@@ -19,6 +27,21 @@ function RiskLevelGraphsSkeleton() {
             </Grid>
         </Grid>
     );
+}
+function findRiskLevelFromParameters(volatility:number, liquidity:number, liquidationBonus:number, ltv:number, borrowCap:number) {
+    const sigma = volatility;
+    const d = borrowCap;
+    const beta = liquidationBonus;
+    const l = liquidity;
+    ltv = Number(ltv) / 100;
+
+    const sigmaTimesSqrtOfD = sigma * Math.sqrt(d);
+    const ltvPlusBeta = ltv + beta;
+    const lnOneDividedByLtvPlusBeta = Math.log(1/ltvPlusBeta);
+    const lnOneDividedByLtvPlusBetaTimesSqrtOfL = lnOneDividedByLtvPlusBeta * Math.sqrt(l);
+    const r = sigmaTimesSqrtOfD / lnOneDividedByLtvPlusBetaTimesSqrtOfL;
+
+    return r;
 }
 
 export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
@@ -33,10 +56,35 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
 
     useEffect(() => {
         setIsLoading(true);
-        async function fetchDataForPair() {
+        async function fetchAndComputeDataForGraph() {
             try {
                 const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
+                const graphData:GraphDataAtBlock[] = [];
 
+
+                /// get token price
+                const liquidityObjectToArray = (Object.keys(data.liquidity)).map((_)=> parseInt(_));
+                const maxBlock = (Math.max.apply(null, liquidityObjectToArray)).toString();
+                const tokenPrice = data.liquidity[maxBlock].priceMedian;
+
+                /// for each block
+                for(const [block, blockData] of Object.entries(data.liquidity)){
+                    const currentBlockData:GraphDataAtBlock = {
+                        blockNumber: Number(block)
+                    }
+                    MORPHO_RISK_PARAMETERS_ARRAY.forEach(
+                        (_) => {
+                            const liquidationBonus = _.bonus;
+                            const liquidity = blockData.slippageMap[liquidationBonus].base * tokenPrice;
+                            const ltv = _.ltv;
+                            const borrowCap = props.supplyCap * tokenPrice;
+                            currentBlockData[`${_.bonus}_${_.ltv}`] = findRiskLevelFromParameters(blockData.volatility, liquidity, liquidationBonus, ltv, borrowCap);
+                        }
+                    )
+                    graphData.push(currentBlockData);
+                }
+
+                console.log('graphData', graphData);
                 setLiquidityData(data);
                 await sleep(1);
             } catch (error) {
@@ -50,13 +98,14 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
                 }
             }
         }
-        fetchDataForPair()
+        fetchAndComputeDataForGraph()
             .then(() => setIsLoading(false))
             .catch(console.error);
+            console.log(liquidityData);
         // platform is not in the deps for this hooks because we only need to reload the data
         // if the pair is changing
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.pair.base, props.pair.quote]);
+    }, [props.pair.base, props.pair.quote, props.supplyCap]);
 
     if (!liquidityData) {
         return <RiskLevelGraphsSkeleton />;

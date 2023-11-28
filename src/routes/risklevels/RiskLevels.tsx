@@ -89,7 +89,7 @@ export default function RiskLevels() {
                 </Grid>
 
                 <Grid item xs={6} sm={3}>
-                    <Typography textAlign={'right'}>Supply Cap ($M): </Typography>
+                    <Typography textAlign={'right'}>Supply Cap: </Typography>
 
                 </Grid>
                 <Grid item xs={6} sm={3}>
@@ -97,16 +97,16 @@ export default function RiskLevels() {
                         required
                         id="supply-cap-input"
                         type="number"
-                        label="Required"
+                        label="In Kind"
                         value={supplyCap}
                         onChange={handleChangeSupplyCap}
                         InputProps={{
-                            startAdornment: <InputAdornment position='start'>$</InputAdornment>,
-                            endAdornment: <InputAdornment position='end'>M</InputAdornment>
+                            // startAdornment: <InputAdornment position='start'>$</InputAdornment>,
+                            endAdornment: <InputAdornment position='end'>{selectedPair.base}</InputAdornment>
                         }}
                     />
                 </Grid>
-          <RiskLevelGraphs pair={selectedPair} platform={'all'} />
+          <RiskLevelGraphs pair={selectedPair} supplyCap={supplyCap} platform={'all'} />
             </Grid>
         )}
 
