@@ -137,25 +137,19 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
 
           <Grid item xs={12} lg={6}>
             <Graph
-              title={`${props.pair.base}/${props.pair.quote} liquidity`}
+              title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.blockNumber)}
               xAxisLabel="Block"
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               rightYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
-              leftAxisSeries={[
-                {
-                  label: `Amount ${props.pair.base} sold`,
-                  data: graphData.map((_) => _.blockNumber),
+              leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
+                const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
+                return {
+                  label: `Bonus: ${_.bonus} -- LTV: ${_.ltv}`,
+                  data: data,
                   formatter: FriendlyFormatNumber
-                }
-              ]}
-              rightAxisSeries={[
-                {
-                  label: `Amount ${props.pair.quote} received`,
-                  data: graphData.map((_) => _.blockNumber),
-                  formatter: FriendlyFormatNumber
-                }
-              ]}
+                };
+              })}
             />
           </Grid>
         </Grid>

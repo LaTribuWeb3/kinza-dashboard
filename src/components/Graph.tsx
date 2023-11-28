@@ -79,15 +79,8 @@ export default function Graph(props: GraphProperties) {
         {props.title}
       </Typography>
       <LineChart
-        legend={{
-          direction: 'column',
-          position: {
-            vertical: 'top',
-            horizontal: 'middle'
-          }
-        }}
         sx={{
-          marginTop: '-50px',
+          marginTop: '',
           '--ChartsLegend-rootOffsetX': '0px',
           '--ChartsLegend-rootOffsetY': '0px',
           '--ChartsLegend-rootSpacing': '3px'
