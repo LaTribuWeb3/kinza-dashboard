@@ -2,7 +2,7 @@ import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextFie
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
-import { sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 
@@ -13,6 +13,7 @@ export default function RiskLevels() {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [supplyCap, setSupplyCap] = useState(100);
+  const [tokenPrice, setTokenPrice] = useState(1);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -60,6 +61,42 @@ export default function RiskLevels() {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    setIsLoading(true);
+    async function getTokenPrice() {
+      try {
+        if (!selectedPair) {
+          return;
+        }
+        const data = await DataService.GetLiquidityData('all', selectedPair.base, selectedPair.quote);
+
+        /// get token price
+        const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
+        const maxBlock = Math.max.apply(null, liquidityObjectToArray).toString();
+        const tokenPrice = data.liquidity[maxBlock].priceMedian;
+        setTokenPrice(tokenPrice);
+        if (selectedPair?.quote === 'USDC') {
+          setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
+        }
+        if (selectedPair?.quote === 'WETH') {
+          setSupplyCap(roundTo(50_000 / tokenPrice, 0));
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setOpenAlert(true);
+        setIsLoading(false);
+        if (error instanceof Error) {
+          setAlertMsg(`Error fetching data: ${error.toString()}`);
+        } else {
+          setAlertMsg(`Unknown error`);
+        }
+      }
+    }
+    getTokenPrice()
+      .then(() => setIsLoading(false))
+      .catch(console.error);
+  }, [selectedPair]);
+
   if (!selectedPair) {
     return;
     <RiskLevelGraphsSkeleton />;
@@ -89,11 +126,10 @@ export default function RiskLevels() {
               ))}
             </Select>
           </Grid>
-
           <Grid item xs={6} sm={3}>
             <Typography textAlign={'right'}>Supply Cap: </Typography>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               required
               id="supply-cap-input"
@@ -105,8 +141,13 @@ export default function RiskLevels() {
                 endAdornment: <InputAdornment position="end">{selectedPair.base}</InputAdornment>
               }}
             />
+            <Typography sx={{ ml: '10px' }}>
+              {FriendlyFormatNumber(supplyCap * tokenPrice)} {selectedPair.quote}
+            </Typography>
           </Grid>
-          <RiskLevelGraphs pair={selectedPair} setSupplyCap={setSupplyCap} supplyCap={supplyCap} platform={'all'} />
+          <Grid item xs={12}>
+            <RiskLevelGraphs pair={selectedPair} supplyCap={supplyCap} platform={'all'} />
+          </Grid>
         </Grid>
       )}
 

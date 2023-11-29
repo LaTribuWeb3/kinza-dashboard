@@ -3,7 +3,7 @@ import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
 import moment from 'moment';
 import { MORPHO_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
 import Graph from '../../components/Graph';
@@ -11,7 +11,6 @@ export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
-  setSupplyCap: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface GraphDataAtBlock {
@@ -67,19 +66,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
         const graphData: GraphDataAtBlock[] = [];
 
-        /// get token price
-        const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
-        const maxBlock = Math.max.apply(null, liquidityObjectToArray).toString();
-        const tokenPrice = data.liquidity[maxBlock].priceMedian;
-        console.log('tokenPrice', tokenPrice);
-
-        if (props.pair?.quote === 'USDC') {
-          props.setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
-        }
-        if (props.pair?.quote === 'WETH') {
-          props.setSupplyCap(roundTo(50_000 / tokenPrice, 0));
-        }
-
         /// for each block
         for (const [block, blockData] of Object.entries(data.liquidity)) {
           const currentBlockData: GraphDataAtBlock = {
@@ -87,12 +73,12 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           };
           for (const morphoParameter of MORPHO_RISK_PARAMETERS_ARRAY) {
             const liquidationBonus = morphoParameter.bonus;
-            const liquidity = blockData.avgSlippageMap[liquidationBonus].base * tokenPrice;
+            const liquidity = blockData.avgSlippageMap[liquidationBonus].base;
             if (liquidity <= 0) {
               continue;
             }
             const ltv = morphoParameter.ltv;
-            const borrowCap = props.supplyCap * tokenPrice;
+            const borrowCap = props.supplyCap;
             currentBlockData[`${morphoParameter.bonus}_${morphoParameter.ltv}`] = findRiskLevelFromParameters(
               blockData.volatility,
               liquidity,
@@ -137,15 +123,14 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
       {isLoading ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid width={'100vw'} container spacing={0}>
+        <Grid container spacing={0}>
           <Grid item xs={12}>
             <Typography
               textAlign={'center'}
               mt={2}
-            >{`${props.pair.base}/${props.pair.quote} data over 180 days (updated ${updated})`}</Typography>
+            >{`${props.pair.base}/${props.pair.quote} risk levels over 180 days (updated ${updated})`}</Typography>
           </Grid>
-
-          <Grid item xs={12} lg={6}>
+          <Grid item xs={12}>
             <Graph
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.blockNumber)}
