@@ -36,11 +36,6 @@ function findRiskLevelFromParameters(
   ltv: number,
   borrowCap: number
 ) {
-  console.log('volatility', volatility);
-  console.log('liquidity', liquidity);
-  console.log('liquidationBonus', liquidationBonus);
-  console.log('ltv', ltv);
-  console.log('borrowCap', borrowCap);
   const sigma = volatility;
   const d = borrowCap;
   const beta = liquidationBonus;
@@ -51,7 +46,6 @@ function findRiskLevelFromParameters(
   const lnOneDividedByLtvPlusBeta = Math.log(1 / ltvPlusBeta);
   const lnOneDividedByLtvPlusBetaTimesSqrtOfL = lnOneDividedByLtvPlusBeta * Math.sqrt(l);
   const r = sigmaTimesSqrtOfD / lnOneDividedByLtvPlusBetaTimesSqrtOfL;
-
   return r;
 }
 
@@ -91,19 +85,22 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           const currentBlockData: GraphDataAtBlock = {
             blockNumber: Number(block)
           };
-          MORPHO_RISK_PARAMETERS_ARRAY.forEach((_) => {
-            const liquidationBonus = _.bonus;
-            const liquidity = blockData.slippageMap[liquidationBonus].base * tokenPrice;
-            const ltv = _.ltv;
+          for (const morphoParameter of MORPHO_RISK_PARAMETERS_ARRAY) {
+            const liquidationBonus = morphoParameter.bonus;
+            const liquidity = blockData.avgSlippageMap[liquidationBonus].base * tokenPrice;
+            if (liquidity <= 0) {
+              continue;
+            }
+            const ltv = morphoParameter.ltv;
             const borrowCap = props.supplyCap * tokenPrice;
-            currentBlockData[`${_.bonus}_${_.ltv}`] = findRiskLevelFromParameters(
+            currentBlockData[`${morphoParameter.bonus}_${morphoParameter.ltv}`] = findRiskLevelFromParameters(
               blockData.volatility,
               liquidity,
               liquidationBonus / 10000,
               ltv,
               borrowCap
             );
-          });
+          }
           graphData.push(currentBlockData);
         }
         graphData.sort((a, b) => a.blockNumber - b.blockNumber);
@@ -153,7 +150,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.blockNumber)}
               xAxisLabel="Block"
-              leftYAxis={{ min: 0, max: 100, formatter: FriendlyFormatNumber }}
+              leftYAxis={{ formatter: FriendlyFormatNumber }}
               leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
                 const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
                 return {
