@@ -11,6 +11,7 @@ export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
+  setSupplyCap: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface GraphDataAtBlock {
@@ -78,6 +79,13 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
         const maxBlock = Math.max.apply(null, liquidityObjectToArray).toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         console.log('tokenPrice', tokenPrice);
+
+        if (props.pair?.quote === 'USDC') {
+          props.setSupplyCap(100000000 / tokenPrice);
+        }
+        if (props.pair?.quote === 'WETH') {
+          props.setSupplyCap(50000 / tokenPrice);
+        }
 
         /// for each block
         for (const [block, blockData] of Object.entries(data.liquidity)) {
