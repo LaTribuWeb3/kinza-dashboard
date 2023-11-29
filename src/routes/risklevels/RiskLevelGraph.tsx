@@ -45,7 +45,6 @@ function findRiskLevelFromParameters(
   const d = borrowCap;
   const beta = liquidationBonus;
   const l = liquidity;
-  ltv = Number(ltv) / 100;
 
   const sigmaTimesSqrtOfD = sigma * Math.sqrt(d);
   const ltvPlusBeta = ltv + beta;
@@ -100,7 +99,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             currentBlockData[`${_.bonus}_${_.ltv}`] = findRiskLevelFromParameters(
               blockData.volatility,
               liquidity,
-              liquidationBonus / 1000,
+              liquidationBonus / 10000,
               ltv,
               borrowCap
             );
