@@ -3,7 +3,7 @@ import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import moment from 'moment';
 import { MORPHO_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
 import Graph from '../../components/Graph';
@@ -74,10 +74,10 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
         console.log('tokenPrice', tokenPrice);
 
         if (props.pair?.quote === 'USDC') {
-          props.setSupplyCap(100000000 / tokenPrice);
+          props.setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
         }
         if (props.pair?.quote === 'WETH') {
-          props.setSupplyCap(50000 / tokenPrice);
+          props.setSupplyCap(roundTo(50_000 / tokenPrice, 0));
         }
 
         /// for each block
