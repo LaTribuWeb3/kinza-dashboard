@@ -138,7 +138,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
                 const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
                 return {
-                  label: `Bonus: ${_.bonus} & LTV: ${_.ltv}`,
+                  label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus}`,
                   data: data,
                   formatter: FriendlyFormatNumber
                 };

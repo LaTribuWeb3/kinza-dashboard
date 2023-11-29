@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography } from '@mui/material';
-import { AxisConfig, LineChart, LineSeriesType } from '@mui/x-charts';
+import { AxisConfig, LineChart, LineSeriesType, mangoFusionPalette } from '@mui/x-charts';
 
 export interface GraphProperties {
   title: string;
@@ -79,6 +79,7 @@ export default function Graph(props: GraphProperties) {
         {props.title}
       </Typography>
       <LineChart
+        colors={mangoFusionPalette}
         margin={{ top: 70 }}
         xAxis={[
           {
