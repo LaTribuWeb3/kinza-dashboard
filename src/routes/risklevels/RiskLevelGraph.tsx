@@ -107,7 +107,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     fetchAndComputeDataForGraph()
       .then(() => setIsLoading(false))
       .catch(console.error);
-    console.log(liquidityData);
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
