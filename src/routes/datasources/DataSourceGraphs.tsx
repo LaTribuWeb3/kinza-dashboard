@@ -165,7 +165,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               ]}
               rightAxisSeries={[
                 {
-                  label: 'volatility (30d)',
+                  label: 'volatility',
                   data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
                   formatter: PercentageFormatter
                 }
