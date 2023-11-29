@@ -79,12 +79,7 @@ export default function Graph(props: GraphProperties) {
         {props.title}
       </Typography>
       <LineChart
-        sx={{
-          marginTop: '',
-          '--ChartsLegend-rootOffsetX': '0px',
-          '--ChartsLegend-rootOffsetY': '0px',
-          '--ChartsLegend-rootSpacing': '3px'
-        }}
+        margin={{ top: 70 }}
         xAxis={[
           {
             label: props.xAxisLabel,
