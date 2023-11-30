@@ -12,8 +12,8 @@ export default function RiskLevels() {
   const [selectedPair, setSelectedPair] = useState<Pair>();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [supplyCap, setSupplyCap] = useState(100);
-  const [tokenPrice, setTokenPrice] = useState(1);
+  const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
+  const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -99,9 +99,8 @@ export default function RiskLevels() {
       .catch(console.error);
   }, [selectedPair]);
 
-  if (!selectedPair) {
-    return;
-    <RiskLevelGraphsSkeleton />;
+  if (!selectedPair || !tokenPrice || !supplyCap) {
+    return <RiskLevelGraphsSkeleton />;
   }
   return (
     <Box sx={{ mt: 10 }}>
