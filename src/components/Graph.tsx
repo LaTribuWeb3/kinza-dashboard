@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography } from '@mui/material';
-import { AxisConfig, LineChart, LineSeriesType } from '@mui/x-charts';
+import { AxisConfig, LineChart, LineSeriesType, mangoFusionPalette } from '@mui/x-charts';
 
-export interface GraphProperies {
+export interface GraphProperties {
   title: string;
   xAxisLabel: string;
   xAxisData: number[];
@@ -28,7 +28,7 @@ export interface GraphProperies {
   }[];
 }
 
-export default function Graph(props: GraphProperies) {
+export default function Graph(props: GraphProperties) {
   const yAxisConfigs: AxisConfig[] = [
     {
       id: 'leftAxisId',
@@ -79,19 +79,8 @@ export default function Graph(props: GraphProperies) {
         {props.title}
       </Typography>
       <LineChart
-        legend={{
-          direction: 'column',
-          position: {
-            vertical: 'top',
-            horizontal: 'middle'
-          }
-        }}
-        sx={{
-          marginTop: '-50px',
-          '--ChartsLegend-rootOffsetX': '0px',
-          '--ChartsLegend-rootOffsetY': '0px',
-          '--ChartsLegend-rootSpacing': '3px'
-        }}
+        colors={mangoFusionPalette}
+        margin={{ top: 70 }}
         xAxis={[
           {
             label: props.xAxisLabel,

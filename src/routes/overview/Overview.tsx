@@ -2,7 +2,7 @@ import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { DATA_SOURCES } from '../../utils/Contants';
+import { DATA_SOURCES } from '../../utils/Constants';
 import { OverviewData } from '../../models/OverviewData';
 import { OverviewCard } from '../../components/OverviewCard';
 

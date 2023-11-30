@@ -1,6 +1,6 @@
-import { List, ListItemButton, ListSubheader } from '@mui/material';
+import { Divider, List, ListItemButton, ListSubheader } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Contants';
+import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Constants';
 import { useState } from 'react';
 
 export interface NavCategoriesProperties {
@@ -53,7 +53,21 @@ export function NavCategories(props: NavCategoriesProperties) {
           {_}
         </ListItemButton>
       ))}
-      {/* <Divider sx={{ my: 1 }} /> */}
+      <Divider sx={{ my: 1 }} />
+      <ListSubheader inset>Utilities</ListSubheader>
+      <ListItemButton
+        key="risklevels"
+        sx={{
+          backgroundColor: selectedButton == 'risklevels' ? 'primary.main' : 'background.default',
+          color: selectedButton == 'risklevels' ? 'primary.contrastText' : 'primary.main',
+          '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
+        }}
+        component={RouterLink}
+        to="/risklevels"
+        onClick={() => handleClick('risklevels')}
+      >
+        Risk Levels
+      </ListItemButton>
     </List>
   );
 }
