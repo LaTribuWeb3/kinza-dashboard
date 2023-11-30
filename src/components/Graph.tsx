@@ -28,6 +28,24 @@ export interface GraphProperties {
   }[];
 }
 
+function dateFormatter(timestampSec: number): string {
+
+  const date =  new Date(timestampSec * 1000);
+  const year = date.toLocaleString('default', {year: 'numeric'});
+  const month = date.toLocaleString('default', {
+    month: '2-digit',
+  });
+  const day = date.toLocaleString('default', {day: '2-digit'});
+
+  return [year, month, day].join('/');
+  return  new Date(timestampSec * 1000).toLocaleDateString('default', {
+    month: '2-digit',
+    day: '2-digit',
+    year: '2-digit',
+  });
+}
+
+
 export default function Graph(props: GraphProperties) {
   const yAxisConfigs: AxisConfig[] = [
     {
@@ -83,8 +101,10 @@ export default function Graph(props: GraphProperties) {
         margin={{ top: 70 }}
         xAxis={[
           {
+            scaleType: 'utc',
             label: props.xAxisLabel,
             data: props.xAxisData,
+            valueFormatter: dateFormatter,
             tickMinStep: 250000,
             min: props.xAxisData[0],
             max: props.xAxisData.at(-1)
