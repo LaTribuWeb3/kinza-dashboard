@@ -166,7 +166,7 @@ export default function RiskLevels() {
       {isLoading ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={1} alignItems="flex-start">
           {/* First row: pairs select and slippage select */}
           <Grid item xs={6} sm={3}>
             <Typography textAlign={'right'}>Pair: </Typography>
@@ -205,9 +205,9 @@ export default function RiskLevels() {
               {FriendlyFormatNumber(supplyCap * tokenPrice)} {selectedPair.quote}
             </Typography>
           </Grid>
-          <Grid item xs={2}>
-            {parameters.map((_) => {
-              return <ParameterButton parameter={_} handleParameterToggle={handleParameterToggle} />;
+          <Grid item xs={12} lg={2} sx={{ marginTop: '5%' }}>
+            {parameters.map((_, index) => {
+              return <ParameterButton key={index} parameter={_} handleParameterToggle={handleParameterToggle} />;
             })}
           </Grid>
           <Grid item xs={12} lg={10}>
