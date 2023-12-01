@@ -1,5 +1,6 @@
 import {
   Box,
+  FormControlLabel,
   Grid,
   InputAdornment,
   MenuItem,
@@ -21,7 +22,14 @@ function ParameterButton(props: {
   parameter: { ltv: number; bonus: number; visible: boolean };
   handleParameterToggle: (parameter: { ltv: number; bonus: number; visible: boolean }) => void;
 }) {
-  return <Switch onChange={() => props.handleParameterToggle(props.parameter)} checked={props.parameter.visible} />;
+  return (
+    <FormControlLabel
+      label={`LTV: ${props.parameter.ltv * 100}% & Bonus: ${props.parameter.bonus / 100}%`}
+      control={
+        <Switch onChange={() => props.handleParameterToggle(props.parameter)} checked={props.parameter.visible} />
+      }
+    />
+  );
 }
 
 export default function RiskLevels() {
