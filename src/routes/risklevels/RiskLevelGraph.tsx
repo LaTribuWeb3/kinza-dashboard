@@ -151,7 +151,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           <Grid item xs={12}>
             <Graph
               title={`${props.pair.base}/${props.pair.quote} Liquidity & Volatility`}
-              xAxisData={graphData.map((_) => _.blockNumber)}
+              xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
               xAxisLabel="Date"
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               leftAxisSeries={[
