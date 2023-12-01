@@ -8,13 +8,13 @@ export interface NavCategoriesProperties {
 }
 
 function findDefaultNavCategory(pathName: string) {
-   if(pathName.includes('datasource')) {
-      return pathName.split('/')[2]
-  } else if(pathName.includes('risklevels')) {
+  if (pathName.includes('datasource')) {
+    return pathName.split('/')[2];
+  } else if (pathName.includes('risklevels')) {
     return 'risklevels';
   }
 
-  return 'overview'
+  return 'overview';
 }
 
 export function NavCategories(props: NavCategoriesProperties) {
