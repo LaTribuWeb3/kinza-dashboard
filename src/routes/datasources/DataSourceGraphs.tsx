@@ -92,7 +92,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             <Graph
               title={`${props.pair.base}/${props.pair.quote} liquidity (avg 30d)`}
               xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
-              xAxisLabel="Block"
+              xAxisLabel="Date"
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               rightYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               leftAxisSeries={[
@@ -117,7 +117,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             <Graph
               title={`${props.pair.base}/${props.pair.quote} price and volatility`}
               xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
-              xAxisLabel="Block"
+              xAxisLabel="Date"
               leftYAxis={{
                 max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.priceMax)) * 1.1,
                 min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.priceMin)) * 0.9,

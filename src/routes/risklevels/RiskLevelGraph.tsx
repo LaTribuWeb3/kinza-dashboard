@@ -3,7 +3,7 @@ import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
 import Graph from '../../components/Graph';
 export interface RiskLevelGraphsInterface {
@@ -135,7 +135,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             <Graph
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.blockNumber)}
-              xAxisLabel="Block"
+              xAxisLabel="Date"
               leftYAxis={{ formatter: FriendlyFormatNumber }}
               leftAxisSeries={props.parameters.map((_) => {
                 const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
@@ -145,6 +145,37 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
                   formatter: FriendlyFormatNumber
                 };
               })}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Graph
+              title={`${props.pair.base}/${props.pair.quote} Liquidity & Volatility`}
+              xAxisData={graphData.map((_) => _.blockNumber)}
+              xAxisLabel="Date"
+              leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
+              leftAxisSeries={[
+                {
+                  label: `${props.pair.base} liquidity for 5% slippage`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[500].base),
+                  formatter: FriendlyFormatNumber
+                }
+              ]}
+              rightYAxis={{
+                min: 0,
+                max: Math.max(
+                  10 / 100,
+                  Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1
+                ),
+                formatter: PercentageFormatter
+              }}
+              rightAxisSeries={[
+                {
+                  label: 'volatility',
+                  data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
+                  formatter: PercentageFormatter
+                }
+              ]}
             />
           </Grid>
         </Grid>
