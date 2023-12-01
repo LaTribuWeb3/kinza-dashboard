@@ -137,14 +137,16 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               xAxisData={graphData.map((_) => _.blockNumber)}
               xAxisLabel="Date"
               leftYAxis={{ formatter: FriendlyFormatNumber }}
-              leftAxisSeries={props.parameters.map((_) => {
-                const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
-                return {
-                  label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus / 100}%`,
-                  data: data,
-                  formatter: FriendlyFormatNumber
-                };
-              })}
+              leftAxisSeries={props.parameters
+                .filter((_) => _.visible)
+                .map((_) => {
+                  const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
+                  return {
+                    label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus / 100}%`,
+                    data: data,
+                    formatter: FriendlyFormatNumber
+                  };
+                })}
             />
           </Grid>
 
