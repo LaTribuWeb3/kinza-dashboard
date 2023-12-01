@@ -13,30 +13,37 @@ export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) *
 export const MORPHO_RISK_PARAMETERS_ARRAY = [
   {
     ltv: 0.625,
-    bonus: 1250
+    bonus: 1250,
+    visible: true
   },
   {
     ltv: 0.77,
-    bonus: 700
+    bonus: 700,
+    visible: true
   },
   {
     ltv: 0.86,
-    bonus: 400
+    bonus: 400,
+    visible: true
   },
   {
     ltv: 0.915,
-    bonus: 250
+    bonus: 250,
+    visible: true
   },
   {
     ltv: 0.945,
-    bonus: 150
+    bonus: 150,
+    visible: true
   },
   {
     ltv: 0.965,
-    bonus: 100
+    bonus: 100,
+    visible: true
   },
   {
     ltv: 0.98,
-    bonus: 50
+    bonus: 50,
+    visible: false
   }
 ];
