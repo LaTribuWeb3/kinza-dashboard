@@ -7,10 +7,21 @@ export interface NavCategoriesProperties {
   toggleDrawerFct: () => void;
 }
 
+function findDefaultNavCategory(pathName: string) {
+   if(pathName.includes('datasource')) {
+      return pathName.split('/')[2]
+  } else if(pathName.includes('risklevels')) {
+    return 'risklevels';
+  }
+
+  return 'overview'
+}
+
 export function NavCategories(props: NavCategoriesProperties) {
   const pathName = useLocation().pathname;
-  const [selectedButton, setSelectedButton] = useState<string>(pathName == '/' ? 'overview' : pathName.split('/')[2]);
+  const [selectedButton, setSelectedButton] = useState<string>(findDefaultNavCategory(pathName));
 
+  console.log(selectedButton);
   function handleClick(buttonName: string) {
     setSelectedButton(buttonName);
     props.toggleDrawerFct();
