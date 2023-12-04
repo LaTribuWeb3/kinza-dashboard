@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
-import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
+import { Box, Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
@@ -28,6 +28,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   const [isLoading, setIsLoading] = useState(true);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
+  const [showVolatility, setShowVolatility] = useState(true);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -41,6 +42,11 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
 
         setLiquidityData(data);
+        if(Object.values(data.liquidity).some(_ => _.volatility == -1)) {
+          setShowVolatility(false);
+        } else {
+          setShowVolatility(true);
+        }
         await sleep(1);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -112,7 +118,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             />
           </Grid>
 
-          {/* Price / volatility graph */}
+
+          {showVolatility ? 
           <Grid item xs={12} lg={6}>
             <Graph
               title={`${props.pair.base}/${props.pair.quote} price and volatility`}
@@ -157,6 +164,11 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
               ]}
             />
           </Grid>
+          : <Grid item xs={12} lg={6}>
+             <Box sx={{textAlign: 'center', mt: 10}}>No volatility data to show.</Box>
+             <Box sx={{textAlign: 'center'}}>Liquidity is computed using aggregated routes, no direct route to compute price related data</Box>
+            </Grid>
+            }
         </Grid>
       )}
 
