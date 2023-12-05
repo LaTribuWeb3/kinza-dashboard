@@ -1,10 +1,36 @@
-import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  FormControlLabel,
+  Grid,
+  InputAdornment,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Switch,
+  TextField,
+  Typography
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
 import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
+import { MORPHO_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
+
+function ParameterButton(props: {
+  parameter: { ltv: number; bonus: number; visible: boolean };
+  handleParameterToggle: (parameter: { ltv: number; bonus: number; visible: boolean }) => void;
+}) {
+  return (
+    <FormControlLabel
+      label={`LTV: ${props.parameter.ltv * 100}% & Bonus: ${props.parameter.bonus / 100}%`}
+      control={
+        <Switch onChange={() => props.handleParameterToggle(props.parameter)} checked={props.parameter.visible} />
+      }
+    />
+  );
+}
 
 export default function RiskLevels() {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,6 +40,7 @@ export default function RiskLevels() {
   const [alertMsg, setAlertMsg] = useState('');
   const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
+  const [parameters, setParameters] = useState(MORPHO_RISK_PARAMETERS_ARRAY);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -25,6 +52,38 @@ export default function RiskLevels() {
   const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {
       setSupplyCap(Number(event.target.value));
+    }
+  };
+
+  const handleParameterToggle = (parameter: { ltv: number; bonus: number; visible: boolean }) => {
+    console.log('firing?');
+    /// if parameter is visible
+    if (parameter.visible) {
+      const newParameters = parameters.map((_) => {
+        if (_ === parameter) {
+          return {
+            ..._,
+            visible: false
+          };
+        } else {
+          return _;
+        }
+      });
+      setParameters(newParameters);
+    }
+    /// if parameter is not visible
+    if (!parameter.visible) {
+      const newParameters = parameters.map((_) => {
+        if (_ === parameter) {
+          return {
+            ..._,
+            visible: true
+          };
+        } else {
+          return _;
+        }
+      });
+      setParameters(newParameters);
     }
   };
 
@@ -107,7 +166,7 @@ export default function RiskLevels() {
       {isLoading ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
           <Grid item xs={6} sm={3}>
             <Typography textAlign={'right'}>Pair: </Typography>
@@ -146,8 +205,13 @@ export default function RiskLevels() {
               {FriendlyFormatNumber(supplyCap * tokenPrice)} {selectedPair.quote}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
-            <RiskLevelGraphs pair={selectedPair} supplyCap={supplyCap} platform={'all'} />
+          <Grid item xs={12} lg={2} sx={{ marginTop: '20px' }}>
+            {parameters.map((_, index) => {
+              return <ParameterButton key={index} parameter={_} handleParameterToggle={handleParameterToggle} />;
+            })}
+          </Grid>
+          <Grid item xs={12} lg={10}>
+            <RiskLevelGraphs pair={selectedPair} parameters={parameters} supplyCap={supplyCap} platform={'all'} />
           </Grid>
         </Grid>
       )}

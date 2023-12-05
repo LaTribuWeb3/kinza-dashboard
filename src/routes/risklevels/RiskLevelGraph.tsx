@@ -3,14 +3,14 @@ import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
-import { MORPHO_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
 import Graph from '../../components/Graph';
 export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
+  parameters: { ltv: number; bonus: number; visible: boolean }[];
 }
 
 export interface GraphDataAtBlock {
@@ -71,23 +71,25 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           const currentBlockData: GraphDataAtBlock = {
             blockNumber: Number(block)
           };
-          for (const morphoParameter of MORPHO_RISK_PARAMETERS_ARRAY) {
-            const liquidationBonus = morphoParameter.bonus;
-            const liquidity = blockData.avgSlippageMap[liquidationBonus].base;
-            if (liquidity <= 0) {
-              continue;
+          for (const morphoParameter of props.parameters) {
+            if (morphoParameter.visible) {
+              const liquidationBonus = morphoParameter.bonus;
+              const liquidity = blockData.avgSlippageMap[liquidationBonus].base;
+              if (liquidity <= 0) {
+                continue;
+              }
+              const ltv = morphoParameter.ltv;
+              const borrowCap = props.supplyCap;
+              currentBlockData[`${morphoParameter.bonus}_${morphoParameter.ltv}`] = findRiskLevelFromParameters(
+                blockData.volatility,
+                liquidity,
+                liquidationBonus / 10000,
+                ltv,
+                borrowCap
+              );
             }
-            const ltv = morphoParameter.ltv;
-            const borrowCap = props.supplyCap;
-            currentBlockData[`${morphoParameter.bonus}_${morphoParameter.ltv}`] = findRiskLevelFromParameters(
-              blockData.volatility,
-              liquidity,
-              liquidationBonus / 10000,
-              ltv,
-              borrowCap
-            );
+            graphData.push(currentBlockData);
           }
-          graphData.push(currentBlockData);
         }
         graphData.sort((a, b) => a.blockNumber - b.blockNumber);
         setGraphData(graphData);
@@ -110,7 +112,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, props.supplyCap]);
+  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters]);
 
   if (!liquidityData) {
     return <RiskLevelGraphsSkeleton />;
@@ -133,16 +135,49 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             <Graph
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.blockNumber)}
-              xAxisLabel="Block"
+              xAxisLabel="Date"
               leftYAxis={{ formatter: FriendlyFormatNumber }}
-              leftAxisSeries={MORPHO_RISK_PARAMETERS_ARRAY.map((_) => {
-                const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
-                return {
-                  label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus/100}%`,
-                  data: data,
+              leftAxisSeries={props.parameters
+                .filter((_) => _.visible)
+                .map((_) => {
+                  const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
+                  return {
+                    label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus / 100}%`,
+                    data: data,
+                    formatter: FriendlyFormatNumber
+                  };
+                })}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Graph
+              title={`${props.pair.base}/${props.pair.quote} Liquidity & Volatility`}
+              xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
+              xAxisLabel="Date"
+              leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
+              leftAxisSeries={[
+                {
+                  label: `${props.pair.base} liquidity for 5% slippage`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[500].base),
                   formatter: FriendlyFormatNumber
-                };
-              })}
+                }
+              ]}
+              rightYAxis={{
+                min: 0,
+                max: Math.max(
+                  10 / 100,
+                  Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1
+                ),
+                formatter: PercentageFormatter
+              }}
+              rightAxisSeries={[
+                {
+                  label: 'volatility',
+                  data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
+                  formatter: PercentageFormatter
+                }
+              ]}
             />
           </Grid>
         </Grid>
