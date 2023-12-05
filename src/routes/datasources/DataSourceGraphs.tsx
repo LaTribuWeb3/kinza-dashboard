@@ -96,7 +96,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
           {/* Avg liquidity graph */}
           <Grid item xs={12} lg={6}>
             <Graph
-              title={`${props.pair.base}/${props.pair.quote} liquidity (avg 30d)`}
+              title={`${props.pair.base}/${props.pair.quote} liquidity (avg 1d)`}
               xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
               xAxisLabel="Date"
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
