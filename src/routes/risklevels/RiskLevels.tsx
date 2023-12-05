@@ -38,8 +38,8 @@ export default function RiskLevels() {
   const [selectedPair, setSelectedPair] = useState<Pair>();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [supplyCap, setSupplyCap] = useState(100);
-  const [tokenPrice, setTokenPrice] = useState(1);
+  const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
+  const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
   const [parameters, setParameters] = useState(MORPHO_RISK_PARAMETERS_ARRAY);
 
   const handleCloseAlert = () => {
