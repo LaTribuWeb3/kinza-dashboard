@@ -3,7 +3,7 @@ import { LiquidityData, Pair } from '../models/ApiData';
 import { OverviewData } from '../models/OverviewData';
 import SimpleCacheService from './CacheService';
 
-const apiUrl: string = import.meta.env.VITE_API_URL_KINZA as string;
+const apiUrl: string = import.meta.env.VITE_API_URL as string;
 export default class DataService {
   static async GetOverview(): Promise<OverviewData[]> {
     const overviewData = await SimpleCacheService.GetAndCache(
