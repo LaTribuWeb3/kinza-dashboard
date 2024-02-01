@@ -95,7 +95,7 @@ export default function RiskLevels() {
       try {
         const data = await DataService.GetAvailablePairs('all');
         setAvailablePairs(
-          data.filter((_) => _.quote === 'USDC' || _.quote === 'WETH').sort((a, b) => a.base.localeCompare(b.base))
+          data.sort((a, b) => a.base.localeCompare(b.base))
         );
 
         const oldPair = selectedPair;
@@ -133,14 +133,17 @@ export default function RiskLevels() {
 
         /// get token price
         const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
-        const maxBlock = Math.max.apply(null, liquidityObjectToArray).toString();
+        const maxBlock = liquidityObjectToArray.at(-1)!.toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         setTokenPrice(tokenPrice);
-        if (selectedPair?.quote === 'USDC') {
+        
+        if (selectedPair?.quote === 'USDT') {
           setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
         }
-        if (selectedPair?.quote === 'WETH') {
+        else if (selectedPair?.quote === 'WETH') {
           setSupplyCap(roundTo(50_000 / tokenPrice, 0));
+        } else {
+          setSupplyCap(roundTo(100_000 / tokenPrice, 0));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
