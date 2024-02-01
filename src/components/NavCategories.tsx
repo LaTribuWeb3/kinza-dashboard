@@ -65,7 +65,7 @@ export function NavCategories(props: NavCategoriesProperties) {
         </ListItemButton>
       ))}
       <Divider sx={{ my: 1 }} />
-      <ListSubheader inset>Utilities</ListSubheader>
+      {/* <ListSubheader inset>Utilities</ListSubheader>
       <ListItemButton
         key="risklevels"
         sx={{
@@ -78,7 +78,7 @@ export function NavCategories(props: NavCategoriesProperties) {
         onClick={() => handleClick('risklevels')}
       >
         Risk Levels
-      </ListItemButton>
+      </ListItemButton> */}
     </List>
   );
 }
