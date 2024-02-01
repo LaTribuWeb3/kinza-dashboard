@@ -46,7 +46,7 @@ export function MainAppBar(props: MainAppBarProperties) {
         </IconButton>
 
         <Typography component="h1" variant="h6" color="inherit" textAlign="center" noWrap sx={{ flexGrow: 1 }}>
-          Risk Oracle Dashboard
+          Kinza Dashboard
         </Typography>
       </Toolbar>
     </AppBar>
