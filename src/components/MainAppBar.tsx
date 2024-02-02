@@ -1,4 +1,4 @@
-import { Typography, styled } from '@mui/material';
+import { Avatar, Box, Icon, Typography, styled } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -44,10 +44,12 @@ export function MainAppBar(props: MainAppBarProperties) {
         >
           <MenuIcon />
         </IconButton>
-
-        <Typography component="h1" variant="h6" color="inherit" textAlign="center" noWrap sx={{ flexGrow: 1 }}>
-          Kinza Dashboard
-        </Typography>
+        <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+          <Avatar alt='Kinza logo' src='kinza-logo.png' sx={{ width: 56, height: 56 }} />
+          <Typography component="h1" variant="h6" color="inherit" noWrap>
+            Kinza Dashboard
+          </Typography>
+        </Box>
       </Toolbar>
     </AppBar>
   );
