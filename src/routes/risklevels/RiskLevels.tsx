@@ -16,7 +16,7 @@ import { Pair } from '../../models/ApiData';
 import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
-import { MORPHO_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
+import { KINZA_RISK_PARAMETERS_ARRAY, KINZA_WBETH_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
 
 function ParameterButton(props: {
   parameter: { ltv: number; bonus: number; visible: boolean };
@@ -40,7 +40,7 @@ export default function RiskLevels() {
   const [alertMsg, setAlertMsg] = useState('');
   const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
-  const [parameters, setParameters] = useState(MORPHO_RISK_PARAMETERS_ARRAY);
+  const [parameters, setParameters] = useState(KINZA_RISK_PARAMETERS_ARRAY);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -48,6 +48,11 @@ export default function RiskLevels() {
   const handleChangePair = (event: SelectChangeEvent) => {
     console.log(`handleChangePair: ${event.target.value}`);
     setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
+    if(event.target.value.split('/')[0].toLowerCase() == 'wbeth') {
+      setParameters(KINZA_WBETH_RISK_PARAMETERS_ARRAY)
+    } else {
+      setParameters(KINZA_RISK_PARAMETERS_ARRAY)
+    }
   };
   const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {

@@ -55,6 +55,8 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [alertMsg, setAlertMsg] = useState('');
   const [graphData, setGraphData] = useState<GraphDataAtBlock[]>([]);
 
+  const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
+
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
@@ -158,8 +160,8 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               leftAxisSeries={[
                 {
-                  label: `${props.pair.base} liquidity for 5% slippage`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[500].base),
+                  label: `${props.pair.base} liquidity for ${slippageBps/100}% slippage`,
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[slippageBps].base),
                   formatter: FriendlyFormatNumber
                 }
               ]}
