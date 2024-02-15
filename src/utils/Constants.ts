@@ -1,4 +1,4 @@
-export const DATA_SOURCES = ['All sources', 'Pancakeswap Stableswaps', 'Pancakeswap v2', 'Pancakeswap v3', 'Wombat'];
+export const DATA_SOURCES = ['All sources', 'Pancakeswap StableSwaps', 'Pancakeswap v2', 'Pancakeswap v3', 'Wombat'];
 
 export const DATA_SOURCES_MAP = {
   'All sources': 'all',
