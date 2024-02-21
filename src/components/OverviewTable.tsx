@@ -39,8 +39,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
         <TableCell component="th" scope="row">
           {baseSymbol}
         </TableCell>
-        <TableCell align="right">{row.riskLevel}</TableCell>
-        {/* <TableCell align="right">{row.subMarkets.length} Markets</TableCell> */}
+        <TableCell align="right">{row.riskLevel.toFixed(2)}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
