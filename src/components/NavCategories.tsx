@@ -12,6 +12,8 @@ function findDefaultNavCategory(pathName: string) {
     return pathName.split('/')[2];
   } else if (pathName.includes('risklevels')) {
     return 'risklevels';
+  } else if (pathName.includes('lastupdate')) {
+    return 'lastUpdate';
   }
 
   return 'overview';
