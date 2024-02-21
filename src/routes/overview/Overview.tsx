@@ -4,6 +4,7 @@ import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { DATA_SOURCES } from '../../utils/Constants';
 import { OverviewData } from '../../models/OverviewData';
+import { OverviewTable } from '../../components/OverviewTable';
 
 function OverviewSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
@@ -68,7 +69,11 @@ export function Overview() {
           </Typography>
         </Container>
       </Grid> */}
-      {isLoading ? <OverviewSkeleton /> : <p>{JSON.stringify(overviewData, null, 2)}</p>}
+      {isLoading ? <OverviewSkeleton /> 
+      : 
+      // <p>{JSON.stringify(overviewData, null, 2)}</p>
+      <OverviewTable data={overviewData} />
+      }
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>
