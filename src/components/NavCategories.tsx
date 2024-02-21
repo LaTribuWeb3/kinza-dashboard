@@ -58,6 +58,7 @@ export function NavCategories(props: NavCategoriesProperties) {
       >
         Risk Levels
       </ListItemButton>
+      <Divider sx={{ my: 1 }} />
       <ListSubheader inset>Datasources</ListSubheader>
       {DATA_SOURCES.map((_, index) => (
         <ListItemButton

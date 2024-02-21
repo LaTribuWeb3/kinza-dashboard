@@ -1,6 +1,7 @@
 import {
   Box,
   Collapse,
+  Grid,
   IconButton,
   Paper,
   Table,
@@ -13,7 +14,7 @@ import {
 } from '@mui/material';
 import { OverviewData, RiskLevelData } from '../models/OverviewData';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import React from 'react';
 import { FriendlyFormatNumber } from '../utils/Utils';
 
@@ -23,8 +24,6 @@ export interface OverviewProperties {
 
 function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
-  console.log({ baseSymbol });
-  console.log({ row });
 
   const [open, setOpen] = React.useState(false);
 
@@ -36,18 +35,15 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell align="center" component="th" scope="row">
           {baseSymbol}
         </TableCell>
-        <TableCell align="right">{row.riskLevel.toFixed(2)}</TableCell>
+        <TableCell align="center">{row.riskLevel.toFixed(2)}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Details
-              </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
@@ -86,23 +82,28 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
 
 export function OverviewTable(props: OverviewProperties) {
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Market</TableCell>
-            <TableCell>Risk level</TableCell>
-            <TableCell>Sub markets #</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {Object.keys(props.data).map((baseSymbol) => (
-            // <Box>{baseSymbol}</Box>
-            <Row key={baseSymbol} baseSymbol={baseSymbol} row={props.data[baseSymbol]} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Grid sx={{ mt: 1 }} container spacing={2}>
+      <Grid item xs={0} lg={1} />
+      <Grid item xs={12} lg={10}>
+        <TableContainer component={Paper}>
+          <Table aria-label="collapsible table">
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                <TableCell align="center">Market</TableCell>
+                <TableCell align="center">Risk level</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.keys(props.data).map((baseSymbol) => (
+                // <Box>{baseSymbol}</Box>
+                <Row key={baseSymbol} baseSymbol={baseSymbol} row={props.data[baseSymbol]} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+      <Grid item xs={0} lg={1} />
+    </Grid>
   );
 }

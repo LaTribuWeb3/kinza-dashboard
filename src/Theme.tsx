@@ -8,8 +8,7 @@ export const themeOptions: ThemeOptions = {
     },
     secondary: {
       main: '#0023f5'
-    },
-    divider: '#fafafa'
+    }
   },
   typography: {
     fontFamily: 'monospace'

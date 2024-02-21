@@ -62,16 +62,8 @@ export function Overview() {
 
   return (
     <Grid sx={{ mt: 10 }} container spacing={2}>
-      {/* <Grid item xs={12}>
-        <Container sx={{ textAlign: 'center' }}>
-          <Typography variant="h4" gutterBottom>
-            Overview
-          </Typography>
-        </Container>
-      </Grid> */}
       {isLoading ? <OverviewSkeleton /> 
       : 
-      // <p>{JSON.stringify(overviewData, null, 2)}</p>
       <OverviewTable data={overviewData} />
       }
 
