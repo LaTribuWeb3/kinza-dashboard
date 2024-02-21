@@ -10,7 +10,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
 } from '@mui/material';
 import { OverviewData, RiskLevelData } from '../models/OverviewData';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
