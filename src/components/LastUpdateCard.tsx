@@ -1,12 +1,12 @@
 import { Card, CardContent, Grid, Tooltip, Typography } from '@mui/material';
-import { OverviewData } from '../models/OverviewData';
+import { LastUpdateData } from '../models/LastUpdateData';
 import moment from 'moment';
 
-export interface OverviewCardInterface {
-  data: OverviewData[];
+export interface LastUpdateCardInterface {
+  data: LastUpdateData[];
 }
 
-export function OverviewCard(props: OverviewCardInterface) {
+export function LastUpdateCard(props: LastUpdateCardInterface) {
   return (
     <Grid container spacing={1}>
       {props.data.map((overviewData, i) => (

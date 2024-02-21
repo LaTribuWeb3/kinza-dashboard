@@ -1,19 +1,47 @@
 import axios, { AxiosResponse } from 'axios';
 import { LiquidityData, Pair } from '../models/ApiData';
-import { OverviewData } from '../models/OverviewData';
+import { LastUpdateData } from '../models/LastUpdateData';
 import SimpleCacheService from './CacheService';
+import { OverviewData } from '../models/OverviewData';
 
 const apiUrl: string = import.meta.env.VITE_API_URL as string;
 export default class DataService {
-  static async GetOverview(): Promise<OverviewData[]> {
-    const overviewData = await SimpleCacheService.GetAndCache(
-      'GetOverview',
+  static async GetLastUpdate(): Promise<LastUpdateData[]> {
+    const lastUpdateData = await SimpleCacheService.GetAndCache(
+      'GetLastUpdate',
       async () => {
         // await sleep(500); // add sleep to simulate waiting
         const fullUrl = apiUrl + `/api/dashboard/overview`;
         try {
-          const response: AxiosResponse<OverviewData[]> = await axios.get(fullUrl);
-          console.log(`found ${response.data.length} overview data`);
+          const response: AxiosResponse<LastUpdateData[]> = await axios.get(fullUrl);
+          console.log(`found ${response.data.length} last update data`);
+          return response.data;
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.error('error message: ', error.message);
+            throw new Error(`Error fetching data on ${fullUrl}: ${error.message}`);
+          } else {
+            console.error('unexpected error: ', error);
+            throw new Error(`Error fetching data on ${fullUrl}`);
+          }
+        }
+      },
+      600 * 1000
+    );
+
+    // throw new Error('Could not reach data');
+    return lastUpdateData;
+  }
+
+  static async GetOverview(): Promise<OverviewData> {
+    const overviewData = await SimpleCacheService.GetAndCache(
+      'GetOverview',
+      async () => {
+        // await sleep(500); // add sleep to simulate waiting
+        const fullUrl = apiUrl + `/api/dashboard/kinza-overview`;
+        try {
+          const response: AxiosResponse<OverviewData> = await axios.get(fullUrl);
+          console.log(`found ${Object.keys(response.data).length} overview data`);
           return response.data;
         } catch (error) {
           if (axios.isAxiosError(error)) {

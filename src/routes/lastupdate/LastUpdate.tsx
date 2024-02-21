@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { DATA_SOURCES } from '../../utils/Constants';
-import { OverviewData } from '../../models/OverviewData';
+import { LastUpdateData } from '../../models/LastUpdateData';
+import { LastUpdateCard, } from '../../components/LastUpdateCard';
 
-function OverviewSkeleton() {
+function LastUpdateSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
@@ -19,9 +20,9 @@ function OverviewSkeleton() {
   );
 }
 
-export function Overview() {
+export function LastUpdate() {
   const [isLoading, setIsLoading] = useState(true);
-  const [overviewData, setOverviewData] = useState<OverviewData>({});
+  const [lastUpdateData, setLastUpdateData] = useState<LastUpdateData[]>([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
 
@@ -34,9 +35,9 @@ export function Overview() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const overviewData = await DataService.GetOverview();
+        const lastUpdateData = await DataService.GetLastUpdate();
 
-        setOverviewData(overviewData);
+        setLastUpdateData(lastUpdateData);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -60,7 +61,7 @@ export function Overview() {
   }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
 
   return (
-    <Grid sx={{ mt: 10 }} container spacing={2}>
+    <Grid sx={{ mt: 10, ml:1, width: "99%" }} container spacing={2}>
       {/* <Grid item xs={12}>
         <Container sx={{ textAlign: 'center' }}>
           <Typography variant="h4" gutterBottom>
@@ -68,7 +69,7 @@ export function Overview() {
           </Typography>
         </Container>
       </Grid> */}
-      {isLoading ? <OverviewSkeleton /> : <p>{JSON.stringify(overviewData, null, 2)}</p>}
+      {isLoading ? <LastUpdateSkeleton /> : <LastUpdateCard data={lastUpdateData} />}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>

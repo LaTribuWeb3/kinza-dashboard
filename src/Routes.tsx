@@ -4,6 +4,7 @@ import App from './routes/App.tsx';
 import DataSource from './routes/datasources/DataSource.tsx';
 import ErrorPage from './ErrorPage.tsx';
 import RiskLevels from './routes/risklevels/RiskLevels.tsx';
+import { LastUpdate } from './routes/lastupdate/LastUpdate.tsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: 'risklevels',
         element: <RiskLevels />
+      },
+      {
+        path: 'lastupdate',
+        element: <LastUpdate />
       }
     ]
   }

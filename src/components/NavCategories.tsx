@@ -42,6 +42,20 @@ export function NavCategories(props: NavCategoriesProperties) {
       >
         Overview
       </ListItemButton>
+      <Divider sx={{ my: 1 }} />
+      <ListItemButton
+        key="risklevels"
+        sx={{
+          backgroundColor: selectedButton == 'risklevels' ? 'primary.main' : 'background.default',
+          color: selectedButton == 'risklevels' ? 'primary.contrastText' : 'primary.main',
+          '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
+        }}
+        component={RouterLink}
+        to="/risklevels"
+        onClick={() => handleClick('risklevels')}
+      >
+        Risk Levels
+      </ListItemButton>
       <ListSubheader inset>Datasources</ListSubheader>
       {DATA_SOURCES.map((_, index) => (
         <ListItemButton
@@ -66,18 +80,19 @@ export function NavCategories(props: NavCategoriesProperties) {
       ))}
       <Divider sx={{ my: 1 }} />
       <ListSubheader inset>Utilities</ListSubheader>
+
       <ListItemButton
-        key="risklevels"
+        key="lastUpdate"
         sx={{
-          backgroundColor: selectedButton == 'risklevels' ? 'primary.main' : 'background.default',
-          color: selectedButton == 'risklevels' ? 'primary.contrastText' : 'primary.main',
+          backgroundColor: selectedButton == 'lastUpdate' ? 'primary.main' : 'background.default',
+          color: selectedButton == 'lastUpdate' ? 'primary.contrastText' : 'primary.main',
           '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
         }}
         component={RouterLink}
-        to="/risklevels"
-        onClick={() => handleClick('risklevels')}
+        to="/lastupdate"
+        onClick={() => handleClick('lastUpdate')}
       >
-        Risk Levels
+        Last Update
       </ListItemButton>
     </List>
   );

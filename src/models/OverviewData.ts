@@ -1,12 +1,21 @@
 export interface OverviewData {
-  dataSourceName: string;
-  lastBlockFetched: number;
-  lastRunTimestampMs: number;
-  poolsFetched: PoolData[];
+    [symbol: string]: RiskLevelData;
 }
 
-export interface PoolData {
-  tokens: string[];
-  address: string;
-  label: string;
+export interface RiskLevelData {
+    riskLevel:  number;
+    subMarkets: SubMarket[];
+}
+
+export interface SubMarket {
+    quote:            string;
+    riskLevel:        number;
+    LTV:              number;
+    liquidationBonus: number;
+    supplyCapUsd:     number;
+    supplyCapInKind:  number;
+    borrowCapUsd:     number;
+    borrowCapInKind:  number;
+    volatility:       number;
+    liquidity:        number;
 }
