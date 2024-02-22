@@ -36,8 +36,14 @@ export function Overview() {
     async function fetchData() {
       try {
         const overviewData = await DataService.GetOverview();
+        const entries = Object.entries(overviewData);
+        entries.sort((a, b) => b[1].riskLevel - a[1].riskLevel);
+        const sortedOverviewData: OverviewData = entries.reduce((acc, [symbol, data]) => {
+          acc[symbol] = data;
+          return acc;
+      }, {} as OverviewData);
 
-        setOverviewData(overviewData);
+        setOverviewData(sortedOverviewData);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);

@@ -95,7 +95,6 @@ export function OverviewTable(props: OverviewProperties) {
             </TableHead>
             <TableBody>
               {Object.keys(props.data).map((baseSymbol) => (
-                // <Box>{baseSymbol}</Box>
                 <Row key={baseSymbol} baseSymbol={baseSymbol} row={props.data[baseSymbol]} />
               ))}
             </TableBody>
