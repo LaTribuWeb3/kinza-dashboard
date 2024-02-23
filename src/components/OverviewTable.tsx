@@ -9,7 +9,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from '@mui/material';
 import { OverviewData, RiskLevelData } from '../models/OverviewData';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -23,6 +23,10 @@ export interface OverviewProperties {
 
 function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
+
+  row.subMarkets.sort((s1, s2) => {
+    return s1.riskLevel > s2.riskLevel ? 0 : 1;
+  });
 
   const [open, setOpen] = React.useState(false);
 
