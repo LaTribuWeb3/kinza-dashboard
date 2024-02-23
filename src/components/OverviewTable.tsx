@@ -9,7 +9,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Tooltip
 } from '@mui/material';
 import { OverviewData, RiskLevelData } from '../models/OverviewData';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -67,8 +68,13 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                       </TableCell>
                       <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
                       <TableCell>{subMarket.LTV * 100}%</TableCell>
-                      <TableCell>${FriendlyFormatNumber(subMarket.supplyCapUsd)}</TableCell>
-                      <TableCell>${FriendlyFormatNumber(subMarket.borrowCapUsd)}</TableCell>
+                      <Tooltip title={`${FriendlyFormatNumber(subMarket.supplyCapInKind)} ${baseSymbol}`}>
+                        <TableCell>${FriendlyFormatNumber(subMarket.supplyCapUsd)}</TableCell>
+                      </Tooltip>
+
+                      <Tooltip title={`${FriendlyFormatNumber(subMarket.borrowCapInKind)} ${subMarket.quote}`}>
+                        <TableCell>${FriendlyFormatNumber(subMarket.borrowCapUsd)}</TableCell>
+                      </Tooltip>
                       <TableCell>{(subMarket.volatility * 100).toFixed(2)}%</TableCell>
                       <TableCell>{FriendlyFormatNumber(subMarket.liquidity)}</TableCell>
                     </TableRow>
