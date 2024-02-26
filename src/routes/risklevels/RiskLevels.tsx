@@ -68,7 +68,6 @@ export default function RiskLevels() {
         Object.keys(overviewData).forEach((symbol) => {
           const riskLevelData = overviewData[symbol];
           kinzaRiskParameters[symbol] = {};
-
           riskLevelData.subMarkets.forEach((subMarket) => {
             // Ensure the subMarket's quote does not already exist for robustness
             if (!kinzaRiskParameters[symbol][subMarket.quote]) {
@@ -82,8 +81,12 @@ export default function RiskLevels() {
           });
         });
         setParameters(kinzaRiskParameters);
-
-        const data = await DataService.GetAvailablePairs('all');
+        const data = [];
+        for (const symbol of Object.keys(overviewData)) {
+          for (const subMarket of overviewData[symbol].subMarkets) {
+            data.push({ base: symbol, quote: subMarket.quote });
+          }
+        }
         setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
         const oldPair = selectedPair;
@@ -93,10 +96,10 @@ export default function RiskLevels() {
         } else {
           setSelectedPair(data[0]);
         }
-
         setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
         setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv);
         setSupplyCapInKind(kinzaRiskParameters[data[0].base][data[0].quote].supplyCapInKind);
+
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -111,7 +114,6 @@ export default function RiskLevels() {
     }
     fetchData()
       .then(() => setIsLoading(false))
-      .then(() => console.log({ riskParameter }))
       .catch(console.error);
   }, []);
 
@@ -123,7 +125,6 @@ export default function RiskLevels() {
           return;
         }
         const data = await DataService.GetLiquidityData('all', selectedPair.base, selectedPair.quote);
-
         /// get token price
         const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
         const maxBlock = liquidityObjectToArray.at(-1)!.toString();
@@ -131,7 +132,7 @@ export default function RiskLevels() {
         setTokenPrice(tokenPrice);
 
         if (selectedPair && supplyCapInKind && tokenPrice) {
-          setSupplyCap(roundTo(supplyCapInKind / tokenPrice, 0));
+          setSupplyCap(roundTo(supplyCapInKind, 2));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
