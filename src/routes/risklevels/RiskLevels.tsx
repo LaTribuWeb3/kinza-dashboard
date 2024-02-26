@@ -16,22 +16,7 @@ import { Pair } from '../../models/ApiData';
 import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
-import { KINZA_RISK_PARAMETERS_ARRAY, KINZA_WBETH_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
 import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
-
-function ParameterButton(props: {
-  parameter: { ltv: number; bonus: number; visible: boolean };
-  handleParameterToggle: (parameter: { ltv: number; bonus: number; visible: boolean }) => void;
-}) {
-  return (
-    <FormControlLabel
-      label={`LTV: ${props.parameter.ltv * 100}% & Bonus: ${props.parameter.bonus / 100}%`}
-      control={
-        <Switch onChange={() => props.handleParameterToggle(props.parameter)} checked={props.parameter.visible} />
-      }
-    />
-  );
-}
 
 export default function RiskLevels() {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +28,7 @@ export default function RiskLevels() {
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
+  const [LTV, setLTV] = useState<number | undefined>(undefined);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -59,6 +45,14 @@ export default function RiskLevels() {
   const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {
       setSupplyCap(Number(event.target.value));
+    }
+  };
+  const handleChangeLTV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target && event.target.value) {
+      const newLTV = Number(event.target.value);
+      if (newLTV >= 1 && newLTV < 100 - riskParameter!.bonus * 100) {
+        setLTV(newLTV / 100);
+      }
     }
   };
 
@@ -99,6 +93,8 @@ export default function RiskLevels() {
         }
 
         setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
+        setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv);
+        console.log('resetting like it should');
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -160,15 +156,15 @@ export default function RiskLevels() {
   }
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading && !riskParameter ? (
+      {isLoading || !riskParameter || !LTV ? (
         <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={2}>
             <Typography textAlign={'right'}>Pair: </Typography>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={2}>
             <Select
               labelId="pair-select"
               id="pair-select"
@@ -183,10 +179,26 @@ export default function RiskLevels() {
               ))}
             </Select>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={2}>
+            <Typography textAlign={'right'}>LTV: </Typography>
+          </Grid>
+          <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <TextField
+              required
+              id="ltv-input"
+              type="number"
+              label={`Must be < ${100 - riskParameter.bonus * 100}%`}
+              onChange={handleChangeLTV}
+              value={LTV * 100}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>
+              }}
+            />
+          </Grid>
+          <Grid item xs={6} sm={2}>
             <Typography textAlign={'right'}>Supply Cap: </Typography>
           </Grid>
-          <Grid item xs={6} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               required
               id="supply-cap-input"
@@ -204,7 +216,13 @@ export default function RiskLevels() {
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={10}>
-            <RiskLevelGraphs pair={selectedPair} parameters={riskParameter} supplyCap={supplyCap} platform={'all'} />
+            <RiskLevelGraphs
+              pair={selectedPair}
+              parameters={riskParameter}
+              LTV={LTV}
+              supplyCap={supplyCap}
+              platform={'all'}
+            />
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
         </Grid>

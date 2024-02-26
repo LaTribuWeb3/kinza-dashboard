@@ -10,6 +10,7 @@ export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
+  LTV: number;
   parameters: { ltv: number; bonus: number; visible: boolean };
 }
 
@@ -56,7 +57,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [graphData, setGraphData] = useState<GraphDataAtBlock[]>([]);
 
   const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
-
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
@@ -80,7 +80,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             if (liquidity <= 0) {
               continue;
             }
-            const ltv = props.parameters.ltv;
+            const ltv = props.LTV;
             const borrowCap = props.supplyCap;
             currentBlockData.riskValue = findRiskLevelFromParameters(
               blockData.volatility,
@@ -113,7 +113,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters]);
+  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV]);
 
   if (!liquidityData) {
     return <RiskLevelGraphsSkeleton />;
