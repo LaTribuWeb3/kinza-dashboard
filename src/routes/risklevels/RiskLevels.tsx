@@ -44,7 +44,6 @@ export default function RiskLevels() {
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
 
-
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
@@ -69,20 +68,19 @@ export default function RiskLevels() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        
         const overviewData = await DataService.GetOverview();
         const kinzaRiskParameters = {} as KinzaRiskParameters;
-        Object.keys(overviewData).forEach(symbol => {
+        Object.keys(overviewData).forEach((symbol) => {
           const riskLevelData = overviewData[symbol];
           kinzaRiskParameters[symbol] = {};
 
-          riskLevelData.subMarkets.forEach(subMarket => {
+          riskLevelData.subMarkets.forEach((subMarket) => {
             // Ensure the subMarket's quote does not already exist for robustness
             if (!kinzaRiskParameters[symbol][subMarket.quote]) {
               kinzaRiskParameters[symbol][subMarket.quote] = {
                 ltv: subMarket.LTV,
                 bonus: subMarket.liquidationBonus,
-                visible: true, // Set all to true as per instruction
+                visible: true // Set all to true as per instruction
               };
             }
           });
@@ -90,9 +88,7 @@ export default function RiskLevels() {
         setParameters(kinzaRiskParameters);
 
         const data = await DataService.GetAvailablePairs('all');
-        setAvailablePairs(
-          data.sort((a, b) => a.base.localeCompare(b.base))
-        );
+        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
         const oldPair = selectedPair;
 
@@ -116,7 +112,8 @@ export default function RiskLevels() {
       }
     }
     fetchData()
-      .then(() => setIsLoading(false)).then(()=>console.log({riskParameter}))
+      .then(() => setIsLoading(false))
+      .then(() => console.log({ riskParameter }))
       .catch(console.error);
   }, []);
 
@@ -137,8 +134,7 @@ export default function RiskLevels() {
 
         if (selectedPair?.quote === 'USDT') {
           setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
-        }
-        else if (selectedPair?.quote === 'WETH') {
+        } else if (selectedPair?.quote === 'WETH') {
           setSupplyCap(roundTo(50_000 / tokenPrice, 0));
         } else {
           setSupplyCap(roundTo(100_000 / tokenPrice, 0));
@@ -164,7 +160,7 @@ export default function RiskLevels() {
   }
   return (
     <Box sx={{ mt: 10 }}>
-      {(isLoading && !riskParameter) ? (
+      {isLoading && !riskParameter ? (
         <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline">
