@@ -1,36 +1,11 @@
-import {
-  Box,
-  FormControlLabel,
-  Grid,
-  InputAdornment,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Switch,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
 import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
-import { KINZA_RISK_PARAMETERS_ARRAY, KINZA_WBETH_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
-
-function ParameterButton(props: {
-  parameter: { ltv: number; bonus: number; visible: boolean };
-  handleParameterToggle: (parameter: { ltv: number; bonus: number; visible: boolean }) => void;
-}) {
-  return (
-    <FormControlLabel
-      label={`LTV: ${props.parameter.ltv * 100}% & Bonus: ${props.parameter.bonus / 100}%`}
-      control={
-        <Switch onChange={() => props.handleParameterToggle(props.parameter)} checked={props.parameter.visible} />
-      }
-    />
-  );
-}
+import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
 
 export default function RiskLevels() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,18 +15,21 @@ export default function RiskLevels() {
   const [alertMsg, setAlertMsg] = useState('');
   const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
-  const [parameters, setParameters] = useState(KINZA_RISK_PARAMETERS_ARRAY);
+  const [supplyCapInKind, setSupplyCapInKind] = useState<number | undefined>(undefined);
+  const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
+  const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
+  const [LTV, setLTV] = useState<number | undefined>(undefined);
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
   const handleChangePair = (event: SelectChangeEvent) => {
     console.log(`handleChangePair: ${event.target.value}`);
-    setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
-    if(event.target.value.split('/')[0].toLowerCase() == 'wbeth') {
-      setParameters(KINZA_WBETH_RISK_PARAMETERS_ARRAY)
-    } else {
-      setParameters(KINZA_RISK_PARAMETERS_ARRAY)
+    const base = event.target.value.split('/')[0];
+    const quote = event.target.value.split('/')[1];
+    setSelectedPair({ base: base, quote: quote });
+    if (parameters) {
+      setRiskParameter(parameters[base][quote]);
     }
   };
   const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,36 +37,12 @@ export default function RiskLevels() {
       setSupplyCap(Number(event.target.value));
     }
   };
-
-  const handleParameterToggle = (parameter: { ltv: number; bonus: number; visible: boolean }) => {
-    console.log('firing?');
-    /// if parameter is visible
-    if (parameter.visible) {
-      const newParameters = parameters.map((_) => {
-        if (_ === parameter) {
-          return {
-            ..._,
-            visible: false
-          };
-        } else {
-          return _;
-        }
-      });
-      setParameters(newParameters);
-    }
-    /// if parameter is not visible
-    if (!parameter.visible) {
-      const newParameters = parameters.map((_) => {
-        if (_ === parameter) {
-          return {
-            ..._,
-            visible: true
-          };
-        } else {
-          return _;
-        }
-      });
-      setParameters(newParameters);
+  const handleChangeLTV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target && event.target.value) {
+      const newLTV = Number(event.target.value);
+      if (newLTV >= 1 && newLTV < 100 - riskParameter!.bonus * 100) {
+        setLTV(newLTV / 100);
+      }
     }
   };
 
@@ -98,10 +52,31 @@ export default function RiskLevels() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const data = await DataService.GetAvailablePairs('all');
-        setAvailablePairs(
-          data.sort((a, b) => a.base.localeCompare(b.base))
-        );
+        const overviewData = await DataService.GetOverview();
+        const kinzaRiskParameters = {} as KinzaRiskParameters;
+        Object.keys(overviewData).forEach((symbol) => {
+          const riskLevelData = overviewData[symbol];
+          kinzaRiskParameters[symbol] = {};
+          riskLevelData.subMarkets.forEach((subMarket) => {
+            // Ensure the subMarket's quote does not already exist for robustness
+            if (!kinzaRiskParameters[symbol][subMarket.quote]) {
+              kinzaRiskParameters[symbol][subMarket.quote] = {
+                ltv: subMarket.LTV,
+                bonus: subMarket.liquidationBonus,
+                visible: true, // Set all to true as per instruction
+                supplyCapInKind: subMarket.supplyCapInKind
+              };
+            }
+          });
+        });
+        setParameters(kinzaRiskParameters);
+        const data = [];
+        for (const symbol of Object.keys(overviewData)) {
+          for (const subMarket of overviewData[symbol].subMarkets) {
+            data.push({ base: symbol, quote: subMarket.quote });
+          }
+        }
+        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
         const oldPair = selectedPair;
 
@@ -110,6 +85,10 @@ export default function RiskLevels() {
         } else {
           setSelectedPair(data[0]);
         }
+        setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
+        setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv);
+        setSupplyCapInKind(kinzaRiskParameters[data[0].base][data[0].quote].supplyCapInKind);
+
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -135,20 +114,14 @@ export default function RiskLevels() {
           return;
         }
         const data = await DataService.GetLiquidityData('all', selectedPair.base, selectedPair.quote);
-
         /// get token price
         const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
         const maxBlock = liquidityObjectToArray.at(-1)!.toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         setTokenPrice(tokenPrice);
-        
-        if (selectedPair?.quote === 'USDT') {
-          setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
-        }
-        else if (selectedPair?.quote === 'WETH') {
-          setSupplyCap(roundTo(50_000 / tokenPrice, 0));
-        } else {
-          setSupplyCap(roundTo(100_000 / tokenPrice, 0));
+
+        if (selectedPair && supplyCapInKind && tokenPrice) {
+          setSupplyCap(roundTo(supplyCapInKind, 2));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -171,15 +144,15 @@ export default function RiskLevels() {
   }
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading ? (
+      {isLoading || !riskParameter || !LTV ? (
         <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={2}>
             <Typography textAlign={'right'}>Pair: </Typography>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={2}>
             <Select
               labelId="pair-select"
               id="pair-select"
@@ -194,10 +167,26 @@ export default function RiskLevels() {
               ))}
             </Select>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={2}>
+            <Typography textAlign={'right'}>LTV: </Typography>
+          </Grid>
+          <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <TextField
+              required
+              id="ltv-input"
+              type="number"
+              label={`Must be < ${100 - riskParameter.bonus * 100}%`}
+              onChange={handleChangeLTV}
+              value={LTV * 100}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">%</InputAdornment>
+              }}
+            />
+          </Grid>
+          <Grid item xs={6} sm={2}>
             <Typography textAlign={'right'}>Supply Cap: </Typography>
           </Grid>
-          <Grid item xs={6} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               required
               id="supply-cap-input"
@@ -213,14 +202,17 @@ export default function RiskLevels() {
               {FriendlyFormatNumber(supplyCap * tokenPrice)} {selectedPair.quote}
             </Typography>
           </Grid>
-          <Grid item xs={12} lg={2} sx={{ marginTop: '20px' }}>
-            {parameters.map((_, index) => {
-              return <ParameterButton key={index} parameter={_} handleParameterToggle={handleParameterToggle} />;
-            })}
-          </Grid>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={10}>
-            <RiskLevelGraphs pair={selectedPair} parameters={parameters} supplyCap={supplyCap} platform={'all'} />
+            <RiskLevelGraphs
+              pair={selectedPair}
+              parameters={riskParameter}
+              LTV={LTV}
+              supplyCap={supplyCap}
+              platform={'all'}
+            />
           </Grid>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
         </Grid>
       )}
 
