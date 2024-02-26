@@ -1,11 +1,12 @@
 export interface KinzaRiskParameters {
-    [symbol: string]: {
-        [quote: string]: KinzaRiskParameter;
-    };
+  [symbol: string]: {
+    [quote: string]: KinzaRiskParameter;
+  };
 }
 
 export interface KinzaRiskParameter {
-    ltv: number;
-    bonus: number;
-    visible: true;
+  ltv: number;
+  bonus: number;
+  visible: true;
+  supplyCapInKind: number;
 }

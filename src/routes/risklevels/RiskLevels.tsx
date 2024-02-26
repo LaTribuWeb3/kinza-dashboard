@@ -26,6 +26,7 @@ export default function RiskLevels() {
   const [alertMsg, setAlertMsg] = useState('');
   const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
+  const [supplyCapInKind, setSupplyCapInKind] = useState<number | undefined>(undefined);
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
   const [LTV, setLTV] = useState<number | undefined>(undefined);
@@ -74,7 +75,8 @@ export default function RiskLevels() {
               kinzaRiskParameters[symbol][subMarket.quote] = {
                 ltv: subMarket.LTV,
                 bonus: subMarket.liquidationBonus,
-                visible: true // Set all to true as per instruction
+                visible: true, // Set all to true as per instruction
+                supplyCapInKind: subMarket.supplyCapInKind
               };
             }
           });
@@ -94,7 +96,7 @@ export default function RiskLevels() {
 
         setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
         setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv);
-        console.log('resetting like it should');
+        setSupplyCapInKind(kinzaRiskParameters[data[0].base][data[0].quote].supplyCapInKind);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -128,12 +130,8 @@ export default function RiskLevels() {
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         setTokenPrice(tokenPrice);
 
-        if (selectedPair?.quote === 'USDT') {
-          setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
-        } else if (selectedPair?.quote === 'WETH') {
-          setSupplyCap(roundTo(50_000 / tokenPrice, 0));
-        } else {
-          setSupplyCap(roundTo(100_000 / tokenPrice, 0));
+        if (selectedPair && supplyCapInKind && tokenPrice) {
+          setSupplyCap(roundTo(supplyCapInKind / tokenPrice, 0));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
