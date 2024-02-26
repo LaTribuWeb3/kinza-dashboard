@@ -41,7 +41,7 @@ export default function RiskLevels() {
     if (event.target && event.target.value) {
       const newLTV = Number(event.target.value);
       if (newLTV >= 1 && newLTV < 100 - riskParameter!.bonus * 100) {
-        setLTV(newLTV / 100);
+        setLTV(newLTV);
       }
     }
   };
@@ -86,7 +86,7 @@ export default function RiskLevels() {
           setSelectedPair(data[0]);
         }
         setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
-        setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv);
+        setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv * 100);
         setSupplyCapInKind(kinzaRiskParameters[data[0].base][data[0].quote].supplyCapInKind);
 
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
@@ -177,7 +177,7 @@ export default function RiskLevels() {
               type="number"
               label={`Must be < ${100 - riskParameter.bonus * 100}%`}
               onChange={handleChangeLTV}
-              value={LTV * 100}
+              value={LTV}
               InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>
               }}
@@ -207,7 +207,7 @@ export default function RiskLevels() {
             <RiskLevelGraphs
               pair={selectedPair}
               parameters={riskParameter}
-              LTV={LTV}
+              LTV={LTV / 100}
               supplyCap={supplyCap}
               platform={'all'}
             />
