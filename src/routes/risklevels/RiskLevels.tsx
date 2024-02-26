@@ -48,10 +48,10 @@ export default function RiskLevels() {
   const handleChangePair = (event: SelectChangeEvent) => {
     console.log(`handleChangePair: ${event.target.value}`);
     setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
-    if(event.target.value.split('/')[0].toLowerCase() == 'wbeth') {
-      setParameters(KINZA_WBETH_RISK_PARAMETERS_ARRAY)
+    if (event.target.value.split('/')[0].toLowerCase() == 'wbeth') {
+      setParameters(KINZA_WBETH_RISK_PARAMETERS_ARRAY);
     } else {
-      setParameters(KINZA_RISK_PARAMETERS_ARRAY)
+      setParameters(KINZA_RISK_PARAMETERS_ARRAY);
     }
   };
   const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,9 +99,7 @@ export default function RiskLevels() {
     async function fetchData() {
       try {
         const data = await DataService.GetAvailablePairs('all');
-        setAvailablePairs(
-          data.sort((a, b) => a.base.localeCompare(b.base))
-        );
+        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
         const oldPair = selectedPair;
 
@@ -141,11 +139,10 @@ export default function RiskLevels() {
         const maxBlock = liquidityObjectToArray.at(-1)!.toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         setTokenPrice(tokenPrice);
-        
+
         if (selectedPair?.quote === 'USDT') {
           setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
-        }
-        else if (selectedPair?.quote === 'WETH') {
+        } else if (selectedPair?.quote === 'WETH') {
           setSupplyCap(roundTo(50_000 / tokenPrice, 0));
         } else {
           setSupplyCap(roundTo(100_000 / tokenPrice, 0));

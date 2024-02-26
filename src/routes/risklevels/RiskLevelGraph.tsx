@@ -160,7 +160,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               leftAxisSeries={[
                 {
-                  label: `${props.pair.base} liquidity for ${slippageBps/100}% slippage`,
+                  label: `${props.pair.base} liquidity for ${slippageBps / 100}% slippage`,
                   data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[slippageBps].base),
                   formatter: FriendlyFormatNumber
                 }

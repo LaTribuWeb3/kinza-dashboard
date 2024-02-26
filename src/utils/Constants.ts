@@ -5,7 +5,7 @@ export const DATA_SOURCES_MAP = {
   'Pancakeswap StableSwaps': 'pancake',
   'Pancakeswap v2': 'pancakeswapv2',
   'Pancakeswap v3': 'pancakeswapv3',
-  'Wombat': 'wombat',
+  Wombat: 'wombat'
 };
 
 export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) * 100);
@@ -29,7 +29,7 @@ export const KINZA_RISK_PARAMETERS_ARRAY = [
     visible: true,
     color: '#FFA726'
   },
-  
+
   {
     ltv: 0.915,
     bonus: 800,
@@ -56,7 +56,6 @@ export const KINZA_RISK_PARAMETERS_ARRAY = [
   }
 ];
 
-
 export const KINZA_WBETH_RISK_PARAMETERS_ARRAY = [
   {
     ltv: 0.98,
@@ -76,7 +75,7 @@ export const KINZA_WBETH_RISK_PARAMETERS_ARRAY = [
     visible: true,
     color: '#FFA726'
   },
-  
+
   {
     ltv: 0.915,
     bonus: 700,
