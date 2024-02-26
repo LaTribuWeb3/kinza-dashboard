@@ -17,6 +17,7 @@ import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { KINZA_RISK_PARAMETERS_ARRAY, KINZA_WBETH_RISK_PARAMETERS_ARRAY } from '../../utils/Constants';
+import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
 
 function ParameterButton(props: {
   parameter: { ltv: number; bonus: number; visible: boolean };
@@ -40,55 +41,25 @@ export default function RiskLevels() {
   const [alertMsg, setAlertMsg] = useState('');
   const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
-  const [parameters, setParameters] = useState(KINZA_RISK_PARAMETERS_ARRAY);
+  const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
+  const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
+
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
   const handleChangePair = (event: SelectChangeEvent) => {
     console.log(`handleChangePair: ${event.target.value}`);
-    setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
-    if(event.target.value.split('/')[0].toLowerCase() == 'wbeth') {
-      setParameters(KINZA_WBETH_RISK_PARAMETERS_ARRAY)
-    } else {
-      setParameters(KINZA_RISK_PARAMETERS_ARRAY)
+    const base = event.target.value.split('/')[0];
+    const quote = event.target.value.split('/')[1];
+    setSelectedPair({ base: base, quote: quote });
+    if (parameters) {
+      setRiskParameter(parameters[base][quote]);
     }
   };
   const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {
       setSupplyCap(Number(event.target.value));
-    }
-  };
-
-  const handleParameterToggle = (parameter: { ltv: number; bonus: number; visible: boolean }) => {
-    console.log('firing?');
-    /// if parameter is visible
-    if (parameter.visible) {
-      const newParameters = parameters.map((_) => {
-        if (_ === parameter) {
-          return {
-            ..._,
-            visible: false
-          };
-        } else {
-          return _;
-        }
-      });
-      setParameters(newParameters);
-    }
-    /// if parameter is not visible
-    if (!parameter.visible) {
-      const newParameters = parameters.map((_) => {
-        if (_ === parameter) {
-          return {
-            ..._,
-            visible: true
-          };
-        } else {
-          return _;
-        }
-      });
-      setParameters(newParameters);
     }
   };
 
@@ -98,6 +69,26 @@ export default function RiskLevels() {
     // Define an asynchronous function
     async function fetchData() {
       try {
+        
+        const overviewData = await DataService.GetOverview();
+        const kinzaRiskParameters = {} as KinzaRiskParameters;
+        Object.keys(overviewData).forEach(symbol => {
+          const riskLevelData = overviewData[symbol];
+          kinzaRiskParameters[symbol] = {};
+
+          riskLevelData.subMarkets.forEach(subMarket => {
+            // Ensure the subMarket's quote does not already exist for robustness
+            if (!kinzaRiskParameters[symbol][subMarket.quote]) {
+              kinzaRiskParameters[symbol][subMarket.quote] = {
+                ltv: subMarket.LTV,
+                bonus: subMarket.liquidationBonus,
+                visible: true, // Set all to true as per instruction
+              };
+            }
+          });
+        });
+        setParameters(kinzaRiskParameters);
+
         const data = await DataService.GetAvailablePairs('all');
         setAvailablePairs(
           data.sort((a, b) => a.base.localeCompare(b.base))
@@ -110,6 +101,8 @@ export default function RiskLevels() {
         } else {
           setSelectedPair(data[0]);
         }
+
+        setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -123,7 +116,7 @@ export default function RiskLevels() {
       }
     }
     fetchData()
-      .then(() => setIsLoading(false))
+      .then(() => setIsLoading(false)).then(()=>console.log({riskParameter}))
       .catch(console.error);
   }, []);
 
@@ -141,7 +134,7 @@ export default function RiskLevels() {
         const maxBlock = liquidityObjectToArray.at(-1)!.toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         setTokenPrice(tokenPrice);
-        
+
         if (selectedPair?.quote === 'USDT') {
           setSupplyCap(roundTo(100_000_000 / tokenPrice, 0));
         }
@@ -171,7 +164,7 @@ export default function RiskLevels() {
   }
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading ? (
+      {(isLoading && !riskParameter) ? (
         <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline">
@@ -213,14 +206,11 @@ export default function RiskLevels() {
               {FriendlyFormatNumber(supplyCap * tokenPrice)} {selectedPair.quote}
             </Typography>
           </Grid>
-          <Grid item xs={12} lg={2} sx={{ marginTop: '20px' }}>
-            {parameters.map((_, index) => {
-              return <ParameterButton key={index} parameter={_} handleParameterToggle={handleParameterToggle} />;
-            })}
-          </Grid>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={10}>
-            <RiskLevelGraphs pair={selectedPair} parameters={parameters} supplyCap={supplyCap} platform={'all'} />
+            <RiskLevelGraphs pair={selectedPair} parameters={riskParameter} supplyCap={supplyCap} platform={'all'} />
           </Grid>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
         </Grid>
       )}
 

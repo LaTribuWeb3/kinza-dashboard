@@ -10,12 +10,12 @@ export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
-  parameters: { ltv: number; bonus: number; visible: boolean }[];
+  parameters: { ltv: number; bonus: number; visible: boolean };
 }
 
 export interface GraphDataAtBlock {
   blockNumber: number;
-  [property: string]: number;
+  riskValue: number;
 }
 
 export function RiskLevelGraphsSkeleton() {
@@ -71,27 +71,26 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
         /// for each block
         for (const [block, blockData] of Object.entries(data.liquidity)) {
           const currentBlockData: GraphDataAtBlock = {
-            blockNumber: Number(block)
+            blockNumber: Number(block),
+            riskValue: 0
           };
-          for (const morphoParameter of props.parameters) {
-            if (morphoParameter.visible) {
-              const liquidationBonus = morphoParameter.bonus;
-              const liquidity = blockData.avgSlippageMap[liquidationBonus].base;
-              if (liquidity <= 0) {
-                continue;
-              }
-              const ltv = morphoParameter.ltv;
-              const borrowCap = props.supplyCap;
-              currentBlockData[`${morphoParameter.bonus}_${morphoParameter.ltv}`] = findRiskLevelFromParameters(
-                blockData.volatility,
-                liquidity,
-                liquidationBonus / 10000,
-                ltv,
-                borrowCap
-              );
+          if (props.parameters.visible) {
+            const liquidationBonus = props.parameters.bonus * 10000;
+            const liquidity = blockData.avgSlippageMap[liquidationBonus].base;
+            if (liquidity <= 0) {
+              continue;
             }
-            graphData.push(currentBlockData);
+            const ltv = props.parameters.ltv;
+            const borrowCap = props.supplyCap;
+            currentBlockData.riskValue = findRiskLevelFromParameters(
+              blockData.volatility,
+              liquidity,
+              liquidationBonus / 10000,
+              ltv,
+              borrowCap
+            );
           }
+          graphData.push(currentBlockData);
         }
         graphData.sort((a, b) => a.blockNumber - b.blockNumber);
         setGraphData(graphData);
@@ -139,16 +138,22 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               xAxisData={graphData.map((_) => _.blockNumber)}
               xAxisLabel="Date"
               leftYAxis={{ formatter: FriendlyFormatNumber }}
-              leftAxisSeries={props.parameters
-                .filter((_) => _.visible)
-                .map((_) => {
-                  const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
-                  return {
-                    label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus / 100}%`,
-                    data: data,
-                    formatter: FriendlyFormatNumber
-                  };
-                })}
+              leftAxisSeries={[
+                {
+                  label: 'Risk Level',
+                  data: graphData.map((_) => _.riskValue),
+                  formatter: undefined
+                }
+              ]}
+              // .filter((_) => _.visible)
+              // .map((_) => {
+              //   const data = graphData.map((block) => block[`${_.bonus}_${_.ltv}`]);
+              //   return {
+              //     label: `LTV: ${_.ltv * 100}% & Bonus: ${_.bonus / 100}%`,
+              //     data: data,
+              //     formatter: FriendlyFormatNumber
+              //   };
+              // })}
             />
           </Grid>
 
@@ -160,7 +165,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
               leftAxisSeries={[
                 {
-                  label: `${props.pair.base} liquidity for ${slippageBps/100}% slippage`,
+                  label: `${props.pair.base} liquidity for ${slippageBps / 100}% slippage`,
                   data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[slippageBps].base),
                   formatter: FriendlyFormatNumber
                 }
