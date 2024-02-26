@@ -25,9 +25,7 @@ export interface OverviewProperties {
 function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
 
-  row.subMarkets.sort((s1, s2) => {
-    return s1.riskLevel > s2.riskLevel ? 0 : 1;
-  });
+  row.subMarkets.sort((s1, s2) => s2.riskLevel - s1.riskLevel);
 
   const [open, setOpen] = React.useState(false);
 
