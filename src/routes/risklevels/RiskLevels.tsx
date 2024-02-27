@@ -6,6 +6,7 @@ import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
+import { useLocation } from 'react-router-dom';
 
 export default function RiskLevels() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +20,10 @@ export default function RiskLevels() {
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
   const [LTV, setLTV] = useState<number | undefined>(undefined);
+  const pathName = useLocation().pathname;
+  const navPair = pathName.split('/')[2]
+    ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
+    : undefined;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -78,10 +83,8 @@ export default function RiskLevels() {
         }
         setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
-        const oldPair = selectedPair;
-
-        if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
-          setSelectedPair(oldPair);
+        if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
+          setSelectedPair(navPair);
         } else {
           setSelectedPair(data[0]);
         }
