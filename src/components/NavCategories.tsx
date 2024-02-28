@@ -1,7 +1,7 @@
 import { Divider, List, ListItemButton, ListSubheader } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface NavCategoriesProperties {
   toggleDrawerFct: () => void;
@@ -22,6 +22,10 @@ function findDefaultNavCategory(pathName: string) {
 export function NavCategories(props: NavCategoriesProperties) {
   const pathName = useLocation().pathname;
   const [selectedButton, setSelectedButton] = useState<string>(findDefaultNavCategory(pathName));
+
+  useEffect(() => {
+    setSelectedButton(findDefaultNavCategory(pathName));
+  } , [pathName]);
 
   console.log(selectedButton);
   function handleClick(buttonName: string) {
