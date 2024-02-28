@@ -18,4 +18,6 @@ export interface SubMarket {
     borrowCapInKind:  number;
     volatility:       number;
     liquidity:        number;
+    basePrice:        number;
+    quotePrice:       number;
 }
