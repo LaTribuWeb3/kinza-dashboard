@@ -90,7 +90,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             }
           }
 
-          console.log('adding ', {currentBlockData});
+          console.log('adding ', { currentBlockData });
           graphData.push(currentBlockData);
         }
         graphData.sort((a, b) => a.timestamp - b.timestamp);

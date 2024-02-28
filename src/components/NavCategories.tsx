@@ -25,7 +25,7 @@ export function NavCategories(props: NavCategoriesProperties) {
 
   useEffect(() => {
     setSelectedButton(findDefaultNavCategory(pathName));
-  } , [pathName]);
+  }, [pathName]);
 
   console.log(selectedButton);
   function handleClick(buttonName: string) {
