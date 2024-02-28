@@ -14,8 +14,8 @@ export interface RiskLevelGraphsInterface {
   parameters: { ltv: number; bonus: number; visible: boolean };
 }
 
-export interface GraphDataAtBlock {
-  blockNumber: number;
+export interface GraphDataAtTimestamp {
+  timestamp: number;
   riskValue: number;
 }
 
@@ -54,7 +54,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [isLoading, setIsLoading] = useState(true);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [graphData, setGraphData] = useState<GraphDataAtBlock[]>([]);
+  const [graphData, setGraphData] = useState<GraphDataAtTimestamp[]>([]);
 
   const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
   const handleCloseAlert = () => {
@@ -66,33 +66,34 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     async function fetchAndComputeDataForGraph() {
       try {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
-        const graphData: GraphDataAtBlock[] = [];
+        const graphData: GraphDataAtTimestamp[] = [];
 
         /// for each block
-        for (const [block, blockData] of Object.entries(data.liquidity)) {
-          const currentBlockData: GraphDataAtBlock = {
-            blockNumber: Number(block),
+        for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
+          const currentBlockData: GraphDataAtTimestamp = {
+            timestamp: Number(timestamp),
             riskValue: 0
           };
           if (props.parameters.visible) {
             const liquidationBonus = props.parameters.bonus * 10000;
-            const liquidity = blockData.avgSlippageMap[liquidationBonus].base;
-            if (liquidity <= 0) {
-              continue;
+            const liquidity = timestampData.avgSlippageMap[liquidationBonus].base;
+            if (liquidity > 0) {
+              const ltv = props.LTV;
+              const borrowCap = props.supplyCap;
+              currentBlockData.riskValue = findRiskLevelFromParameters(
+                timestampData.volatility,
+                liquidity,
+                liquidationBonus / 10000,
+                ltv,
+                borrowCap
+              );
             }
-            const ltv = props.LTV;
-            const borrowCap = props.supplyCap;
-            currentBlockData.riskValue = findRiskLevelFromParameters(
-              blockData.volatility,
-              liquidity,
-              liquidationBonus / 10000,
-              ltv,
-              borrowCap
-            );
           }
+
+          console.log('adding ', {currentBlockData});
           graphData.push(currentBlockData);
         }
-        graphData.sort((a, b) => a.blockNumber - b.blockNumber);
+        graphData.sort((a, b) => a.timestamp - b.timestamp);
         setGraphData(graphData);
         setLiquidityData(data);
         await sleep(1);
@@ -135,7 +136,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           <Grid item xs={12}>
             <Graph
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
-              xAxisData={graphData.map((_) => _.blockNumber)}
+              xAxisData={graphData.map((_) => _.timestamp)}
               xAxisLabel="Date"
               leftYAxis={{ formatter: FriendlyFormatNumber }}
               leftAxisSeries={[
