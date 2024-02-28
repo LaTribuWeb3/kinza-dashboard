@@ -8,5 +8,7 @@ export interface KinzaRiskParameter {
   ltv: number;
   bonus: number;
   visible: true;
-  supplyCapInKind: number;
+  supplyCapInUSD: number;
+  borrowCapInUSD: number;
+  basePrice: number;
 }
