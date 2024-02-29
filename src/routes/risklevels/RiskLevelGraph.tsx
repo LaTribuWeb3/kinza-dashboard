@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
-import { Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
+import { Grid, LinearProgress, Skeleton, Typography, useMediaQuery } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
@@ -55,6 +55,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [graphData, setGraphData] = useState<GraphDataAtTimestamp[]>([]);
+  const screenBigEnough = useMediaQuery('(min-width:600px)');
 
   const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
   const handleCloseAlert = () => {
@@ -67,8 +68,9 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
       try {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
         const graphData: GraphDataAtTimestamp[] = [];
-
+        let i = 0;
         /// for each block
+        if(screenBigEnough) {
         for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
           const currentBlockData: GraphDataAtTimestamp = {
             timestamp: Number(timestamp),
@@ -93,6 +95,36 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           console.log('adding ', { currentBlockData });
           graphData.push(currentBlockData);
         }
+        }
+        else {
+          for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
+          if(!(i%4)){
+            const currentBlockData: GraphDataAtTimestamp = {
+              timestamp: Number(timestamp),
+              riskValue: 0
+            };
+            if (props.parameters.visible) {
+              const liquidationBonus = props.parameters.bonus * 10000;
+              const liquidity = timestampData.avgSlippageMap[liquidationBonus].base;
+              if (liquidity > 0) {
+                const ltv = props.LTV;
+                const borrowCap = props.supplyCap;
+                currentBlockData.riskValue = findRiskLevelFromParameters(
+                  timestampData.volatility,
+                  liquidity,
+                  liquidationBonus / 10000,
+                  ltv,
+                  borrowCap
+                );
+              }
+            }
+            console.log('adding ', { currentBlockData });
+            graphData.push(currentBlockData);
+          }
+          i++;
+        }
+        }
+
         graphData.sort((a, b) => a.timestamp - b.timestamp);
         setGraphData(graphData);
         setLiquidityData(data);
