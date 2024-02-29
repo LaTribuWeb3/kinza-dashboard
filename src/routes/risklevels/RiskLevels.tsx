@@ -232,7 +232,6 @@ export default function RiskLevels() {
             />
             <Typography sx={{ ml: '10px' }}>${FriendlyFormatNumber(capUSD)}</Typography>
           </Grid>
-          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={12}>
             <RiskLevelGraphs
               pair={selectedPair}
