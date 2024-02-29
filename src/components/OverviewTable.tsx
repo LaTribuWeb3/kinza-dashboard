@@ -10,13 +10,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 import { OverviewData, RiskLevelData } from '../models/OverviewData';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import React from 'react';
 import { FriendlyFormatNumber } from '../utils/Utils';
+import { Link as RouterLink } from 'react-router-dom';
 
 export interface OverviewProperties {
   data: OverviewData;
@@ -25,9 +27,7 @@ export interface OverviewProperties {
 function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
 
-  row.subMarkets.sort((s1, s2) => {
-    return s1.riskLevel > s2.riskLevel ? 0 : 1;
-  });
+  row.subMarkets.sort((s1, s2) => s2.riskLevel - s1.riskLevel);
 
   const [open, setOpen] = React.useState(false);
 
@@ -64,7 +64,9 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                   {row.subMarkets.map((subMarket) => (
                     <TableRow key={subMarket.quote}>
                       <TableCell component="th" scope="row">
-                        {baseSymbol}/{subMarket.quote}
+                        <Typography component={RouterLink} to={`/risklevels/${baseSymbol}-${subMarket.quote}`}>
+                          {baseSymbol}/{subMarket.quote}
+                        </Typography>
                       </TableCell>
                       <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
                       <TableCell>{subMarket.LTV * 100}%</TableCell>
