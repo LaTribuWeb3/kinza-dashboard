@@ -44,9 +44,9 @@ export function MainAppBar(props: MainAppBarProperties) {
         >
           <MenuIcon />
         </IconButton>
-          <Avatar alt='Kinza logo' src='/favicon.svg' sx={{ width: 50, height: 50 }} />
+          <Avatar alt='b protocol logo' src='/favicon.svg' sx={{ width: 50, height: 50, padding: 0.5 }} />
         <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-          <Avatar alt='Kinza logo' src='/kinza-logo.png' sx={{ width: 56, height: 56 }} />
+          <Avatar alt='Kinza logo' src='/kinza-logo.png' sx={{ width: 56, height: 56, padding: 0.25 }} />
           <Typography component="h1" variant="h6" color="inherit" noWrap>
             Kinza Dashboard
           </Typography>
