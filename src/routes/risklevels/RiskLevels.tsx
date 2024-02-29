@@ -2,7 +2,7 @@ import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextFie
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
-import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
@@ -14,9 +14,9 @@ export default function RiskLevels() {
   const [selectedPair, setSelectedPair] = useState<Pair>();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [supplyCap, setSupplyCap] = useState<number | undefined>(undefined);
+  const [capUSD, setCapUSD] = useState<number>(0);
+  const [capInKind, setCapInKind] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
-  const [supplyCapInKind, setSupplyCapInKind] = useState<number | undefined>(undefined);
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
   const [LTV, setLTV] = useState<number | undefined>(undefined);
@@ -37,9 +37,9 @@ export default function RiskLevels() {
       setRiskParameter(parameters[base][quote]);
     }
   };
-  const handleChangeSupplyCap = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {
-      setSupplyCap(Number(event.target.value));
+      setCapInKind(Number(event.target.value));
     }
   };
   const handleChangeLTV = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +69,9 @@ export default function RiskLevels() {
                 ltv: subMarket.LTV,
                 bonus: subMarket.liquidationBonus,
                 visible: true, // Set all to true as per instruction
-                supplyCapInKind: subMarket.supplyCapInKind
+                supplyCapInUSD: subMarket.supplyCapUsd,
+                borrowCapInUSD: subMarket.borrowCapUsd,
+                basePrice: subMarket.basePrice
               };
             }
           });
@@ -88,9 +90,17 @@ export default function RiskLevels() {
         } else {
           setSelectedPair(data[0]);
         }
-        setRiskParameter(kinzaRiskParameters[data[0].base][data[0].quote]);
-        setLTV(kinzaRiskParameters[data[0].base][data[0].quote].ltv * 100);
-        setSupplyCapInKind(kinzaRiskParameters[data[0].base][data[0].quote].supplyCapInKind);
+        const pairSet = navPair ? navPair : data[0];
+        setRiskParameter(kinzaRiskParameters[pairSet.base][pairSet.quote]);
+        setLTV(kinzaRiskParameters[pairSet.base][pairSet.quote].ltv * 100);
+        const capUSDToSet = Math.min(
+          kinzaRiskParameters[pairSet.base][pairSet.quote].supplyCapInUSD,
+          kinzaRiskParameters[pairSet.base][pairSet.quote].borrowCapInUSD
+        );
+        setCapUSD(capUSDToSet);
+        const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
+        setCapInKind(capInKindToSet);
+
 
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
@@ -123,8 +133,15 @@ export default function RiskLevels() {
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
         setTokenPrice(tokenPrice);
 
-        if (selectedPair && supplyCapInKind && tokenPrice) {
-          setSupplyCap(roundTo(supplyCapInKind, 2));
+        if (selectedPair && capInKind && tokenPrice && parameters) {
+          const capUSDToSet = Math.min(
+            parameters[selectedPair.base][selectedPair.quote].supplyCapInUSD,
+            parameters[selectedPair.base][selectedPair.quote].borrowCapInUSD
+          );
+          setCapUSD(capUSDToSet);
+
+          const capInKindToSet = capUSDToSet / parameters[selectedPair.base][selectedPair.quote].basePrice;
+          setCapInKind(Number(capInKindToSet.toFixed(2)));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -142,7 +159,7 @@ export default function RiskLevels() {
       .catch(console.error);
   }, [selectedPair]);
 
-  if (!selectedPair || !tokenPrice || !supplyCap) {
+  if (!selectedPair || !tokenPrice || !capInKind) {
     return <RiskLevelGraphsSkeleton />;
   }
   return (
@@ -195,15 +212,13 @@ export default function RiskLevels() {
               id="supply-cap-input"
               type="number"
               label="In Kind"
-              value={supplyCap}
-              onChange={handleChangeSupplyCap}
+              value={capInKind}
+              onChange={handleChangeCap}
               InputProps={{
                 endAdornment: <InputAdornment position="end">{selectedPair.base}</InputAdornment>
               }}
             />
-            <Typography sx={{ ml: '10px' }}>
-              {FriendlyFormatNumber(supplyCap * tokenPrice)} {selectedPair.quote}
-            </Typography>
+            <Typography sx={{ ml: '10px' }}>{FriendlyFormatNumber(capUSD)} USD</Typography>
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={10}>
@@ -211,7 +226,8 @@ export default function RiskLevels() {
               pair={selectedPair}
               parameters={riskParameter}
               LTV={LTV / 100}
-              supplyCap={supplyCap}
+              supplyCap={capInKind}
+
               platform={'all'}
             />
           </Grid>
