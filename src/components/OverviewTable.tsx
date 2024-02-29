@@ -66,6 +66,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                     <TableRow>
                       <TableCell>Market</TableCell>
                       <TableCell>Risk Level</TableCell>
+                      <TableCell>LTV (%)</TableCell>
                     </TableRow>
                   )}
                 </TableHead>
@@ -103,6 +104,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                           </Typography>
                         </TableCell>
                         <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
+                        <TableCell>{subMarket.LTV * 100}%</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
