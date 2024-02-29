@@ -46,7 +46,7 @@ export default function RiskLevels() {
     if (event.target && event.target.value) {
       const newLTV = Number(event.target.value);
       if (newLTV >= 1 && newLTV < 100 - riskParameter!.bonus * 100) {
-        setLTV(newLTV / 100);
+        setLTV(newLTV);
       }
     }
   };
@@ -85,10 +85,8 @@ export default function RiskLevels() {
         }
         setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
-        const oldPair = selectedPair;
-
-        if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
-          setSelectedPair(oldPair);
+        if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
+          setSelectedPair(navPair);
         } else {
           setSelectedPair(data[0]);
         }
@@ -102,6 +100,7 @@ export default function RiskLevels() {
         setCapUSD(capUSDToSet);
         const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
         setCapInKind(capInKindToSet);
+
 
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
@@ -198,7 +197,7 @@ export default function RiskLevels() {
               type="number"
               label={`Must be < ${100 - riskParameter.bonus * 100}%`}
               onChange={handleChangeLTV}
-              value={LTV * 100}
+              value={LTV}
               InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>
               }}
@@ -228,6 +227,7 @@ export default function RiskLevels() {
               parameters={riskParameter}
               LTV={LTV / 100}
               supplyCap={capInKind}
+
               platform={'all'}
             />
           </Grid>
