@@ -2,7 +2,7 @@ import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextFie
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
-import { FriendlyFormatNumber, roundTo, sleep } from '../../utils/Utils';
+import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
@@ -14,7 +14,7 @@ export default function RiskLevels() {
   const [selectedPair, setSelectedPair] = useState<Pair>();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [capUSD, setCapUSD] = useState<number | undefined>(undefined);
+  const [capUSD, setCapUSD] = useState<number>(0);
   const [capInKind, setCapInKind] = useState<number | undefined>(undefined);
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
