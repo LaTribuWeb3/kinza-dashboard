@@ -204,7 +204,7 @@ export default function RiskLevels() {
             />
           </Grid>
           <Grid item xs={6} sm={2}>
-            <Typography textAlign={'right'}>Supply Cap: </Typography>
+            <Typography textAlign={'right'}>Cap: </Typography>
           </Grid>
           <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
@@ -218,7 +218,7 @@ export default function RiskLevels() {
                 endAdornment: <InputAdornment position="end">{selectedPair.base}</InputAdornment>
               }}
             />
-            <Typography sx={{ ml: '10px' }}>{FriendlyFormatNumber(capUSD)} USD</Typography>
+            <Typography sx={{ ml: '10px' }}>${FriendlyFormatNumber(capUSD)}</Typography>
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={10}>
