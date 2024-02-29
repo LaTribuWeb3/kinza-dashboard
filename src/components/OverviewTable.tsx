@@ -19,6 +19,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import React from 'react';
 import { FriendlyFormatNumber } from '../utils/Utils';
 import { Link as RouterLink } from 'react-router-dom';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export interface OverviewProperties {
   data: OverviewData;
@@ -26,6 +27,7 @@ export interface OverviewProperties {
 
 function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
+  const screenBigEnough = useMediaQuery('(min-width:600px)');
 
   row.subMarkets.sort((s1, s2) => s2.riskLevel - s1.riskLevel);
 
@@ -50,38 +52,61 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
             <Box sx={{ margin: 1 }}>
               <Table size="small" aria-label="purchases">
                 <TableHead>
-                  <TableRow>
-                    <TableCell>Market</TableCell>
-                    <TableCell>Risk Level</TableCell>
-                    <TableCell>LTV (%)</TableCell>
-                    <TableCell>Supply Cap ($)</TableCell>
-                    <TableCell>Borrow Cap ($)</TableCell>
-                    <TableCell>Volatility (%)</TableCell>
-                    <TableCell>Liquidity ({baseSymbol})</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.subMarkets.map((subMarket) => (
-                    <TableRow key={subMarket.quote}>
-                      <TableCell component="th" scope="row">
-                        <Typography component={RouterLink} to={`/risklevels/${baseSymbol}-${subMarket.quote}`}>
-                          {baseSymbol}/{subMarket.quote}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
-                      <TableCell>{subMarket.LTV * 100}%</TableCell>
-                      <Tooltip title={`${FriendlyFormatNumber(subMarket.supplyCapInKind)} ${baseSymbol}`}>
-                        <TableCell>${FriendlyFormatNumber(subMarket.supplyCapUsd)}</TableCell>
-                      </Tooltip>
-
-                      <Tooltip title={`${FriendlyFormatNumber(subMarket.borrowCapInKind)} ${subMarket.quote}`}>
-                        <TableCell>${FriendlyFormatNumber(subMarket.borrowCapUsd)}</TableCell>
-                      </Tooltip>
-                      <TableCell>{(subMarket.volatility * 100).toFixed(2)}%</TableCell>
-                      <TableCell>{FriendlyFormatNumber(subMarket.liquidity)}</TableCell>
+                  {screenBigEnough ? (
+                    <TableRow>
+                      <TableCell>Market</TableCell>
+                      <TableCell>Risk Level</TableCell>
+                      <TableCell>LTV (%)</TableCell>
+                      <TableCell>Supply Cap ($)</TableCell>
+                      <TableCell>Borrow Cap ($)</TableCell>
+                      <TableCell>Volatility (%)</TableCell>
+                      <TableCell>Liquidity ({baseSymbol})</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
+                  ) : (
+                    <TableRow>
+                      <TableCell>Market</TableCell>
+                      <TableCell>Risk Level</TableCell>
+                    </TableRow>
+                  )}
+                </TableHead>
+
+                {screenBigEnough ? (
+                  <TableBody>
+                    {row.subMarkets.map((subMarket) => (
+                      <TableRow key={subMarket.quote}>
+                        <TableCell component="th" scope="row">
+                          <Typography component={RouterLink} to={`/risklevels/${baseSymbol}-${subMarket.quote}`}>
+                            {baseSymbol}/{subMarket.quote}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
+                        <TableCell>{subMarket.LTV * 100}%</TableCell>
+                        <Tooltip title={`${FriendlyFormatNumber(subMarket.supplyCapInKind)} ${baseSymbol}`}>
+                          <TableCell>${FriendlyFormatNumber(subMarket.supplyCapUsd)}</TableCell>
+                        </Tooltip>
+
+                        <Tooltip title={`${FriendlyFormatNumber(subMarket.borrowCapInKind)} ${subMarket.quote}`}>
+                          <TableCell>${FriendlyFormatNumber(subMarket.borrowCapUsd)}</TableCell>
+                        </Tooltip>
+                        <TableCell>{(subMarket.volatility * 100).toFixed(2)}%</TableCell>
+                        <TableCell>{FriendlyFormatNumber(subMarket.liquidity)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                ) : (
+                  <TableBody>
+                    {row.subMarkets.map((subMarket) => (
+                      <TableRow key={subMarket.quote}>
+                        <TableCell component="th" scope="row">
+                          <Typography component={RouterLink} to={`/risklevels/${baseSymbol}-${subMarket.quote}`}>
+                            {baseSymbol}/{subMarket.quote}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                )}
               </Table>
             </Box>
           </Collapse>
