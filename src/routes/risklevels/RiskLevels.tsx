@@ -168,12 +168,10 @@ export default function RiskLevels() {
       {isLoading || !riskParameter || !LTV ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid container spacing={1} alignItems="baseline">
+        <Grid container spacing={1} alignItems="baseline" justifyContent='center'>
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={3} sm={1}>
+          <Grid item xs={12} sm={6} md={4} lg={1} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Pair: </Typography>
-          </Grid>
-          <Grid item xs={9} sm={2}>
             <Select
               sx={{ width: '95%' }}
               labelId="pair-select"
@@ -189,10 +187,9 @@ export default function RiskLevels() {
               ))}
             </Select>
           </Grid>
-          <Grid item xs={3} sm={1}>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
+          <Grid item xs={12} sm={6} md={4} lg={1} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>LTV: </Typography>
-          </Grid>
-          <Grid item xs={9} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               sx={{
                 width: '95%',
@@ -214,10 +211,9 @@ export default function RiskLevels() {
               }}
             />
           </Grid>
-          <Grid item xs={3} sm={2}>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
+          <Grid item xs={12} sm={6} md={4} lg={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Cap: </Typography>
-          </Grid>
-          <Grid item xs={6} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               sx={{
                 '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
@@ -246,7 +242,6 @@ export default function RiskLevels() {
               platform={'all'}
             />
           </Grid>
-          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
         </Grid>
       )}
 
