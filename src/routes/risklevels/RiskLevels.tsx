@@ -169,10 +169,10 @@ export default function RiskLevels() {
       ) : (
         <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={6} sm={2}>
+          <Grid item xs={3} sm={1}>
             <Typography textAlign={'right'}>Pair: </Typography>
           </Grid>
-          <Grid item xs={6} sm={2}>
+          <Grid item xs={9} sm={2}>
             <Select
               labelId="pair-select"
               id="pair-select"
@@ -187,10 +187,10 @@ export default function RiskLevels() {
               ))}
             </Select>
           </Grid>
-          <Grid item xs={6} sm={2}>
+          <Grid item xs={3} sm={1}>
             <Typography textAlign={'right'}>LTV: </Typography>
           </Grid>
-          <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={9} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               required
               id="ltv-input"
@@ -203,10 +203,10 @@ export default function RiskLevels() {
               }}
             />
           </Grid>
-          <Grid item xs={6} sm={2}>
+          <Grid item xs={3} sm={2}>
             <Typography textAlign={'right'}>Cap: </Typography>
           </Grid>
-          <Grid item xs={6} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={6} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
               required
               id="supply-cap-input"
@@ -221,7 +221,7 @@ export default function RiskLevels() {
             <Typography sx={{ ml: '10px' }}>${FriendlyFormatNumber(capUSD)}</Typography>
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
-          <Grid item xs={12} lg={10}>
+          <Grid item xs={12} lg={12}>
             <RiskLevelGraphs
               pair={selectedPair}
               parameters={riskParameter}
