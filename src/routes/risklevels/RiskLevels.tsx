@@ -38,8 +38,9 @@ export default function RiskLevels() {
     }
   };
   const handleChangeCap = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target && event.target.value) {
+    if (event.target && event.target.value && tokenPrice) {
       setCapInKind(Number(event.target.value));
+      setCapUSD(Number(event.target.value) * tokenPrice);
     }
   };
   const handleChangeLTV = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +102,6 @@ export default function RiskLevels() {
         const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
         setCapInKind(capInKindToSet);
 
-
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -131,7 +131,6 @@ export default function RiskLevels() {
         const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
         const maxBlock = liquidityObjectToArray.at(-1)!.toString();
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
-        setTokenPrice(tokenPrice);
 
         if (selectedPair && capInKind && tokenPrice && parameters) {
           const capUSDToSet = Math.min(
@@ -141,6 +140,8 @@ export default function RiskLevels() {
           setCapUSD(capUSDToSet);
 
           const capInKindToSet = capUSDToSet / parameters[selectedPair.base][selectedPair.quote].basePrice;
+          setTokenPrice(parameters[selectedPair.base][selectedPair.quote].basePrice);
+
           setCapInKind(Number(capInKindToSet.toFixed(2)));
         }
       } catch (error) {
@@ -167,13 +168,12 @@ export default function RiskLevels() {
       {isLoading || !riskParameter || !LTV ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid container spacing={1} alignItems="baseline">
+        <Grid container spacing={1} alignItems="baseline" justifyContent='center'>
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={3} sm={1}>
+          <Grid item xs={8} sm={6} md={4} lg={1} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Pair: </Typography>
-          </Grid>
-          <Grid item xs={9} sm={2}>
             <Select
+              sx={{ width: '95%' }}
               labelId="pair-select"
               id="pair-select"
               value={`${selectedPair.base}/${selectedPair.quote}`}
@@ -187,11 +187,19 @@ export default function RiskLevels() {
               ))}
             </Select>
           </Grid>
-          <Grid item xs={3} sm={1}>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
+          <Grid item xs={8} sm={6} md={4} lg={1} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>LTV: </Typography>
-          </Grid>
-          <Grid item xs={9} sm={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
+              sx={{
+                width: '95%',
+                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                  display: 'none'
+                },
+                '& input[type=number]': {
+                  MozAppearance: 'textfield'
+                }
+              }}
               required
               id="ltv-input"
               type="number"
@@ -203,35 +211,36 @@ export default function RiskLevels() {
               }}
             />
           </Grid>
-          <Grid item xs={3} sm={2}>
+          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
+          <Grid item xs={8} sm={6} md={4} lg={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Cap: </Typography>
-          </Grid>
-          <Grid item xs={6} sm={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <TextField
+              sx={{
+                '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                  display: 'none'
+                },
+                '& input[type=number]': {
+                  MozAppearance: 'textfield'
+                }
+              }}
               required
               id="supply-cap-input"
               type="number"
-              label="In Kind"
+              label={selectedPair.base}
               value={capInKind}
               onChange={handleChangeCap}
-              InputProps={{
-                endAdornment: <InputAdornment position="end">{selectedPair.base}</InputAdornment>
-              }}
             />
             <Typography sx={{ ml: '10px' }}>${FriendlyFormatNumber(capUSD)}</Typography>
           </Grid>
-          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={12} lg={12}>
             <RiskLevelGraphs
               pair={selectedPair}
               parameters={riskParameter}
               LTV={LTV / 100}
               supplyCap={capInKind}
-
               platform={'all'}
             />
           </Grid>
-          <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
         </Grid>
       )}
 
