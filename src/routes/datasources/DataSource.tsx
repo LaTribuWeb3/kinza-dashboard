@@ -1,13 +1,23 @@
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
-import { Grid, LinearProgress, MenuItem, Select, SelectChangeEvent, Skeleton, Typography } from '@mui/material';
+import {
+  Grid,
+  LinearProgress,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Skeleton,
+  Typography,
+  FormControl,
+  InputLabel
+} from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { SLIPPAGES_BPS } from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
 import { sleep } from '../../utils/Utils';
+import { DATA_SOURCES, DATA_SOURCES_MAP } from '../../utils/Constants';
 
 function DataSourceSkeleton() {
   return (
@@ -33,12 +43,14 @@ export default function DataSource() {
   const [selectedPair, setSelectedPair] = useState<Pair>();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-
-  const pathName = useLocation().pathname;
-  const platform = pathName.split('/')[2];
+  const [platform, setPlatform] = useState('all');
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
+  };
+
+  const handleChangePlatform = (event: SelectChangeEvent) => {
+    setPlatform(event.target.value);
   };
 
   const handleChangeSlippage = (event: SelectChangeEvent) => {
@@ -99,6 +111,24 @@ export default function DataSource() {
       ) : (
         <Grid container spacing={1} alignItems="baseline">
           {/* First row: pairs select and slippage select */}
+          <Grid item xs={12} sm={12} display="flex" justifyContent="center">
+            <FormControl>
+              <InputLabel id="data-source-select-label">Data Source</InputLabel>
+              <Select
+                labelId="data-source-select-label"
+                id="data-source-select"
+                value={platform}
+                label="Data Source"
+                onChange={handleChangePlatform}
+              >
+                {DATA_SOURCES.map((source, index) => (
+                  <MenuItem key={index} value={DATA_SOURCES_MAP[source as keyof typeof DATA_SOURCES_MAP]}>
+                    {source}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
           <Grid item xs={6} sm={3}>
             <Typography textAlign={'right'}>Pair: </Typography>
           </Grid>

@@ -1,6 +1,5 @@
-import { Divider, List, ListItemButton, ListSubheader } from '@mui/material';
+import { Divider, List, ListItemButton } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { DATA_SOURCES, DATA_SOURCES_MAP } from '../utils/Constants';
 import { useEffect, useState } from 'react';
 
 export interface NavCategoriesProperties {
@@ -9,11 +8,13 @@ export interface NavCategoriesProperties {
 
 function findDefaultNavCategory(pathName: string) {
   if (pathName.includes('datasource')) {
-    return pathName.split('/')[2];
+    return 'datasource';
   } else if (pathName.includes('risklevels')) {
     return 'risklevels';
   } else if (pathName.includes('lastupdate')) {
     return 'lastUpdate';
+  } else if (pathName.includes('learn')) {
+    return 'learn';
   }
 
   return 'overview';
@@ -35,6 +36,7 @@ export function NavCategories(props: NavCategoriesProperties) {
 
   return (
     <List sx={{ mt: 7 }}>
+      <Divider sx={{ my: 1 }} />
       <ListItemButton
         key="overview"
         sx={{
@@ -63,30 +65,20 @@ export function NavCategories(props: NavCategoriesProperties) {
         Risk Levels
       </ListItemButton>
       <Divider sx={{ my: 1 }} />
-      <ListSubheader inset>Datasources</ListSubheader>
-      {DATA_SOURCES.map((_, index) => (
-        <ListItemButton
-          key={index}
-          sx={{
-            backgroundColor:
-              selectedButton == DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]
-                ? 'primary.main'
-                : 'background.default',
-            color:
-              selectedButton == DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]
-                ? 'primary.contrastText'
-                : 'primary.main',
-            '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
-          }}
-          component={RouterLink}
-          onClick={() => handleClick(DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP])}
-          to={`/datasource/${DATA_SOURCES_MAP[_ as keyof typeof DATA_SOURCES_MAP]}`}
-        >
-          {_}
-        </ListItemButton>
-      ))}
+      <ListItemButton
+        key="datasource"
+        sx={{
+          backgroundColor: selectedButton == 'datasource' ? 'primary.main' : 'background.default',
+          color: selectedButton == 'datasource' ? 'primary.contrastText' : 'primary.main',
+          '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
+        }}
+        component={RouterLink}
+        to="/datasource/all"
+        onClick={() => handleClick('datasource')}
+      >
+        Datasources
+      </ListItemButton>
       <Divider sx={{ my: 1 }} />
-      <ListSubheader inset>Utilities</ListSubheader>
 
       <ListItemButton
         key="lastUpdate"
@@ -100,6 +92,20 @@ export function NavCategories(props: NavCategoriesProperties) {
         onClick={() => handleClick('lastUpdate')}
       >
         Last Update
+      </ListItemButton>
+      <Divider sx={{ my: 1 }} />
+      <ListItemButton
+        key="learn"
+        sx={{
+          backgroundColor: selectedButton == 'learn' ? 'primary.main' : 'background.default',
+          color: selectedButton == 'learn' ? 'primary.contrastText' : 'primary.main',
+          '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' }
+        }}
+        component={RouterLink}
+        to="/learn"
+        onClick={() => handleClick('learn')}
+      >
+        Learn More
       </ListItemButton>
     </List>
   );
