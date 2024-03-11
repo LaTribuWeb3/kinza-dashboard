@@ -170,7 +170,7 @@ export default function RiskLevels() {
       ) : (
         <Grid container spacing={1} alignItems="baseline" justifyContent='center'>
           {/* First row: pairs select and slippage select */}
-          <Grid item xs={8} sm={6} md={4} lg={1} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={8} sm={6} md={4} lg={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Pair: </Typography>
             <Select
               sx={{ width: '95%' }}
@@ -188,7 +188,7 @@ export default function RiskLevels() {
             </Select>
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
-          <Grid item xs={8} sm={6} md={4} lg={1} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={8} sm={6} md={4} lg={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>LTV: </Typography>
             <TextField
               sx={{
@@ -212,7 +212,7 @@ export default function RiskLevels() {
             />
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
-          <Grid item xs={8} sm={6} md={4} lg={2} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Grid item xs={8} sm={6} md={4} lg={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Cap: </Typography>
             <TextField
               sx={{
