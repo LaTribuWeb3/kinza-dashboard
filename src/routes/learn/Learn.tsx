@@ -15,7 +15,7 @@ export default function Learn() {
             target="_blank"
             rel="noopener"
           >
-            SmartLTV formula
+             SmartLTV formula
           </Link>
           . Higher risk level values reflect a higher risk exposure which results from changes in market conditions
           without adjustments of LTV ratios of the market.
