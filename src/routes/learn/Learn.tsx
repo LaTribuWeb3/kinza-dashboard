@@ -1,4 +1,4 @@
-import { Box, Grid, LinearProgress, Link, Paper, Skeleton, Typography } from '@mui/material';
+import { Box, Divider, Grid, LinearProgress, Link, Paper, Skeleton, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
@@ -41,7 +41,7 @@ export function Learn() {
           without adjustments of LTV ratios of the market.
         </Typography>
 
-        <Grid container justifyContent="center">
+        <Grid container justifyContent="center" sx={{ fontSize: '24px' }}>
           <MathJax>
             {
               '\\( r = \\frac{\\sigma \\cdot \\sqrt{d}}{\\ln \\left( \\frac{1}{LTV + \\beta} \\right) \\cdot \\sqrt{l}} \\)'
@@ -56,7 +56,7 @@ export function Learn() {
           <br /> d - Debt cap of the borrowable asset.
           <br /> LTV - Loan to Value ratio.
         </Typography>
-
+        <Divider sx={{ my: 2 }} />
         <Typography variant="h6" gutterBottom>
           Read more
         </Typography>
