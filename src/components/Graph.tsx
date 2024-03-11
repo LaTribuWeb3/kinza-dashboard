@@ -9,11 +9,13 @@ export interface GraphProperties {
   leftYAxis: {
     min?: number;
     max?: number;
+    label?: string;
     formatter: ((value: any) => string) | undefined;
   };
   rightYAxis?: {
     min?: number;
     max?: number;
+    label?: string;
     formatter: ((value: any) => string) | undefined;
   };
   leftAxisSeries: {
@@ -50,6 +52,7 @@ export default function Graph(props: GraphProperties) {
       id: 'leftAxisId',
       min: props.leftYAxis.min,
       max: props.leftYAxis.max,
+      label: props.leftYAxis.label,
       valueFormatter: props.leftYAxis.formatter
     }
   ];
@@ -59,6 +62,7 @@ export default function Graph(props: GraphProperties) {
       id: 'rightAxisId',
       min: props.rightYAxis.min,
       max: props.rightYAxis.max,
+      label: props.rightYAxis.label,
       valueFormatter: props.rightYAxis.formatter
     });
   }

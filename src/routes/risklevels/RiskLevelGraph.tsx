@@ -170,7 +170,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               title={`${props.pair.base}/${props.pair.quote} Risk Levels`}
               xAxisData={graphData.map((_) => _.timestamp)}
               xAxisLabel="Date"
-              leftYAxis={{ formatter: FriendlyFormatNumber }}
+              leftYAxis={{ formatter: FriendlyFormatNumber, label: 'Risk Level'}}
               leftAxisSeries={[
                 {
                   label: 'Risk Level',
@@ -186,7 +186,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               title={`${props.pair.base}/${props.pair.quote} Liquidity & Volatility`}
               xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
               xAxisLabel="Date"
-              leftYAxis={{ min: 0, formatter: FriendlyFormatNumber }}
+              leftYAxis={{ min: 0, formatter: FriendlyFormatNumber, label:'Liquidity' }}
               leftAxisSeries={[
                 {
                   label: `${props.pair.base} liquidity for ${slippageBps / 100}% slippage`,
@@ -200,7 +200,8 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
                   10 / 100,
                   Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1
                 ),
-                formatter: PercentageFormatter
+                formatter: PercentageFormatter,
+                label: 'volatility'
               }}
               rightAxisSeries={[
                 {
