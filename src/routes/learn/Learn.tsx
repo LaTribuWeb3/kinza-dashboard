@@ -9,7 +9,7 @@ export default function Learn() {
           Risk Levels
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Risk Levels compare lending markets’ economic risk levels (r) over time as calculated by the 
+          Risk Levels compare lending markets’ economic risk levels (r) over time as calculated by the &nbsp;
           <Link
             href="https://github.com/Risk-DAO/Reports/blob/main/a-smart-contract-ltv-formula.pdf"
             target="_blank"
