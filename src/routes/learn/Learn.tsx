@@ -1,27 +1,7 @@
-import { Box, Divider, Grid, LinearProgress, Link, Paper, Skeleton, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import DataService from '../../services/DataService';
-import { SimpleAlert } from '../../components/SimpleAlert';
-import { DATA_SOURCES } from '../../utils/Constants';
-import { LastUpdateData } from '../../models/LastUpdateData';
-import { LastUpdateCard } from '../../components/LastUpdateCard';
+import { Box, Divider, Grid, Link, Paper, Typography } from '@mui/material';
 import { MathJax } from 'better-react-mathjax';
 
-function LastUpdateSkeleton() {
-  const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
-  return (
-    <Grid container spacing={1}>
-      <LinearProgress color="secondary" sx={{ position: 'absolute', bottom: 5, left: 0, width: '100vw' }} />
-      {Array.from({ length: nbSkeletons }).map((_, i) => (
-        <Grid key={i} item xs={12} md={6}>
-          <Skeleton height={175} variant="rectangular" />
-        </Grid>
-      ))}
-    </Grid>
-  );
-}
-
-export function Learn() {
+export default function Learn() {
   return (
     <Box sx={{ flexGrow: 1, overflow: 'hidden', padding: 2 }}>
       <Paper elevation={5} sx={{ padding: 3 }}>
