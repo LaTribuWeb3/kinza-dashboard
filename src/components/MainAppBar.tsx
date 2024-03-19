@@ -48,7 +48,7 @@ export function MainAppBar(props: MainAppBarProperties) {
         <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
           <Avatar alt='Kinza logo' src='/kinza-logo.png' sx={{ width: 56, height: 56, padding: 0.25 }} />
           <Typography component="h1" variant="h6" color="inherit" noWrap>
-            Kinza Dashboard
+          Kinza SmartLTV Monitor
           </Typography>
         </Box>
       </Toolbar>
