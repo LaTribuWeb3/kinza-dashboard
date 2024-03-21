@@ -44,13 +44,45 @@ export function MainAppBar(props: MainAppBarProperties) {
         >
           <MenuIcon />
         </IconButton>
-          <Avatar variant='rounded' alt='b protocol logo' src='/favicon.svg' sx={{ width: 56, height: 45, padding: 0.5 }} />
-        <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-          <Avatar alt='Kinza logo' src='/kinza-logo.png' sx={{ width: 56, height: 56, padding: 0.25 }} />
-          <Typography component="h1" variant="h6" color="inherit" noWrap>
-          Kinza SmartLTV Monitor
+        <Avatar
+          variant="rounded"
+          alt="b protocol logo"
+          src="/favicon.svg"
+          sx={{ width: { xs: 40, md: 56 }, height: { xs: 30, md: 45 }, padding: 0.25, mr: 0.25 }}
+        />
+        <Box
+          sx={{
+            height: '100%',
+            width: '95%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1
+          }}
+        >
+          <Avatar
+            alt="Kinza logo"
+            src="/kinza-logo.png"
+            sx={{ display: { xs: 'none', sm: 'flex' }, width: 45, height: 45, padding: 0.25 }}
+          />
+          <Typography
+            sx={{ display: { xs: 'none', sm: 'flex' } }}
+            variant="h6"
+            color="inherit"
+            textAlign="center"
+            noWrap
+          >
+            Kinza SmartLTV Monitor
+          </Typography>
+          <Typography sx={{ display: { xs: 'flex', sm: 'none' } }} color="inherit" textAlign="center" noWrap>
+            Kinza SmartLTV Monitor
           </Typography>
         </Box>
+        <Avatar
+          alt="Kinza logo"
+          src="/kinza-logo.png"
+          sx={{ display: { xs: 'flex', sm: 'none' }, width: 35, height: 35 }}
+        />
       </Toolbar>
     </AppBar>
   );
