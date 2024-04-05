@@ -29,7 +29,6 @@ export default function RiskLevels() {
     setOpenAlert(false);
   };
   const handleChangePair = (event: SelectChangeEvent) => {
-    console.log(`handleChangePair: ${event.target.value}`);
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
     setSelectedPair({ base: base, quote: quote });
@@ -43,6 +42,7 @@ export default function RiskLevels() {
       setCapUSD(Number(event.target.value) * tokenPrice);
     }
   };
+
   const handleChangeLTV = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {
       const newLTV = Number(event.target.value);
@@ -94,14 +94,16 @@ export default function RiskLevels() {
         const pairSet = navPair ? navPair : data[0];
         setRiskParameter(kinzaRiskParameters[pairSet.base][pairSet.quote]);
         setLTV(kinzaRiskParameters[pairSet.base][pairSet.quote].ltv * 100);
-        const capUSDToSet = Math.min(
-          kinzaRiskParameters[pairSet.base][pairSet.quote].supplyCapInUSD,
-          kinzaRiskParameters[pairSet.base][pairSet.quote].borrowCapInUSD
+        const capUSDToSet = Math.max(
+          1,
+          Math.min(
+            kinzaRiskParameters[pairSet.base][pairSet.quote].supplyCapInUSD,
+            kinzaRiskParameters[pairSet.base][pairSet.quote].borrowCapInUSD
+          )
         );
         setCapUSD(capUSDToSet);
         const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
         setCapInKind(capInKindToSet);
-
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -133,9 +135,12 @@ export default function RiskLevels() {
         const tokenPrice = data.liquidity[maxBlock].priceMedian;
 
         if (selectedPair && capInKind && tokenPrice && parameters) {
-          const capUSDToSet = Math.min(
-            parameters[selectedPair.base][selectedPair.quote].supplyCapInUSD,
-            parameters[selectedPair.base][selectedPair.quote].borrowCapInUSD
+          const capUSDToSet = Math.max(
+            1,
+            Math.min(
+              parameters[selectedPair.base][selectedPair.quote].supplyCapInUSD,
+              parameters[selectedPair.base][selectedPair.quote].borrowCapInUSD
+            )
           );
           setCapUSD(capUSDToSet);
 
@@ -160,7 +165,7 @@ export default function RiskLevels() {
       .catch(console.error);
   }, [selectedPair]);
 
-  if (!selectedPair || !tokenPrice || !capInKind) {
+  if (!selectedPair || !tokenPrice || capInKind == undefined) {
     return <RiskLevelGraphsSkeleton />;
   }
   return (
@@ -168,7 +173,7 @@ export default function RiskLevels() {
       {isLoading || !riskParameter || !LTV ? (
         <RiskLevelGraphsSkeleton />
       ) : (
-        <Grid container spacing={1} alignItems="baseline" justifyContent='center'>
+        <Grid container spacing={1} alignItems="baseline" justifyContent="center">
           {/* First row: pairs select and slippage select */}
           <Grid item xs={8} sm={6} md={4} lg={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Typography textAlign={'right'}>Pair: </Typography>
