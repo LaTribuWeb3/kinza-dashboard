@@ -83,7 +83,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
           };
           if (props.parameters.visible) {
             const liquidationBonus = props.parameters.bonus * 10000;
-            const liquidity = timestampData.avgSlippageMap[liquidationBonus].base;
+            const liquidity = timestampData.avgSlippageMap[liquidationBonus];
             if (liquidity > 0) {
               const ltv = props.LTV;
               const cap = props.supplyCap == 0 ? 1 : props.supplyCap;
@@ -166,7 +166,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               leftAxisSeries={[
                 {
                   label: `${props.pair.base} liquidity for ${slippageBps / 100}% slippage`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[slippageBps].base),
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[slippageBps]),
                   formatter: FriendlyFormatNumber
                 }
               ]}
