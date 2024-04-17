@@ -1,6 +1,7 @@
-import { Divider, List, ListItemButton } from '@mui/material';
+import { Divider, FormControl, InputLabel, List, ListItemButton, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../routes/App';
 
 export interface NavCategoriesProperties {
   toggleDrawerFct: () => void;
@@ -23,6 +24,7 @@ function findDefaultNavCategory(pathName: string) {
 export function NavCategories(props: NavCategoriesProperties) {
   const pathName = useLocation().pathname;
   const [selectedButton, setSelectedButton] = useState<string>(findDefaultNavCategory(pathName));
+  const { appProperties, setAppProperties } = useContext(AppContext);
 
   useEffect(() => {
     setSelectedButton(findDefaultNavCategory(pathName));
@@ -33,8 +35,26 @@ export function NavCategories(props: NavCategoriesProperties) {
     props.toggleDrawerFct();
   }
 
+  function handleSelectChain(event: SelectChangeEvent) {
+    setAppProperties({ ...appProperties, chain: event.target.value });
+  }
+
   return (
     <List sx={{ mt: 7 }}>
+      <FormControl sx={{mt: 5, width:0.9, ml:1}} >
+  <InputLabel id="Chain">Chain</InputLabel>
+  <Select
+    labelId="Chain"
+    id="Chain"
+    value={appProperties.chain}
+    defaultValue={appProperties.chain}
+    label="Chain"
+    onChange={handleSelectChain}
+  >
+    <MenuItem value={'bsc'}>BSC</MenuItem>
+    <MenuItem value={'ethereum'}>Ethereum</MenuItem>
+  </Select>
+</FormControl>
       <Divider sx={{ my: 1 }} />
       <ListItemButton
         key="overview"

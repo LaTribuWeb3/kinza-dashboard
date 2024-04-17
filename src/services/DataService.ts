@@ -4,9 +4,11 @@ import { LastUpdateData } from '../models/LastUpdateData';
 import SimpleCacheService from './CacheService';
 import { OverviewData } from '../models/OverviewData';
 
-const apiUrl: string = import.meta.env.VITE_API_URL as string;
+const bscAPIUrl: string = import.meta.env.VITE_BSC_API_URL as string;
+const mainnetAPIUrl: string = import.meta.env.VITE_MAINNET_API_URL as string;
 export default class DataService {
-  static async GetLastUpdate(): Promise<LastUpdateData[]> {
+  static async GetLastUpdate(chain:string): Promise<LastUpdateData[]> {
+    const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
     const lastUpdateData = await SimpleCacheService.GetAndCache(
       'GetLastUpdate',
       async () => {
@@ -33,7 +35,8 @@ export default class DataService {
     return lastUpdateData;
   }
 
-  static async GetOverview(): Promise<OverviewData> {
+  static async GetOverview(chain:string): Promise<OverviewData> {
+    const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
     const overviewData = await SimpleCacheService.GetAndCache(
       'GetOverview',
       async () => {
@@ -60,7 +63,8 @@ export default class DataService {
     return overviewData;
   }
 
-  static async GetAvailablePairs(platform: string): Promise<Pair[]> {
+  static async GetAvailablePairs(platform: string, chain:string): Promise<Pair[]> {
+    const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
     console.log(`getting available pairs for ${platform}`);
     const pairLoadingFunction = async () => {
       // await sleep(500); // add sleep to simulate waiting
@@ -89,7 +93,8 @@ export default class DataService {
     return availablePairs;
   }
 
-  static async GetLiquidityData(platform: string, base: string, quote: string): Promise<LiquidityData> {
+  static async GetLiquidityData(platform: string, base: string, quote: string, chain:string): Promise<LiquidityData> {
+    const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
     console.log(`getting liquidity data for for ${platform} ${base} ${quote}`);
 
     const liquidityDataLoadingFunction = async () => {

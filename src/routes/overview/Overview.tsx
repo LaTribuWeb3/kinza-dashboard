@@ -1,10 +1,11 @@
 import { Grid, LinearProgress, Skeleton } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { DATA_SOURCES } from '../../utils/Constants';
 import { OverviewData } from '../../models/OverviewData';
 import { OverviewTable } from '../../components/OverviewTable';
+import { AppContext } from '../App';
 
 function OverviewSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
@@ -25,6 +26,8 @@ export function Overview() {
   const [overviewData, setOverviewData] = useState<OverviewData>({});
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
+  const {appProperties} = useContext(AppContext);
+  const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -35,7 +38,7 @@ export function Overview() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const overviewData = await DataService.GetOverview();
+        const overviewData = await DataService.GetOverview(chain);
         const entries = Object.entries(overviewData);
         entries.sort((a, b) => b[1].riskLevel - a[1].riskLevel);
         const sortedOverviewData: OverviewData = entries.reduce((acc, [symbol, data]) => {

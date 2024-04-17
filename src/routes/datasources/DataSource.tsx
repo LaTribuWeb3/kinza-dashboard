@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
 import {
@@ -18,6 +18,7 @@ import { SLIPPAGES_BPS } from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
 import { sleep } from '../../utils/Utils';
 import { DATA_SOURCES, DATA_SOURCES_MAP } from '../../utils/Constants';
+import { AppContext } from '../App';
 
 function DataSourceSkeleton() {
   return (
@@ -44,6 +45,9 @@ export default function DataSource() {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [platform, setPlatform] = useState('all');
+  const { appProperties, setAppProperties } = useContext(AppContext);
+  const chain = appProperties.chain;
+
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -51,15 +55,18 @@ export default function DataSource() {
 
   const handleChangePlatform = (event: SelectChangeEvent) => {
     setPlatform(event.target.value);
+    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, platform: event.target.value }});
   };
 
   const handleChangeSlippage = (event: SelectChangeEvent) => {
     setSelectedSlippage(Number(event.target.value));
+    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, slippage: Number(event.target.value) }});
   };
 
   const handleChangePair = (event: SelectChangeEvent) => {
     console.log(`handleChangePair: ${event.target.value}`);
     setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
+    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] } }});
   };
 
   useEffect(() => {
@@ -67,12 +74,17 @@ export default function DataSource() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const data = await DataService.GetAvailablePairs(platform);
+        const data = await DataService.GetAvailablePairs(platform, chain);
         setAvailablePairs(data);
 
         const oldPair = selectedPair;
 
-        if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
+        if (appProperties.dataSources.pair.base && appProperties.dataSources.pair.quote && data.some((_) => _.base == appProperties.dataSources.pair.base && _.quote == appProperties.dataSources.pair.quote)) {
+          setSelectedPair(appProperties.dataSources.pair);
+          setSelectedSlippage(appProperties.dataSources.slippage);
+          setPlatform(appProperties.dataSources.platform);
+        }
+        else if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
           setSelectedPair(oldPair);
         } else {
           setSelectedPair(data[0]);

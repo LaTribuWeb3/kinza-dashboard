@@ -1,10 +1,11 @@
 import { Grid, LinearProgress, Skeleton } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { DATA_SOURCES } from '../../utils/Constants';
 import { LastUpdateData } from '../../models/LastUpdateData';
 import { LastUpdateCard, } from '../../components/LastUpdateCard';
+import { AppContext } from '../App';
 
 function LastUpdateSkeleton() {
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
@@ -25,6 +26,8 @@ export function LastUpdate() {
   const [lastUpdateData, setLastUpdateData] = useState<LastUpdateData[]>([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
+  const {appProperties} = useContext(AppContext);
+  const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -35,7 +38,7 @@ export function LastUpdate() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const lastUpdateData = await DataService.GetLastUpdate();
+        const lastUpdateData = await DataService.GetLastUpdate(chain);
 
         setLastUpdateData(lastUpdateData);
         setIsLoading(false);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography, useMediaQuery } from '@mui/material';
@@ -6,6 +6,7 @@ import { SimpleAlert } from '../../components/SimpleAlert';
 import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
 import Graph from '../../components/Graph';
+import { AppContext } from '../App';
 export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
@@ -56,6 +57,8 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [alertMsg, setAlertMsg] = useState('');
   const [graphData, setGraphData] = useState<GraphDataAtTimestamp[]>([]);
   const screenBigEnough = useMediaQuery('(min-width:600px)');
+  const {appProperties} = useContext(AppContext);
+  const chain = appProperties.chain;
 
   const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
   const handleCloseAlert = () => {
@@ -66,7 +69,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     setIsLoading(true);
     async function fetchAndComputeDataForGraph() {
       try {
-        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
+        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
         const graphData: GraphDataAtTimestamp[] = [];
         let i = 0;
         for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {

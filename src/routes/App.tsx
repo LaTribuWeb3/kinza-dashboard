@@ -1,15 +1,60 @@
 import { Box } from '@mui/material';
-import React from 'react';
+import React, { createContext } from 'react';
 import { ResponsiveNavBar } from '../components/ResponsiveNavBar';
 import { MainAppBar } from '../components/MainAppBar';
 import { Outlet } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { Overview } from './overview/Overview';
+import { AppContextProperties, appContextType } from '../models/AppContext';
 
 const drawerWidth = 240;
+const initialContext: appContextType = {
+  appProperties: {
+    chain: 'bsc',
+    riskParameter: {
+      pair: { base: '', quote: '' },
+      ltv: 0,
+      bonus: 0,
+      visible: true,
+      supplyCapInUSD: 0,
+      borrowCapInUSD: 0,
+      basePrice: 0
+    },
+    dataSources: {
+      current: false,
+      pair: { base: '', quote: '' },
+      platform: 'all',
+      slippage: 0
+    }
+  },
+  setAppProperties: () => {}
+};
+export const AppContext = createContext<appContextType>(initialContext);
 
 function App() {
   const [openDrawer, setOpenDrawer] = React.useState(false);
+  const [appProperties, setAppProperties] = React.useState<AppContextProperties>(
+    {
+      chain: 'bsc',
+      riskParameter: {
+        pair: { base: '', quote: '' },
+        ltv: 0,
+        bonus: 0,
+        visible: true,
+        supplyCapInUSD: 0,
+        borrowCapInUSD: 0,
+        basePrice: 0
+      },
+      dataSources: {
+        current: false,
+        pair: { base: '', quote: '' },
+        platform: 'all',
+        slippage: 0
+      }
+    }    
+  );
+
+  console.log('appProperties:', appProperties)
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
@@ -19,25 +64,27 @@ function App() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <MainAppBar toggleDrawerFct={toggleDrawer} />
-      <ResponsiveNavBar drawerWidth={drawerWidth} open={openDrawer} toggleDrawerFct={toggleDrawer} />
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-          flexGrow: 1,
-          height: '100vh',
-          width: '100vw',
-          overflow: 'auto',
-          direction: 'row'
-        }}
-      >
-        <Box sx={{ mt: 8, ml: 1.5 }}>
-          {pathName == '/' && <Overview />}
-          <Outlet />
+      <AppContext.Provider value={{ appProperties, setAppProperties }}>
+        <MainAppBar toggleDrawerFct={toggleDrawer} />
+        <ResponsiveNavBar drawerWidth={drawerWidth} open={openDrawer} toggleDrawerFct={toggleDrawer} />
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+            flexGrow: 1,
+            height: '100vh',
+            width: '100vw',
+            overflow: 'auto',
+            direction: 'row'
+          }}
+        >
+          <Box sx={{ mt: 8, ml: 1.5 }}>
+            {pathName == '/' && <Overview />}
+            <Outlet />
+          </Box>
         </Box>
-      </Box>
+      </AppContext.Provider>
     </Box>
   );
 }
