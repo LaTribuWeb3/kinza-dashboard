@@ -7,10 +7,10 @@ import { OverviewData } from '../models/OverviewData';
 const bscAPIUrl: string = import.meta.env.VITE_BSC_API_URL as string;
 const mainnetAPIUrl: string = import.meta.env.VITE_MAINNET_API_URL as string;
 export default class DataService {
-  static async GetLastUpdate(chain:string): Promise<LastUpdateData[]> {
+  static async GetLastUpdate(chain: string): Promise<LastUpdateData[]> {
     const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
     const lastUpdateData = await SimpleCacheService.GetAndCache(
-      'GetLastUpdate',
+      `GetLastUpdate-${chain}`,
       async () => {
         // await sleep(500); // add sleep to simulate waiting
         const fullUrl = apiUrl + `/api/dashboard/overview`;
@@ -35,10 +35,10 @@ export default class DataService {
     return lastUpdateData;
   }
 
-  static async GetOverview(chain:string): Promise<OverviewData> {
+  static async GetOverview(chain: string): Promise<OverviewData> {
     const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
     const overviewData = await SimpleCacheService.GetAndCache(
-      'GetOverview',
+      `GetOverview-${chain}`,
       async () => {
         // await sleep(500); // add sleep to simulate waiting
         const fullUrl = apiUrl + `/api/dashboard/kinza-overview`;
@@ -63,9 +63,9 @@ export default class DataService {
     return overviewData;
   }
 
-  static async GetAvailablePairs(platform: string, chain:string): Promise<Pair[]> {
+  static async GetAvailablePairs(platform: string, chain: string): Promise<Pair[]> {
     const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
-    console.log(`getting available pairs for ${platform}`);
+    console.log(`getting available pairs for ${platform} on ${chain} chain`);
     const pairLoadingFunction = async () => {
       // await sleep(500); // add sleep to simulate waiting
       const fullUrl = apiUrl + `/api/dashboard/available/${platform}`;
@@ -85,7 +85,7 @@ export default class DataService {
     };
 
     const availablePairs = await SimpleCacheService.GetAndCache(
-      `GetAvailablePairs-${platform}`,
+      `GetAvailablePairs-${platform}-${chain}`,
       pairLoadingFunction,
       600 * 1000
     );
@@ -93,9 +93,9 @@ export default class DataService {
     return availablePairs;
   }
 
-  static async GetLiquidityData(platform: string, base: string, quote: string, chain:string): Promise<LiquidityData> {
+  static async GetLiquidityData(platform: string, base: string, quote: string, chain: string): Promise<LiquidityData> {
     const apiUrl = chain === 'bsc' ? bscAPIUrl : mainnetAPIUrl;
-    console.log(`getting liquidity data for for ${platform} ${base} ${quote}`);
+    console.log(`getting liquidity data for for ${platform} ${base} ${quote} on ${chain} chain`);
 
     const liquidityDataLoadingFunction = async () => {
       // await sleep(1000); // add sleep to simulate waiting
@@ -119,7 +119,7 @@ export default class DataService {
     };
 
     const liquidityData = await SimpleCacheService.GetAndCache(
-      `GetLiquidityData-${platform}-${base}-${quote}`,
+      `GetLiquidityData-${platform}-${base}-${quote}-${chain}`,
       liquidityDataLoadingFunction,
       600 * 1000
     );

@@ -30,7 +30,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [showVolatility, setShowVolatility] = useState(true);
-  const {appProperties} = useContext(AppContext);
+  const { appProperties } = useContext(AppContext);
   const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
@@ -39,13 +39,12 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
 
   useEffect(() => {
     setIsLoading(true);
-    // Define an asynchronous function
     async function fetchDataForPair() {
       try {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
 
         setLiquidityData(data);
-        if(Object.values(data.liquidity).some(_ => _.volatility == -1)) {
+        if (Object.values(data.liquidity).some((_) => _.volatility == -1)) {
           setShowVolatility(false);
         } else {
           setShowVolatility(true);
@@ -63,19 +62,17 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
       }
     }
 
-    // Call the asynchronous function
     fetchDataForPair()
       .then(() => setIsLoading(false))
       .catch(console.error);
 
-    // You can also return a cleanup function from useEffect if needed
     return () => {
       // Perform cleanup if necessary
     };
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote]);
+  }, [props.pair.base, props.pair.quote, chain]);
 
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
@@ -113,59 +110,61 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
             />
           </Grid>
 
-
-          {showVolatility ? 
-          <Grid item xs={12} lg={6}>
-            <Graph
-              title={`${props.pair.base}/${props.pair.quote} price and volatility`}
-              xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
-              xAxisLabel="Date"
-              leftYAxis={{
-                max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.priceMax)) * 1.1,
-                min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.priceMin)) * 0.9,
-                formatter: FriendlyFormatNumber,
-                label: 'price'
-              }}
-              rightYAxis={{
-                min: 0,
-                max: Math.max(
-                  10 / 100,
-                  Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1
-                ),
-                formatter: PercentageFormatter,
-                label: 'volatility'
-              }}
-              leftAxisSeries={[
-                {
-                  label: `price median (1d)`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.priceMedian),
-                  formatter: FriendlyFormatNumber
-                },
-                {
-                  label: `price min (1d)`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.priceMin),
-                  formatter: FriendlyFormatNumber
-                },
-                {
-                  label: `price max (1d)`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.priceMax),
-                  formatter: FriendlyFormatNumber
-                }
-              ]}
-              rightAxisSeries={[
-                {
-                  label: 'volatility',
-                  data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
-                  formatter: PercentageFormatter
-                }
-              ]}
-            />
-          </Grid>
-          : <Grid item xs={12} lg={6}>
-             <Box sx={{textAlign: 'center', mt: 10}}>No volatility data to show.</Box>
-             <Box sx={{textAlign: 'center'}}>Liquidity is computed using aggregated routes, no direct route to compute price related data</Box>
+          {showVolatility ? (
+            <Grid item xs={12} lg={6}>
+              <Graph
+                title={`${props.pair.base}/${props.pair.quote} price and volatility`}
+                xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
+                xAxisLabel="Date"
+                leftYAxis={{
+                  max: Math.max(...Object.values(liquidityData.liquidity).map((_) => _.priceMax)) * 1.1,
+                  min: Math.min(...Object.values(liquidityData.liquidity).map((_) => _.priceMin)) * 0.9,
+                  formatter: FriendlyFormatNumber,
+                  label: 'price'
+                }}
+                rightYAxis={{
+                  min: 0,
+                  max: Math.max(
+                    10 / 100,
+                    Math.max(...Object.values(liquidityData.liquidity).map((_) => _.volatility)) * 1.1
+                  ),
+                  formatter: PercentageFormatter,
+                  label: 'volatility'
+                }}
+                leftAxisSeries={[
+                  {
+                    label: `price median (1d)`,
+                    data: Object.values(liquidityData.liquidity).map((_) => _.priceMedian),
+                    formatter: FriendlyFormatNumber
+                  },
+                  {
+                    label: `price min (1d)`,
+                    data: Object.values(liquidityData.liquidity).map((_) => _.priceMin),
+                    formatter: FriendlyFormatNumber
+                  },
+                  {
+                    label: `price max (1d)`,
+                    data: Object.values(liquidityData.liquidity).map((_) => _.priceMax),
+                    formatter: FriendlyFormatNumber
+                  }
+                ]}
+                rightAxisSeries={[
+                  {
+                    label: 'volatility',
+                    data: Object.values(liquidityData.liquidity).map((_) => _.volatility),
+                    formatter: PercentageFormatter
+                  }
+                ]}
+              />
             </Grid>
-            }
+          ) : (
+            <Grid item xs={12} lg={6}>
+              <Box sx={{ textAlign: 'center', mt: 10 }}>No volatility data to show.</Box>
+              <Box sx={{ textAlign: 'center' }}>
+                Liquidity is computed using aggregated routes, no direct route to compute price related data
+              </Box>
+            </Grid>
+          )}
         </Grid>
       )}
 

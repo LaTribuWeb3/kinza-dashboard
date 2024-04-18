@@ -14,10 +14,15 @@ import {
   InputLabel
 } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { SLIPPAGES_BPS } from '../../utils/Constants';
+import {
+  BSC_DATA_SOURCES,
+  BSC_DATA_SOURCES_MAP,
+  ETH_DATA_SOURCES,
+  ETH_DATA_SOURCES_MAP,
+  SLIPPAGES_BPS
+} from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
 import { sleep } from '../../utils/Utils';
-import { DATA_SOURCES, DATA_SOURCES_MAP } from '../../utils/Constants';
 import { AppContext } from '../App';
 
 function DataSourceSkeleton() {
@@ -47,7 +52,8 @@ export default function DataSource() {
   const [platform, setPlatform] = useState('all');
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
-
+  const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
+  const DATA_SOURCES_MAP = chain === 'bsc' ? BSC_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -55,36 +61,60 @@ export default function DataSource() {
 
   const handleChangePlatform = (event: SelectChangeEvent) => {
     setPlatform(event.target.value);
-    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, platform: event.target.value }});
+    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, platform: event.target.value } });
   };
 
   const handleChangeSlippage = (event: SelectChangeEvent) => {
     setSelectedSlippage(Number(event.target.value));
-    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, slippage: Number(event.target.value) }});
+    setAppProperties({
+      ...appProperties,
+      dataSources: { ...appProperties.dataSources, slippage: Number(event.target.value) }
+    });
   };
 
   const handleChangePair = (event: SelectChangeEvent) => {
     console.log(`handleChangePair: ${event.target.value}`);
     setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
-    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] } }});
+    setAppProperties({
+      ...appProperties,
+      dataSources: {
+        ...appProperties.dataSources,
+        pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] }
+      }
+    });
   };
+
+  useEffect(() => {
+    setPlatform('all');
+  }, [DATA_SOURCES, chain]);
 
   useEffect(() => {
     setIsLoading(true);
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const data = await DataService.GetAvailablePairs(platform, chain);
-        setAvailablePairs(data);
+        const overviewData = await DataService.GetOverview(chain);
+        const data = [];
+        for (const symbol of Object.keys(overviewData)) {
+          for (const subMarket of overviewData[symbol].subMarkets) {
+            data.push({ base: symbol, quote: subMarket.quote });
+          }
+        }
+        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
         const oldPair = selectedPair;
 
-        if (appProperties.dataSources.pair.base && appProperties.dataSources.pair.quote && data.some((_) => _.base == appProperties.dataSources.pair.base && _.quote == appProperties.dataSources.pair.quote)) {
+        if (
+          appProperties.dataSources.pair.base &&
+          appProperties.dataSources.pair.quote &&
+          data.some(
+            (_) => _.base == appProperties.dataSources.pair.base && _.quote == appProperties.dataSources.pair.quote
+          )
+        ) {
           setSelectedPair(appProperties.dataSources.pair);
           setSelectedSlippage(appProperties.dataSources.slippage);
           setPlatform(appProperties.dataSources.platform);
-        }
-        else if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
+        } else if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
           setSelectedPair(oldPair);
         } else {
           setSelectedPair(data[0]);
@@ -92,7 +122,6 @@ export default function DataSource() {
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`Error fetching data: ${error.toString()}`);
@@ -111,7 +140,7 @@ export default function DataSource() {
     return () => {
       // Perform cleanup if necessary
     };
-  }, [platform]);
+  }, [platform, chain, selectedPair]);
 
   if (!selectedPair) {
     return <DataSourceSkeleton />;

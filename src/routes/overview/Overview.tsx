@@ -2,12 +2,17 @@ import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { DATA_SOURCES } from '../../utils/Constants';
+import { BSC_DATA_SOURCES, ETH_DATA_SOURCES } from '../../utils/Constants';
 import { OverviewData } from '../../models/OverviewData';
 import { OverviewTable } from '../../components/OverviewTable';
 import { AppContext } from '../App';
 
-function OverviewSkeleton() {
+interface skeletonProps {
+  chain: string;
+}
+
+function OverviewSkeleton(props: skeletonProps) {
+  const DATA_SOURCES = props.chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
@@ -26,7 +31,7 @@ export function Overview() {
   const [overviewData, setOverviewData] = useState<OverviewData>({});
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const {appProperties} = useContext(AppContext);
+  const { appProperties } = useContext(AppContext);
   const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
@@ -35,7 +40,6 @@ export function Overview() {
 
   useEffect(() => {
     setIsLoading(true);
-    // Define an asynchronous function
     async function fetchData() {
       try {
         const overviewData = await DataService.GetOverview(chain);
@@ -44,7 +48,7 @@ export function Overview() {
         const sortedOverviewData: OverviewData = entries.reduce((acc, [symbol, data]) => {
           acc[symbol] = data;
           return acc;
-      }, {} as OverviewData);
+        }, {} as OverviewData);
 
         setOverviewData(sortedOverviewData);
         setIsLoading(false);
@@ -60,21 +64,16 @@ export function Overview() {
       }
     }
 
-    // Call the asynchronous function
     fetchData().catch(console.error);
 
-    // You can also return a cleanup function from useEffect if needed
     return () => {
       // Perform cleanup if necessary
     };
-  }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
+  }, [chain]);
 
   return (
     <Grid sx={{ mt: 10 }} container spacing={2}>
-      {isLoading ? <OverviewSkeleton /> 
-      : 
-      <OverviewTable data={overviewData} />
-      }
+      {isLoading ? <OverviewSkeleton chain={chain} /> : <OverviewTable data={overviewData} />}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>

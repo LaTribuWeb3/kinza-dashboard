@@ -2,12 +2,17 @@ import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { DATA_SOURCES } from '../../utils/Constants';
+import { BSC_DATA_SOURCES, ETH_DATA_SOURCES } from '../../utils/Constants';
 import { LastUpdateData } from '../../models/LastUpdateData';
-import { LastUpdateCard, } from '../../components/LastUpdateCard';
+import { LastUpdateCard } from '../../components/LastUpdateCard';
 import { AppContext } from '../App';
 
-function LastUpdateSkeleton() {
+interface skeletonProps {
+  chain: string;
+}
+
+function LastUpdateSkeleton(props: skeletonProps) {
+  const DATA_SOURCES = props.chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
@@ -26,7 +31,7 @@ export function LastUpdate() {
   const [lastUpdateData, setLastUpdateData] = useState<LastUpdateData[]>([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const {appProperties} = useContext(AppContext);
+  const { appProperties } = useContext(AppContext);
   const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
@@ -35,7 +40,6 @@ export function LastUpdate() {
 
   useEffect(() => {
     setIsLoading(true);
-    // Define an asynchronous function
     async function fetchData() {
       try {
         const lastUpdateData = await DataService.GetLastUpdate(chain);
@@ -54,17 +58,15 @@ export function LastUpdate() {
       }
     }
 
-    // Call the asynchronous function
     fetchData().catch(console.error);
 
-    // You can also return a cleanup function from useEffect if needed
     return () => {
       // Perform cleanup if necessary
     };
-  }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
+  }, [chain]);
 
   return (
-    <Grid sx={{ mt: 10, ml:1, width: "99%" }} container spacing={2}>
+    <Grid sx={{ mt: 10, ml: 1, width: '99%' }} container spacing={2}>
       {/* <Grid item xs={12}>
         <Container sx={{ textAlign: 'center' }}>
           <Typography variant="h4" gutterBottom>
@@ -72,7 +74,7 @@ export function LastUpdate() {
           </Typography>
         </Container>
       </Grid> */}
-      {isLoading ? <LastUpdateSkeleton /> : <LastUpdateCard data={lastUpdateData} />}
+      {isLoading ? <LastUpdateSkeleton chain={chain} /> : <LastUpdateCard data={lastUpdateData} />}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>

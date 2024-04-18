@@ -24,9 +24,6 @@ export default function RiskLevels() {
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
   const pathName = useLocation().pathname;
-  const navPair = pathName.split('/')[2]
-    ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
-    : undefined;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -34,7 +31,10 @@ export default function RiskLevels() {
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
-    setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: { base: base, quote: quote } } });
+    setAppProperties({
+      ...appProperties,
+      riskParameter: { ...appProperties.riskParameter, pair: { base: base, quote: quote } }
+    });
     setSelectedPair({ base: base, quote: quote });
     if (parameters) {
       setRiskParameter(parameters[base][quote]);
@@ -47,7 +47,14 @@ export default function RiskLevels() {
     if (event.target && event.target.value && tokenPrice) {
       setCapInKind(Number(event.target.value));
       setCapUSD(Number(event.target.value) * tokenPrice);
-      setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, basePrice: tokenPrice, supplyCapInUSD: Number(event.target.value) * tokenPrice } });
+      setAppProperties({
+        ...appProperties,
+        riskParameter: {
+          ...appProperties.riskParameter,
+          basePrice: tokenPrice,
+          supplyCapInUSD: Number(event.target.value) * tokenPrice
+        }
+      });
     }
   };
 
@@ -95,10 +102,12 @@ export default function RiskLevels() {
           }
         }
         setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
-
+        const navPair = pathName.split('/')[2]
+          ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
+          : undefined;
         if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
           setSelectedPair(navPair);
-          setAppProperties({ ...appProperties,  riskParameter: {... appProperties.riskParameter, pair: navPair } });
+          setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: navPair } });
         } else if (appProperties.riskParameter.pair.base && appProperties.riskParameter.pair.quote) {
           setSelectedPair(appProperties.riskParameter.pair);
         } else if (data.length > 0) {
@@ -120,7 +129,6 @@ export default function RiskLevels() {
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`Error fetching data: ${error.toString()}`);
@@ -132,7 +140,7 @@ export default function RiskLevels() {
     fetchData()
       .then(() => setIsLoading(false))
       .catch(console.error);
-  }, []);
+  }, [chain]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -161,6 +169,7 @@ export default function RiskLevels() {
           setTokenPrice(parameters[selectedPair.base][selectedPair.quote].basePrice);
 
           setCapInKind(Number(capInKindToSet.toFixed(2)));
+          await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -178,7 +187,7 @@ export default function RiskLevels() {
       .catch(console.error);
   }, [selectedPair]);
 
-  if (!selectedPair || !tokenPrice || capInKind == undefined) {
+  if (!selectedPair || !tokenPrice || capInKind == undefined || isLoading) {
     return <RiskLevelGraphsSkeleton />;
   }
   return (
@@ -257,6 +266,7 @@ export default function RiskLevels() {
               LTV={LTV / 100}
               supplyCap={capInKind}
               platform={'all'}
+              chain={chain}
             />
           </Grid>
         </Grid>

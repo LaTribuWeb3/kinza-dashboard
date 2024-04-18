@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Grid, LinearProgress, Skeleton, Typography, useMediaQuery } from '@mui/material';
@@ -6,12 +6,12 @@ import { SimpleAlert } from '../../components/SimpleAlert';
 import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
 import Graph from '../../components/Graph';
-import { AppContext } from '../App';
 export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
   LTV: number;
+  chain: string;
   parameters: { ltv: number; bonus: number; visible: boolean };
 }
 
@@ -57,8 +57,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [alertMsg, setAlertMsg] = useState('');
   const [graphData, setGraphData] = useState<GraphDataAtTimestamp[]>([]);
   const screenBigEnough = useMediaQuery('(min-width:600px)');
-  const {appProperties} = useContext(AppContext);
-  const chain = appProperties.chain;
 
   const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
   const handleCloseAlert = () => {
@@ -69,7 +67,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     setIsLoading(true);
     async function fetchAndComputeDataForGraph() {
       try {
-        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
+        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, props.chain);
         const graphData: GraphDataAtTimestamp[] = [];
         let i = 0;
         for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
@@ -96,8 +94,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               );
             }
           }
-
-          console.log('adding ', { currentBlockData });
           graphData.push(currentBlockData);
         }
 
@@ -107,7 +103,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
         await sleep(1);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`${error.toString()}`);
@@ -122,7 +117,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV]);
+  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV, props.chain]);
 
   if (!liquidityData) {
     return <RiskLevelGraphsSkeleton />;
