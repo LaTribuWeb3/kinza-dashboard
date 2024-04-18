@@ -41,7 +41,7 @@ export function NavCategories(props: NavCategoriesProperties) {
 
   return (
     <List sx={{ mt: 7 }}>
-      <FormControl sx={{mt: 5, width:0.9, ml:1}} >
+      <FormControl sx={{mt: 5, width:0.9, ml:1, opacity: 0, height:0}} >
   <InputLabel id="Chain">Chain</InputLabel>
   <Select
     labelId="Chain"
