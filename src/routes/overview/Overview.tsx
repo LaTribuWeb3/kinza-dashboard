@@ -29,13 +29,13 @@ export function Overview() {
   const {appProperties} = useContext(AppContext);
   const chain = appProperties.chain;
 
+
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
 
   useEffect(() => {
     setIsLoading(true);
-    // Define an asynchronous function
     async function fetchData() {
       try {
         const overviewData = await DataService.GetOverview(chain);
@@ -60,14 +60,12 @@ export function Overview() {
       }
     }
 
-    // Call the asynchronous function
     fetchData().catch(console.error);
 
-    // You can also return a cleanup function from useEffect if needed
     return () => {
       // Perform cleanup if necessary
     };
-  }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
+  }, [chain]);
 
   return (
     <Grid sx={{ mt: 10 }} container spacing={2}>

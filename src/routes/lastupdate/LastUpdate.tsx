@@ -35,7 +35,6 @@ export function LastUpdate() {
 
   useEffect(() => {
     setIsLoading(true);
-    // Define an asynchronous function
     async function fetchData() {
       try {
         const lastUpdateData = await DataService.GetLastUpdate(chain);
@@ -54,14 +53,14 @@ export function LastUpdate() {
       }
     }
 
-    // Call the asynchronous function
+
     fetchData().catch(console.error);
 
-    // You can also return a cleanup function from useEffect if needed
+
     return () => {
       // Perform cleanup if necessary
     };
-  }, []); // Empty dependency array means this effect runs once, similar to componentDidMount
+  }, [chain]); 
 
   return (
     <Grid sx={{ mt: 10, ml:1, width: "99%" }} container spacing={2}>

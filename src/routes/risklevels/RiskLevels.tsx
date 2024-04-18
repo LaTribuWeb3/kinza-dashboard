@@ -132,7 +132,7 @@ export default function RiskLevels() {
     fetchData()
       .then(() => setIsLoading(false))
       .catch(console.error);
-  }, []);
+  }, [appProperties, chain, navPair, setAppProperties]);
 
   useEffect(() => {
     setIsLoading(true);

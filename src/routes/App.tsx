@@ -5,29 +5,10 @@ import { MainAppBar } from '../components/MainAppBar';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Overview } from './overview/Overview';
 import { AppContextProperties, appContextType } from '../models/AppContext';
+import { initialContext } from '../utils/Constants';
 
 const drawerWidth = 240;
-const initialContext: appContextType = {
-  appProperties: {
-    chain: 'bsc',
-    riskParameter: {
-      pair: { base: '', quote: '' },
-      ltv: 0,
-      bonus: 0,
-      visible: true,
-      supplyCapInUSD: 0,
-      borrowCapInUSD: 0,
-      basePrice: 0
-    },
-    dataSources: {
-      current: false,
-      pair: { base: '', quote: '' },
-      platform: 'all',
-      slippage: 0
-    }
-  },
-  setAppProperties: () => {}
-};
+
 
 export const AppContext = createContext<appContextType>(initialContext);
 

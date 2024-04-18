@@ -96,8 +96,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
               );
             }
           }
-
-          console.log('adding ', { currentBlockData });
           graphData.push(currentBlockData);
         }
 
@@ -122,7 +120,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV]);
+  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV, chain]);
 
   if (!liquidityData) {
     return <RiskLevelGraphsSkeleton />;

@@ -2,6 +2,7 @@ import { Divider, FormControl, InputLabel, List, ListItemButton, MenuItem, Selec
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../routes/App';
+import { initialContext } from '../utils/Constants';
 
 export interface NavCategoriesProperties {
   toggleDrawerFct: () => void;
@@ -36,7 +37,10 @@ export function NavCategories(props: NavCategoriesProperties) {
   }
 
   function handleSelectChain(event: SelectChangeEvent) {
-    setAppProperties({ ...appProperties, chain: event.target.value });
+        setAppProperties(prevProperties => ({
+          ...initialContext.appProperties, 
+          chain: event.target.value
+        }));
   }
 
   return (

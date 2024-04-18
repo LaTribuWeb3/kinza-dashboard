@@ -33,13 +33,13 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   const {appProperties} = useContext(AppContext);
   const chain = appProperties.chain;
 
+
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
 
   useEffect(() => {
     setIsLoading(true);
-    // Define an asynchronous function
     async function fetchDataForPair() {
       try {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
@@ -62,26 +62,26 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
         }
       }
     }
+  
 
-    // Call the asynchronous function
     fetchDataForPair()
       .then(() => setIsLoading(false))
       .catch(console.error);
 
-    // You can also return a cleanup function from useEffect if needed
     return () => {
       // Perform cleanup if necessary
     };
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote]);
+  }, [props.pair.base, props.pair.quote, chain]);
 
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
   }
 
   const updated = moment(liquidityData.updated).fromNow();
+  
 
   return (
     <>

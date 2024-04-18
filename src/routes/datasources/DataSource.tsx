@@ -111,7 +111,7 @@ export default function DataSource() {
     return () => {
       // Perform cleanup if necessary
     };
-  }, [platform]);
+  }, [platform, chain, selectedPair]);
 
   if (!selectedPair) {
     return <DataSourceSkeleton />;
