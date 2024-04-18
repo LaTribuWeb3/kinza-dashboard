@@ -4,7 +4,7 @@ import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { DATA_SOURCES } from '../../utils/Constants';
 import { LastUpdateData } from '../../models/LastUpdateData';
-import { LastUpdateCard, } from '../../components/LastUpdateCard';
+import { LastUpdateCard } from '../../components/LastUpdateCard';
 import { AppContext } from '../App';
 
 function LastUpdateSkeleton() {
@@ -26,7 +26,7 @@ export function LastUpdate() {
   const [lastUpdateData, setLastUpdateData] = useState<LastUpdateData[]>([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const {appProperties} = useContext(AppContext);
+  const { appProperties } = useContext(AppContext);
   const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
@@ -53,17 +53,15 @@ export function LastUpdate() {
       }
     }
 
-
     fetchData().catch(console.error);
-
 
     return () => {
       // Perform cleanup if necessary
     };
-  }, [chain]); 
+  }, [chain]);
 
   return (
-    <Grid sx={{ mt: 10, ml:1, width: "99%" }} container spacing={2}>
+    <Grid sx={{ mt: 10, ml: 1, width: '99%' }} container spacing={2}>
       {/* <Grid item xs={12}>
         <Container sx={{ textAlign: 'center' }}>
           <Typography variant="h4" gutterBottom>

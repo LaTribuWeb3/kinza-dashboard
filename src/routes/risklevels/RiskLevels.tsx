@@ -34,7 +34,10 @@ export default function RiskLevels() {
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
-    setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: { base: base, quote: quote } } });
+    setAppProperties({
+      ...appProperties,
+      riskParameter: { ...appProperties.riskParameter, pair: { base: base, quote: quote } }
+    });
     setSelectedPair({ base: base, quote: quote });
     if (parameters) {
       setRiskParameter(parameters[base][quote]);
@@ -47,7 +50,14 @@ export default function RiskLevels() {
     if (event.target && event.target.value && tokenPrice) {
       setCapInKind(Number(event.target.value));
       setCapUSD(Number(event.target.value) * tokenPrice);
-      setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, basePrice: tokenPrice, supplyCapInUSD: Number(event.target.value) * tokenPrice } });
+      setAppProperties({
+        ...appProperties,
+        riskParameter: {
+          ...appProperties.riskParameter,
+          basePrice: tokenPrice,
+          supplyCapInUSD: Number(event.target.value) * tokenPrice
+        }
+      });
     }
   };
 
@@ -98,7 +108,7 @@ export default function RiskLevels() {
 
         if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
           setSelectedPair(navPair);
-          setAppProperties({ ...appProperties,  riskParameter: {... appProperties.riskParameter, pair: navPair } });
+          setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: navPair } });
         } else if (appProperties.riskParameter.pair.base && appProperties.riskParameter.pair.quote) {
           setSelectedPair(appProperties.riskParameter.pair);
         } else if (data.length > 0) {

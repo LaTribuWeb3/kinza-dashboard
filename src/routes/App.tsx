@@ -9,7 +9,6 @@ import { initialContext } from '../utils/Constants';
 
 const drawerWidth = 240;
 
-
 export const AppContext = createContext<appContextType>(initialContext);
 
 function App() {

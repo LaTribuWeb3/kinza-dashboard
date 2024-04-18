@@ -1,4 +1,4 @@
-import { appContextType } from "../models/AppContext";
+import { appContextType } from '../models/AppContext';
 
 export const DATA_SOURCES = ['All sources', 'Pancakeswap StableSwaps', 'Pancakeswap v2', 'Pancakeswap v3', 'Wombat'];
 

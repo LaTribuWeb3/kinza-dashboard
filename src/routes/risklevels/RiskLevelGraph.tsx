@@ -67,40 +67,40 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     setIsLoading(true);
     async function fetchAndComputeDataForGraph() {
       try {
-          const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, props.chain);
-          const graphData: GraphDataAtTimestamp[] = [];
-          let i = 0;
-          for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
-            if (!screenBigEnough && i % 4 == 0) {
-              continue;
-            }
-            i++;
-            const currentBlockData: GraphDataAtTimestamp = {
-              timestamp: Number(timestamp),
-              riskValue: 0
-            };
-            if (props.parameters.visible) {
-              const liquidationBonus = props.parameters.bonus * 10000;
-              const liquidity = timestampData.avgSlippageMap[liquidationBonus];
-              if (liquidity > 0) {
-                const ltv = props.LTV;
-                const cap = props.supplyCap == 0 ? 1 : props.supplyCap;
-                currentBlockData.riskValue = findRiskLevelFromParameters(
-                  timestampData.volatility,
-                  liquidity,
-                  liquidationBonus / 10000,
-                  ltv,
-                  cap
-                );
-              }
-            }
-            graphData.push(currentBlockData);
+        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, props.chain);
+        const graphData: GraphDataAtTimestamp[] = [];
+        let i = 0;
+        for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
+          if (!screenBigEnough && i % 4 == 0) {
+            continue;
           }
+          i++;
+          const currentBlockData: GraphDataAtTimestamp = {
+            timestamp: Number(timestamp),
+            riskValue: 0
+          };
+          if (props.parameters.visible) {
+            const liquidationBonus = props.parameters.bonus * 10000;
+            const liquidity = timestampData.avgSlippageMap[liquidationBonus];
+            if (liquidity > 0) {
+              const ltv = props.LTV;
+              const cap = props.supplyCap == 0 ? 1 : props.supplyCap;
+              currentBlockData.riskValue = findRiskLevelFromParameters(
+                timestampData.volatility,
+                liquidity,
+                liquidationBonus / 10000,
+                ltv,
+                cap
+              );
+            }
+          }
+          graphData.push(currentBlockData);
+        }
 
-          graphData.sort((a, b) => a.timestamp - b.timestamp);
-          setGraphData(graphData);
-          setLiquidityData(data);
-          await sleep(1);
+        graphData.sort((a, b) => a.timestamp - b.timestamp);
+        setGraphData(graphData);
+        setLiquidityData(data);
+        await sleep(1);
       } catch (error) {
         console.error('Error fetching data:', error);
         setIsLoading(false);
