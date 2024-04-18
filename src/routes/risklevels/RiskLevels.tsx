@@ -1,5 +1,5 @@
 import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { Pair } from '../../models/ApiData';
 import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
@@ -7,6 +7,7 @@ import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
 import { useLocation } from 'react-router-dom';
+import { AppContext } from '../App';
 
 export default function RiskLevels() {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +21,8 @@ export default function RiskLevels() {
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
   const [LTV, setLTV] = useState<number | undefined>(undefined);
+  const { appProperties, setAppProperties } = useContext(AppContext);
+  const chain = appProperties.chain;
   const pathName = useLocation().pathname;
   const navPair = pathName.split('/')[2]
     ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
@@ -31,15 +34,20 @@ export default function RiskLevels() {
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
+    setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: { base: base, quote: quote } } });
     setSelectedPair({ base: base, quote: quote });
     if (parameters) {
       setRiskParameter(parameters[base][quote]);
+      const updatedAppProperties = parameters[base][quote];
+      updatedAppProperties.pair = { base: base, quote: quote };
+      setAppProperties({ ...appProperties, riskParameter: updatedAppProperties });
     }
   };
   const handleChangeCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value && tokenPrice) {
       setCapInKind(Number(event.target.value));
       setCapUSD(Number(event.target.value) * tokenPrice);
+      setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, basePrice: tokenPrice, supplyCapInUSD: Number(event.target.value) * tokenPrice } });
     }
   };
 
@@ -48,6 +56,7 @@ export default function RiskLevels() {
       const newLTV = Number(event.target.value);
       if (newLTV >= 1 && newLTV < 100 - riskParameter!.bonus * 100) {
         setLTV(newLTV);
+        setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, ltv: newLTV / 100 } });
       }
     }
   };
@@ -58,7 +67,7 @@ export default function RiskLevels() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const overviewData = await DataService.GetOverview();
+        const overviewData = await DataService.GetOverview(chain);
         const kinzaRiskParameters = {} as KinzaRiskParameters;
         Object.keys(overviewData).forEach((symbol) => {
           const riskLevelData = overviewData[symbol];
@@ -67,6 +76,7 @@ export default function RiskLevels() {
             // Ensure the subMarket's quote does not already exist for robustness
             if (!kinzaRiskParameters[symbol][subMarket.quote]) {
               kinzaRiskParameters[symbol][subMarket.quote] = {
+                pair: { base: symbol, quote: subMarket.quote },
                 ltv: subMarket.LTV,
                 bonus: subMarket.liquidationBonus,
                 visible: true, // Set all to true as per instruction
@@ -88,7 +98,10 @@ export default function RiskLevels() {
 
         if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
           setSelectedPair(navPair);
-        } else {
+          setAppProperties({ ...appProperties,  riskParameter: {... appProperties.riskParameter, pair: navPair } });
+        } else if (appProperties.riskParameter.pair.base && appProperties.riskParameter.pair.quote) {
+          setSelectedPair(appProperties.riskParameter.pair);
+        } else if (data.length > 0) {
           setSelectedPair(data[0]);
         }
         const pairSet = navPair ? navPair : data[0];
@@ -128,7 +141,7 @@ export default function RiskLevels() {
         if (!selectedPair) {
           return;
         }
-        const data = await DataService.GetLiquidityData('all', selectedPair.base, selectedPair.quote);
+        const data = await DataService.GetLiquidityData('all', selectedPair.base, selectedPair.quote, chain);
         /// get token price
         const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
         const maxBlock = liquidityObjectToArray.at(-1)!.toString();
