@@ -74,7 +74,7 @@ export function LastUpdate() {
           </Typography>
         </Container>
       </Grid> */}
-      {isLoading ? <LastUpdateSkeleton /> : <LastUpdateCard data={lastUpdateData} />}
+      {isLoading ? <LastUpdateSkeleton chain={chain} /> : <LastUpdateCard data={lastUpdateData} />}
 
       <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Grid>
