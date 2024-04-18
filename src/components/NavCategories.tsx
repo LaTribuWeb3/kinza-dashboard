@@ -1,4 +1,15 @@
-import { Divider, FormControl, InputLabel, List, ListItemButton, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Divider,
+  FormControl,
+  InputLabel,
+  List,
+  ListItemButton,
+  MenuItem,
+  Select,
+  SelectChangeEvent
+} from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../routes/App';
@@ -37,28 +48,41 @@ export function NavCategories(props: NavCategoriesProperties) {
   }
 
   function handleSelectChain(event: SelectChangeEvent) {
-        setAppProperties(() => ({
-          ...initialContext.appProperties, 
-          chain: event.target.value
-        }));
+    setAppProperties(() => ({
+      ...initialContext.appProperties,
+      chain: event.target.value
+    }));
   }
 
   return (
     <List sx={{ mt: 7 }}>
-      <FormControl sx={{mt: 5, width:0.9, ml:1}} >
-  <InputLabel id="Chain">Chain</InputLabel>
-  <Select
-    labelId="Chain"
-    id="Chain"
-    value={appProperties.chain}
-    defaultValue={appProperties.chain}
-    label="Chain"
-    onChange={handleSelectChain}
-  >
-    <MenuItem value={'bsc'}>BSC</MenuItem>
-    <MenuItem value={'ethereum'}>Ethereum</MenuItem>
-  </Select>
-</FormControl>
+      <FormControl sx={{ mt: 5, width: 0.9, ml: 1 }}>
+        <InputLabel id="Chain">Chain</InputLabel>
+        <Select
+          style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', width: '100%' }}
+          labelId="Chain"
+          id="Chain"
+          value={appProperties.chain}
+          defaultValue={appProperties.chain}
+          label="Chain"
+          onChange={handleSelectChain}
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <MenuItem value={'bsc'}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+              <Avatar alt="binance smart chain logo" src="/bsc.ico" sx={{ width: 25, height: 25, marginRight: 2 }} />
+              BSC
+            </Box>
+          </MenuItem>
+          <MenuItem value={'ethereum'} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+              <Avatar alt="Ethereum logo" src="/eth.png" sx={{ width: 25, height: 25, marginRight: 2 }} />
+              Ethereum
+            </Box>
+          </MenuItem>
+        </Select>
+      </FormControl>
+
       <Divider sx={{ my: 1 }} />
       <ListItemButton
         key="overview"
