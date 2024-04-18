@@ -178,7 +178,7 @@ export default function RiskLevels() {
       .catch(console.error);
   }, [selectedPair]);
 
-  if (!selectedPair || !tokenPrice || capInKind == undefined) {
+  if (!selectedPair || !tokenPrice || capInKind == undefined || isLoading) {
     return <RiskLevelGraphsSkeleton />;
   }
   return (
@@ -257,6 +257,7 @@ export default function RiskLevels() {
               LTV={LTV / 100}
               supplyCap={capInKind}
               platform={'all'}
+              chain={chain}
             />
           </Grid>
         </Grid>

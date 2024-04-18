@@ -12,6 +12,7 @@ export interface RiskLevelGraphsInterface {
   platform: string;
   supplyCap: number;
   LTV: number;
+  chain: string;
   parameters: { ltv: number; bonus: number; visible: boolean };
 }
 
@@ -57,8 +58,6 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [alertMsg, setAlertMsg] = useState('');
   const [graphData, setGraphData] = useState<GraphDataAtTimestamp[]>([]);
   const screenBigEnough = useMediaQuery('(min-width:600px)');
-  const {appProperties} = useContext(AppContext);
-  const chain = appProperties.chain;
 
   const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
   const handleCloseAlert = () => {
@@ -69,43 +68,42 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     setIsLoading(true);
     async function fetchAndComputeDataForGraph() {
       try {
-        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
-        const graphData: GraphDataAtTimestamp[] = [];
-        let i = 0;
-        for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
-          if (!screenBigEnough && i % 4 == 0) {
-            continue;
-          }
-          i++;
-          const currentBlockData: GraphDataAtTimestamp = {
-            timestamp: Number(timestamp),
-            riskValue: 0
-          };
-          if (props.parameters.visible) {
-            const liquidationBonus = props.parameters.bonus * 10000;
-            const liquidity = timestampData.avgSlippageMap[liquidationBonus];
-            if (liquidity > 0) {
-              const ltv = props.LTV;
-              const cap = props.supplyCap == 0 ? 1 : props.supplyCap;
-              currentBlockData.riskValue = findRiskLevelFromParameters(
-                timestampData.volatility,
-                liquidity,
-                liquidationBonus / 10000,
-                ltv,
-                cap
-              );
+          const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, props.chain);
+          const graphData: GraphDataAtTimestamp[] = [];
+          let i = 0;
+          for (const [timestamp, timestampData] of Object.entries(data.liquidity)) {
+            if (!screenBigEnough && i % 4 == 0) {
+              continue;
             }
+            i++;
+            const currentBlockData: GraphDataAtTimestamp = {
+              timestamp: Number(timestamp),
+              riskValue: 0
+            };
+            if (props.parameters.visible) {
+              const liquidationBonus = props.parameters.bonus * 10000;
+              const liquidity = timestampData.avgSlippageMap[liquidationBonus];
+              if (liquidity > 0) {
+                const ltv = props.LTV;
+                const cap = props.supplyCap == 0 ? 1 : props.supplyCap;
+                currentBlockData.riskValue = findRiskLevelFromParameters(
+                  timestampData.volatility,
+                  liquidity,
+                  liquidationBonus / 10000,
+                  ltv,
+                  cap
+                );
+              }
+            }
+            graphData.push(currentBlockData);
           }
-          graphData.push(currentBlockData);
-        }
 
-        graphData.sort((a, b) => a.timestamp - b.timestamp);
-        setGraphData(graphData);
-        setLiquidityData(data);
-        await sleep(1);
+          graphData.sort((a, b) => a.timestamp - b.timestamp);
+          setGraphData(graphData);
+          setLiquidityData(data);
+          await sleep(1);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`${error.toString()}`);
@@ -120,7 +118,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV, chain]);
+  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV, props.chain]);
 
   if (!liquidityData) {
     return <RiskLevelGraphsSkeleton />;
