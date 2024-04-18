@@ -14,10 +14,15 @@ import {
   InputLabel
 } from '@mui/material';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { SLIPPAGES_BPS } from '../../utils/Constants';
+import {
+  BSC_DATA_SOURCES,
+  BSC_DATA_SOURCES_MAP,
+  ETH_DATA_SOURCES,
+  ETH_DATA_SOURCES_MAP,
+  SLIPPAGES_BPS
+} from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
 import { sleep } from '../../utils/Utils';
-import { DATA_SOURCES, DATA_SOURCES_MAP } from '../../utils/Constants';
 import { AppContext } from '../App';
 
 function DataSourceSkeleton() {
@@ -47,6 +52,8 @@ export default function DataSource() {
   const [platform, setPlatform] = useState('all');
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
+  const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
+  const DATA_SOURCES_MAP = chain === 'bsc' ? BSC_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -78,6 +85,10 @@ export default function DataSource() {
   };
 
   useEffect(() => {
+    setPlatform('all');
+  }, [DATA_SOURCES, chain]);
+
+  useEffect(() => {
     setIsLoading(true);
     // Define an asynchronous function
     async function fetchData() {
@@ -105,7 +116,6 @@ export default function DataSource() {
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`Error fetching data: ${error.toString()}`);

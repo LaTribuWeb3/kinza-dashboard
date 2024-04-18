@@ -171,6 +171,7 @@ export default function RiskLevels() {
           setTokenPrice(parameters[selectedPair.base][selectedPair.quote].basePrice);
 
           setCapInKind(Number(capInKindToSet.toFixed(2)));
+          await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
         }
       } catch (error) {
         console.error('Error fetching data:', error);

@@ -2,12 +2,17 @@ import { Grid, LinearProgress, Skeleton } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
 import { SimpleAlert } from '../../components/SimpleAlert';
-import { DATA_SOURCES } from '../../utils/Constants';
+import { BSC_DATA_SOURCES, ETH_DATA_SOURCES } from '../../utils/Constants';
 import { LastUpdateData } from '../../models/LastUpdateData';
 import { LastUpdateCard } from '../../components/LastUpdateCard';
 import { AppContext } from '../App';
 
-function LastUpdateSkeleton() {
+interface skeletonProps {
+  chain: string;
+}
+
+function LastUpdateSkeleton(props: skeletonProps) {
+  const DATA_SOURCES = props.chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
