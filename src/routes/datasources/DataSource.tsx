@@ -93,8 +93,14 @@ export default function DataSource() {
     // Define an asynchronous function
     async function fetchData() {
       try {
-        const data = await DataService.GetAvailablePairs(platform, chain);
-        setAvailablePairs(data);
+        const overviewData = await DataService.GetOverview(chain);
+        const data = [];
+        for (const symbol of Object.keys(overviewData)) {
+          for (const subMarket of overviewData[symbol].subMarkets) {
+            data.push({ base: symbol, quote: subMarket.quote });
+          }
+        }
+        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
 
         const oldPair = selectedPair;
 
