@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React, { createContext, useMemo, useState } from 'react';
+import { createContext, useMemo, useState } from 'react';
 import { ResponsiveNavBar } from '../components/ResponsiveNavBar';
 import { MainAppBar } from '../components/MainAppBar';
 import { Outlet, useLocation } from 'react-router-dom';

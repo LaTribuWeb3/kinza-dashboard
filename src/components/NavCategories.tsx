@@ -37,7 +37,7 @@ export function NavCategories(props: NavCategoriesProperties) {
   }
 
   function handleSelectChain(event: SelectChangeEvent) {
-        setAppProperties(prevProperties => ({
+        setAppProperties(() => ({
           ...initialContext.appProperties, 
           chain: event.target.value
         }));
