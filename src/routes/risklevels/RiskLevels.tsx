@@ -24,9 +24,6 @@ export default function RiskLevels() {
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
   const pathName = useLocation().pathname;
-  const navPair = pathName.split('/')[2]
-    ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
-    : undefined;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -105,7 +102,9 @@ export default function RiskLevels() {
           }
         }
         setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
-
+        const navPair = pathName.split('/')[2]
+          ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
+          : undefined;
         if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
           setSelectedPair(navPair);
           setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: navPair } });
@@ -130,7 +129,6 @@ export default function RiskLevels() {
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`Error fetching data: ${error.toString()}`);
@@ -142,7 +140,7 @@ export default function RiskLevels() {
     fetchData()
       .then(() => setIsLoading(false))
       .catch(console.error);
-  }, [appProperties, chain, navPair, setAppProperties]);
+  }, [chain]);
 
   useEffect(() => {
     setIsLoading(true);
