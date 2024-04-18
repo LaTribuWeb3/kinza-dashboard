@@ -1,9 +1,8 @@
 import { Box } from '@mui/material';
-import React, { createContext } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 import { ResponsiveNavBar } from '../components/ResponsiveNavBar';
 import { MainAppBar } from '../components/MainAppBar';
-import { Outlet } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Overview } from './overview/Overview';
 import { AppContextProperties, appContextType } from '../models/AppContext';
 
@@ -29,32 +28,14 @@ const initialContext: appContextType = {
   },
   setAppProperties: () => {}
 };
+
 export const AppContext = createContext<appContextType>(initialContext);
 
 function App() {
-  const [openDrawer, setOpenDrawer] = React.useState(false);
-  const [appProperties, setAppProperties] = React.useState<AppContextProperties>(
-    {
-      chain: 'bsc',
-      riskParameter: {
-        pair: { base: '', quote: '' },
-        ltv: 0,
-        bonus: 0,
-        visible: true,
-        supplyCapInUSD: 0,
-        borrowCapInUSD: 0,
-        basePrice: 0
-      },
-      dataSources: {
-        current: false,
-        pair: { base: '', quote: '' },
-        platform: 'all',
-        slippage: 0
-      }
-    }    
-  );
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [appProperties, setAppProperties] = useState<AppContextProperties>(initialContext.appProperties);
 
-  console.log('appProperties:', appProperties)
+  const contextValue = useMemo(() => ({ appProperties, setAppProperties }), [appProperties, setAppProperties]);
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
@@ -64,7 +45,7 @@ function App() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppContext.Provider value={{ appProperties, setAppProperties }}>
+      <AppContext.Provider value={contextValue}>
         <MainAppBar toggleDrawerFct={toggleDrawer} />
         <ResponsiveNavBar drawerWidth={drawerWidth} open={openDrawer} toggleDrawerFct={toggleDrawer} />
         <Box
@@ -80,7 +61,7 @@ function App() {
           }}
         >
           <Box sx={{ mt: 8, ml: 1.5 }}>
-            {pathName == '/' && <Overview />}
+            {pathName === '/' && <Overview />}
             <Outlet />
           </Box>
         </Box>
