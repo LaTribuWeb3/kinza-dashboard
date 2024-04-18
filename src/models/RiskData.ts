@@ -1,3 +1,5 @@
+import { Pair } from './ApiData';
+
 export interface KinzaRiskParameters {
   [symbol: string]: {
     [quote: string]: KinzaRiskParameter;
@@ -5,6 +7,7 @@ export interface KinzaRiskParameters {
 }
 
 export interface KinzaRiskParameter {
+  pair: Pair;
   ltv: number;
   bonus: number;
   visible: true;

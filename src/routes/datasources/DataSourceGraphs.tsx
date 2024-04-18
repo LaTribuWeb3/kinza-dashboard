@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LiquidityData, Pair } from '../../models/ApiData';
 import DataService from '../../services/DataService';
 import { Box, Grid, LinearProgress, Skeleton, Typography } from '@mui/material';
@@ -6,6 +6,7 @@ import { SimpleAlert } from '../../components/SimpleAlert';
 import { FriendlyFormatNumber, PercentageFormatter, sleep } from '../../utils/Utils';
 import moment from 'moment';
 import Graph from '../../components/Graph';
+import { AppContext } from '../App';
 export interface DataSourceGraphsInterface {
   pair: Pair;
   platform: string;
@@ -29,6 +30,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
   const [showVolatility, setShowVolatility] = useState(true);
+  const {appProperties} = useContext(AppContext);
+  const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
@@ -39,7 +42,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
     // Define an asynchronous function
     async function fetchDataForPair() {
       try {
-        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote);
+        const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
 
         setLiquidityData(data);
         if(Object.values(data.liquidity).some(_ => _.volatility == -1)) {
@@ -96,22 +99,14 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
           {/* Avg liquidity graph */}
           <Grid item xs={12} lg={6}>
             <Graph
-              title={`${props.pair.base}/${props.pair.quote} liquidity (avg 30d)`}
+              title={`${props.pair.base}/${props.pair.quote} liquidity (30d avg)`}
               xAxisData={Object.keys(liquidityData.liquidity).map((_) => Number(_))}
               xAxisLabel="Date"
               leftYAxis={{ min: 0, formatter: FriendlyFormatNumber, label: props.pair.base }}
-              rightYAxis={{ min: 0, formatter: FriendlyFormatNumber, label:props.pair.quote}}
               leftAxisSeries={[
                 {
                   label: `Amount ${props.pair.base} sold`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[props.targetSlippage].base),
-                  formatter: FriendlyFormatNumber
-                }
-              ]}
-              rightAxisSeries={[
-                {
-                  label: `Amount ${props.pair.quote} received`,
-                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[props.targetSlippage].quote),
+                  data: Object.values(liquidityData.liquidity).map((_) => _.avgSlippageMap[props.targetSlippage]),
                   formatter: FriendlyFormatNumber
                 }
               ]}
