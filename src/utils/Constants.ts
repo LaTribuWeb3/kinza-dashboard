@@ -44,7 +44,7 @@ export const initialContext: appContextType = {
       current: false,
       pair: { base: '', quote: '' },
       platform: 'all',
-      slippage: 0
+      slippage: 500
     }
   },
   setAppProperties: () => {}
