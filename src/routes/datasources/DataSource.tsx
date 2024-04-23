@@ -56,22 +56,20 @@ export default function DataSource() {
   const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
   const DATA_SOURCES_MAP = chain === 'bsc' ? BSC_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
-  function findPlatformsForPair(base:string, quote:string) {
+  function findPlatformsForPair(base: string, quote: string) {
     const platformsAvailable = [];
 
-    if(appProperties.availablePairs){
-    for (const [platform, pairs] of Object.entries(appProperties.availablePairs)) {
-      // Check if the pair exists in the current platform's list
-      const pairExists = pairs.some(pair => 
-        pair.base === base && pair.quote === quote
-      );
-  
-      // If the pair exists, add the platform to the list
-      if (pairExists) {
-        platformsAvailable.push(platform);
+    if (appProperties.availablePairs) {
+      for (const [platform, pairs] of Object.entries(appProperties.availablePairs)) {
+        // Check if the pair exists in the current platform's list
+        const pairExists = pairs.some((pair) => pair.base === base && pair.quote === quote);
+
+        // If the pair exists, add the platform to the list
+        if (pairExists) {
+          platformsAvailable.push(platform);
+        }
       }
     }
-  }    
     return platformsAvailable;
   }
 
@@ -188,18 +186,18 @@ export default function DataSource() {
                 onChange={handleChangePlatform}
               >
                 {DATA_SOURCES.map((source, index) => {
-        // Map source to its value in the DATA_SOURCES_MAP
-        const value = DATA_SOURCES_MAP[source as keyof typeof DATA_SOURCES_MAP];
-        // Render MenuItem only if the platform is available for the specific pair
-        if (platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`].includes(value)) {
-          return (
-            <MenuItem key={index} value={value}>
-              {source}
-            </MenuItem>
-          );
-        }
-        return null;
-      })}
+                  // Map source to its value in the DATA_SOURCES_MAP
+                  const value = DATA_SOURCES_MAP[source as keyof typeof DATA_SOURCES_MAP];
+                  // Render MenuItem only if the platform is available for the specific pair
+                  if (platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`].includes(value)) {
+                    return (
+                      <MenuItem key={index} value={value}>
+                        {source}
+                      </MenuItem>
+                    );
+                  }
+                  return null;
+                })}
               </Select>
             </FormControl>
           </Grid>

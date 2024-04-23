@@ -64,7 +64,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
           }
         } else {
           setAlertMsg(`Unknown error`);
-          setUnavailablePair(false)
+          setUnavailablePair(false);
         }
       }
     }
@@ -91,7 +91,9 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
     <>
       {isLoading && !unavailablePair ? (
         <DataSourceGraphsSkeleton />
-      ) : unavailablePair ? <span>No data</span> : (
+      ) : unavailablePair ? (
+        <span>No data</span>
+      ) : (
         <Grid width={'100vw'} container spacing={0}>
           <Grid item xs={12}>
             <Typography

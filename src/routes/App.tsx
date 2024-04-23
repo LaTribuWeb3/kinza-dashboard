@@ -5,7 +5,13 @@ import { MainAppBar } from '../components/MainAppBar';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Overview } from './overview/Overview';
 import { AppContextProperties, appContextType } from '../models/AppContext';
-import { BSC_DATA_SOURCES, BSC_DATA_SOURCES_MAP, ETH_DATA_SOURCES, ETH_DATA_SOURCES_MAP, initialContext } from '../utils/Constants';
+import {
+  BSC_DATA_SOURCES,
+  BSC_DATA_SOURCES_MAP,
+  ETH_DATA_SOURCES,
+  ETH_DATA_SOURCES_MAP,
+  initialContext
+} from '../utils/Constants';
 import DataService from '../services/DataService';
 
 const drawerWidth = 240;
@@ -25,23 +31,25 @@ function App() {
     setOpenDrawer(!openDrawer);
   };
 
-  useEffect(() => {
-    async function fetchAvailablePairs(){
-      for(const platform of Object.values(DATA_SOURCES_MAP)){
-        const pairs = await DataService.GetAvailablePairs(platform, chain);
-        setAppProperties((prev) => ({
-          ...prev,
-          availablePairs: {
-            ...prev.availablePairs,
-            [platform]: pairs
-          }
-        }));
+  useEffect(
+    () => {
+      async function fetchAvailablePairs() {
+        for (const platform of Object.values(DATA_SOURCES_MAP)) {
+          const pairs = await DataService.GetAvailablePairs(platform, chain);
+          setAppProperties((prev) => ({
+            ...prev,
+            availablePairs: {
+              ...prev.availablePairs,
+              [platform]: pairs
+            }
+          }));
+        }
       }
-    }
-    fetchAvailablePairs().catch((console.error));
-  }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [chain]);
+      fetchAvailablePairs().catch(console.error);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chain]
+  );
 
   const pathName = useLocation().pathname;
 
