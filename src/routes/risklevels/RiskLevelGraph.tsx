@@ -80,7 +80,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             riskValue: 0
           };
           if (props.parameters.visible) {
-            const liquidationBonus = props.parameters.bonus * 10000;
+            const liquidationBonus = Math.round(props.parameters.bonus * 10000);
             const liquidity = timestampData.avgSlippageMap[liquidationBonus];
             if (liquidity > 0) {
               const ltv = props.LTV;
