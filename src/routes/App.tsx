@@ -1,11 +1,12 @@
 import { Box } from '@mui/material';
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { ResponsiveNavBar } from '../components/ResponsiveNavBar';
 import { MainAppBar } from '../components/MainAppBar';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Overview } from './overview/Overview';
 import { AppContextProperties, appContextType } from '../models/AppContext';
-import { initialContext } from '../utils/Constants';
+import { BSC_DATA_SOURCES, BSC_DATA_SOURCES_MAP, ETH_DATA_SOURCES, ETH_DATA_SOURCES_MAP, initialContext } from '../utils/Constants';
+import DataService from '../services/DataService';
 
 const drawerWidth = 240;
 
@@ -16,10 +17,31 @@ function App() {
   const [appProperties, setAppProperties] = useState<AppContextProperties>(initialContext.appProperties);
 
   const contextValue = useMemo(() => ({ appProperties, setAppProperties }), [appProperties, setAppProperties]);
+  const chain = appProperties.chain;
+  const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : ETH_DATA_SOURCES;
+  const DATA_SOURCES_MAP = chain === 'bsc' ? BSC_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
   };
+
+  useEffect(() => {
+    async function fetchAvailablePairs(){
+      for(const platform of Object.values(DATA_SOURCES_MAP)){
+        const pairs = await DataService.GetAvailablePairs(platform, chain);
+        setAppProperties((prev) => ({
+          ...prev,
+          availablePairs: {
+            ...prev.availablePairs,
+            [platform]: pairs
+          }
+        }));
+      }
+    }
+    fetchAvailablePairs().catch((console.error));
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  , [chain]);
 
   const pathName = useLocation().pathname;
 
