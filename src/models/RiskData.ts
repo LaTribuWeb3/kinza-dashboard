@@ -9,6 +9,7 @@ export interface KinzaRiskParameters {
 export interface KinzaRiskParameter {
   pair: Pair;
   ltv: number;
+  liquidationThreshold: number;
   bonus: number;
   visible: true;
   supplyCapInUSD: number;
