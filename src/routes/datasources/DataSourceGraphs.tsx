@@ -31,6 +31,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
   const [alertMsg, setAlertMsg] = useState('');
   const [showVolatility, setShowVolatility] = useState(true);
   const { appProperties } = useContext(AppContext);
+  const [unavailablePair, setUnavailablePair] = useState(false);
   const chain = appProperties.chain;
 
   const handleCloseAlert = () => {
@@ -39,6 +40,7 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
 
   useEffect(() => {
     setIsLoading(true);
+    setUnavailablePair(false);
     async function fetchDataForPair() {
       try {
         const data = await DataService.GetLiquidityData(props.platform, props.pair.base, props.pair.quote, chain);
@@ -52,12 +54,17 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
         await sleep(1);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setOpenAlert(true);
         setIsLoading(false);
         if (error instanceof Error) {
           setAlertMsg(`${error.toString()}`);
+          if (error.toString().includes('No data available for this pair on this platform')) {
+            await sleep(1);
+            setUnavailablePair(true);
+            setIsLoading(false);
+          }
         } else {
           setAlertMsg(`Unknown error`);
+          setUnavailablePair(false);
         }
       }
     }
@@ -69,10 +76,8 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
     return () => {
       // Perform cleanup if necessary
     };
-    // platform is not in the deps for this hooks because we only need to reload the data
-    // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, chain]);
+  }, [props.pair.base, props.pair.quote, chain, props.platform]);
 
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
@@ -82,8 +87,16 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && !unavailablePair ? (
         <DataSourceGraphsSkeleton />
+      ) : unavailablePair ? (
+        <Grid width={'100vw'} container spacing={0}>
+          <Grid item xs={12}>
+            <Typography textAlign={'center'} mt={2}>
+              This pair doesn't exist on this platform.
+            </Typography>
+          </Grid>
+        </Grid>
       ) : (
         <Grid width={'100vw'} container spacing={0}>
           <Grid item xs={12}>

@@ -110,7 +110,14 @@ export default class DataService {
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('error message: ', error.message);
-          throw new Error(`Error fetching data on ${fullUrl}: ${error.message}`);
+          const apiErrorMessage = Object.values(error.response?.data as object);
+          if (apiErrorMessage.length > 0) {
+            const errorMessage = apiErrorMessage[0] as string;
+            if (errorMessage.includes('Could not find data for') && errorMessage.includes(platform.toLowerCase())) {
+              throw new Error('No data available for this pair on this platform.');
+            }
+          }
+          throw new Error(`Error fetching data on ${fullUrl}`);
         } else {
           console.error('unexpected error: ', error);
           throw new Error(`Error fetching data on ${fullUrl}`);

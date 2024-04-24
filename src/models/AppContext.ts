@@ -3,6 +3,9 @@ import { KinzaRiskParameter } from './RiskData';
 
 export interface AppContextProperties {
   chain: string;
+  availablePairs?: {
+    [key: string]: Pair[];
+  };
   riskParameter: KinzaRiskParameter;
   dataSources: {
     current: boolean;
