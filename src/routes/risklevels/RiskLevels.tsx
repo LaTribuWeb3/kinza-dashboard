@@ -220,7 +220,7 @@ export default function RiskLevels() {
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={8} sm={6} md={4} lg={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Typography textAlign={'right'}>liquidationThreshold: </Typography>
+            <Typography textAlign={'right'}>LT: </Typography>
             <TextField
               sx={{
                 width: '95%',
