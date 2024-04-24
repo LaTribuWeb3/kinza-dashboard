@@ -79,8 +79,6 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.pair.base, props.pair.quote, chain, props.platform]);
 
-  console.log(appProperties.dataSources);
-
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
   }
