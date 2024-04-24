@@ -106,6 +106,26 @@ export default function DataSource() {
     setPlatform('all');
   }, [DATA_SOURCES, chain]);
 
+  useEffect(
+    () => {
+      async function fetchAvailablePairs() {
+        for (const platform of Object.values(DATA_SOURCES_MAP)) {
+          const pairs = await DataService.GetAvailablePairs(platform, chain);
+          setAppProperties((prev) => ({
+            ...prev,
+            availablePairs: {
+              ...prev.availablePairs,
+              [platform]: pairs
+            }
+          }));
+        }
+      }
+      fetchAvailablePairs().catch(console.error);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chain]
+  );
+
   useEffect(() => {
     setIsLoading(true);
     // Define an asynchronous function
@@ -119,6 +139,19 @@ export default function DataSource() {
           }
         }
         setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
+
+        if (!appProperties.availablePairs) {
+          for (const platform of Object.values(DATA_SOURCES_MAP)) {
+            const pairs = await DataService.GetAvailablePairs(platform, chain);
+            setAppProperties((prev) => ({
+              ...prev,
+              availablePairs: {
+                ...prev.availablePairs,
+                [platform]: pairs
+              }
+            }));
+          }
+        }
         const platformsForPairs: { [key: string]: string[] } = {};
         for (const pair of data) {
           platformsForPairs[`${pair.base}/${pair.quote}`] = findPlatformsForPair(pair.base, pair.quote);
@@ -139,8 +172,10 @@ export default function DataSource() {
           setPlatform(appProperties.dataSources.platform);
         } else if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
           setSelectedPair(oldPair);
+          setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, pair: oldPair } });
         } else {
           setSelectedPair(data[0]);
+          setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, pair: data[0] } });
         }
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {

@@ -117,8 +117,6 @@ export default class DataService {
               throw new Error('No data available for this pair on this platform.');
             }
           }
-
-          console.log('error response: ', Object.values(error.response?.data as object));
           throw new Error(`Error fetching data on ${fullUrl}`);
         } else {
           console.error('unexpected error: ', error);

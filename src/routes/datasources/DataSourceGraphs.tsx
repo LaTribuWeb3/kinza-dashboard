@@ -76,10 +76,10 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
     return () => {
       // Perform cleanup if necessary
     };
-    // platform is not in the deps for this hooks because we only need to reload the data
-    // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.pair.base, props.pair.quote, chain, props.platform]);
+
+  console.log(appProperties.dataSources);
 
   if (!liquidityData) {
     return <DataSourceGraphsSkeleton />;
@@ -92,7 +92,13 @@ export function DataSourceGraphs(props: DataSourceGraphsInterface) {
       {isLoading && !unavailablePair ? (
         <DataSourceGraphsSkeleton />
       ) : unavailablePair ? (
-        <span>No data</span>
+        <Grid width={'100vw'} container spacing={0}>
+          <Grid item xs={12}>
+            <Typography textAlign={'center'} mt={2}>
+              This pair doesn't exist on this platform.
+            </Typography>
+          </Grid>
+        </Grid>
       ) : (
         <Grid width={'100vw'} container spacing={0}>
           <Grid item xs={12}>
