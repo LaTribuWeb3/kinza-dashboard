@@ -56,7 +56,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                     <TableRow>
                       <TableCell>Market</TableCell>
                       <TableCell>Risk Level</TableCell>
-                      <TableCell>LTV (%)</TableCell>
+                      <TableCell>LT (%)</TableCell>
                       <TableCell>Supply Cap ($)</TableCell>
                       <TableCell>Borrow Cap ($)</TableCell>
                       <TableCell>Volatility (%)</TableCell>
@@ -66,7 +66,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                     <TableRow>
                       <TableCell>Market</TableCell>
                       <TableCell>Risk Level</TableCell>
-                      <TableCell>LTV (%)</TableCell>
+                      <TableCell>LT (%)</TableCell>
                     </TableRow>
                   )}
                 </TableHead>
@@ -104,7 +104,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                           </Typography>
                         </TableCell>
                         <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
-                        <TableCell>{subMarket.LTV * 100}%</TableCell>
+                        <TableCell>{subMarket.liquidationThreshold * 100}%</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

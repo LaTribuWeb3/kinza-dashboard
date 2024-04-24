@@ -10,9 +10,9 @@ export interface RiskLevelGraphsInterface {
   pair: Pair;
   platform: string;
   supplyCap: number;
-  LTV: number;
+  liquidationThreshold: number;
   chain: string;
-  parameters: { ltv: number; bonus: number; visible: boolean };
+  parameters: { liquidationThreshold: number; bonus: number; visible: boolean };
 }
 
 export interface GraphDataAtTimestamp {
@@ -34,7 +34,7 @@ function findRiskLevelFromParameters(
   volatility: number,
   liquidity: number,
   liquidationBonus: number,
-  ltv: number,
+  liquidationThreshold: number,
   borrowCap: number
 ) {
   const sigma = volatility;
@@ -43,10 +43,10 @@ function findRiskLevelFromParameters(
   const l = liquidity;
 
   const sigmaTimesSqrtOfD = sigma * Math.sqrt(d);
-  const ltvPlusBeta = ltv + beta;
-  const lnOneDividedByLtvPlusBeta = Math.log(1 / ltvPlusBeta);
-  const lnOneDividedByLtvPlusBetaTimesSqrtOfL = lnOneDividedByLtvPlusBeta * Math.sqrt(l);
-  const r = sigmaTimesSqrtOfD / lnOneDividedByLtvPlusBetaTimesSqrtOfL;
+  const ltPlusBeta = liquidationThreshold + beta;
+  const lnOneDividedByLtPlusBeta = Math.log(1 / ltPlusBeta);
+  const lnOneDividedByLtPlusBetaTimesSqrtOfL = lnOneDividedByLtPlusBeta * Math.sqrt(l);
+  const r = sigmaTimesSqrtOfD / lnOneDividedByLtPlusBetaTimesSqrtOfL;
   return r;
 }
 
@@ -83,13 +83,13 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
             const liquidationBonus = Math.round(props.parameters.bonus * 10000);
             const liquidity = timestampData.avgSlippageMap[liquidationBonus];
             if (liquidity > 0) {
-              const ltv = props.LTV;
+              const liquidationThreshold = props.liquidationThreshold;
               const cap = props.supplyCap == 0 ? 1 : props.supplyCap;
               currentBlockData.riskValue = findRiskLevelFromParameters(
                 timestampData.volatility,
                 liquidity,
                 liquidationBonus / 10000,
-                ltv,
+                liquidationThreshold,
                 cap
               );
             }
@@ -117,7 +117,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
     // platform is not in the deps for this hooks because we only need to reload the data
     // if the pair is changing
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.LTV, props.chain]);
+  }, [props.pair.base, props.pair.quote, props.supplyCap, props.parameters, props.liquidationThreshold, props.chain]);
 
   if (!liquidityData) {
     return <RiskLevelGraphsSkeleton />;

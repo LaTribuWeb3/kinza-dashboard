@@ -11,6 +11,7 @@ export interface SubMarket {
   quote: string;
   riskLevel: number;
   LTV: number;
+  liquidationThreshold: number;
   liquidationBonus: number;
   supplyCapUsd: number;
   supplyCapInKind: number;

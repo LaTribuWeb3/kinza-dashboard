@@ -34,6 +34,7 @@ export const initialContext: appContextType = {
     riskParameter: {
       pair: { base: '', quote: '' },
       ltv: 0,
+      liquidationThreshold: 0,
       bonus: 0,
       visible: true,
       supplyCapInUSD: 0,

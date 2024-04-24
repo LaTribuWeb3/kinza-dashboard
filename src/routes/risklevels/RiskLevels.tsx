@@ -20,7 +20,7 @@ export default function RiskLevels() {
   const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
   const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
   const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
-  const [LTV, setLTV] = useState<number | undefined>(undefined);
+  const [liquidationThreshold, setLiquidationThreshold] = useState<number | undefined>(undefined);
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
   const pathName = useLocation().pathname;
@@ -58,12 +58,15 @@ export default function RiskLevels() {
     }
   };
 
-  const handleChangeLTV = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeLT = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value) {
-      const newLTV = Number(event.target.value);
-      if (newLTV >= 1 && newLTV < 100 - riskParameter!.bonus * 100) {
-        setLTV(newLTV);
-        setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, ltv: newLTV / 100 } });
+      const newLT = Number(event.target.value);
+      if (newLT >= 1 && newLT < 100 - riskParameter!.bonus * 100) {
+        setLiquidationThreshold(newLT);
+        setAppProperties({
+          ...appProperties,
+          riskParameter: { ...appProperties.riskParameter, liquidationThreshold: newLT / 100 }
+        });
       }
     }
   };
@@ -85,6 +88,7 @@ export default function RiskLevels() {
               kinzaRiskParameters[symbol][subMarket.quote] = {
                 pair: { base: symbol, quote: subMarket.quote },
                 ltv: subMarket.LTV,
+                liquidationThreshold: subMarket.liquidationThreshold,
                 bonus: subMarket.liquidationBonus,
                 visible: true, // Set all to true as per instruction
                 supplyCapInUSD: subMarket.supplyCapUsd,
@@ -115,7 +119,7 @@ export default function RiskLevels() {
         }
         const pairSet = navPair ? navPair : data[0];
         setRiskParameter(kinzaRiskParameters[pairSet.base][pairSet.quote]);
-        setLTV(kinzaRiskParameters[pairSet.base][pairSet.quote].ltv * 100);
+        setLiquidationThreshold(kinzaRiskParameters[pairSet.base][pairSet.quote].liquidationThreshold * 100);
         const capUSDToSet = Math.max(
           1,
           Math.min(
@@ -192,7 +196,7 @@ export default function RiskLevels() {
   }
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading || !riskParameter || !LTV ? (
+      {isLoading || !riskParameter || !liquidationThreshold ? (
         <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline" justifyContent="center">
@@ -216,7 +220,7 @@ export default function RiskLevels() {
           </Grid>
           <Grid item xs={0} lg={1} sx={{ marginTop: '20px' }} />
           <Grid item xs={8} sm={6} md={4} lg={3} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Typography textAlign={'right'}>LTV: </Typography>
+            <Typography textAlign={'right'}>LT: </Typography>
             <TextField
               sx={{
                 width: '95%',
@@ -228,11 +232,11 @@ export default function RiskLevels() {
                 }
               }}
               required
-              id="ltv-input"
+              id="lt-input"
               type="number"
               label={`Must be < ${100 - riskParameter.bonus * 100}%`}
-              onChange={handleChangeLTV}
-              value={LTV}
+              onChange={handleChangeLT}
+              value={liquidationThreshold}
               InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>
               }}
@@ -263,7 +267,7 @@ export default function RiskLevels() {
             <RiskLevelGraphs
               pair={selectedPair}
               parameters={riskParameter}
-              LTV={LTV / 100}
+              liquidationThreshold={liquidationThreshold / 100}
               supplyCap={capInKind}
               platform={'all'}
               chain={chain}
