@@ -81,7 +81,7 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
                           </Typography>
                         </TableCell>
                         <TableCell>{subMarket.riskLevel.toFixed(2)}</TableCell>
-                        <TableCell>{subMarket.LTV * 100}%</TableCell>
+                        <TableCell>{subMarket.liquidationThreshold * 100}%</TableCell>
                         <Tooltip title={`${FriendlyFormatNumber(subMarket.supplyCapInKind)} ${baseSymbol}`}>
                           <TableCell>${FriendlyFormatNumber(subMarket.supplyCapUsd)}</TableCell>
                         </Tooltip>
