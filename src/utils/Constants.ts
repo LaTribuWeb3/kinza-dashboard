@@ -5,7 +5,8 @@ export const BSC_DATA_SOURCES = [
   'Pancakeswap StableSwaps',
   'Pancakeswap v2',
   'Pancakeswap v3',
-  'Wombat'
+  'Wombat',
+  'Curve'
 ];
 
 export const BSC_DATA_SOURCES_MAP = {
@@ -13,7 +14,8 @@ export const BSC_DATA_SOURCES_MAP = {
   'Pancakeswap StableSwaps': 'pancake',
   'Pancakeswap v2': 'pancakeswapv2',
   'Pancakeswap v3': 'pancakeswapv3',
-  Wombat: 'wombat'
+  Wombat: 'wombat',
+  Curve: 'curve',
 };
 export const ETH_DATA_SOURCES = ['All sources', 'Uniswap v2', 'Uniswap v3', 'Sushiswap v2', 'Curve', 'Balancer'];
 
