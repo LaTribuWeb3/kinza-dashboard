@@ -8,7 +8,7 @@ export const BSC_DATA_SOURCES = [
   'Wombat',
   'Curve'
 ];
-
+//trigger new build
 export const BSC_DATA_SOURCES_MAP = {
   'All sources': 'all',
   'Pancakeswap StableSwaps': 'pancake',
