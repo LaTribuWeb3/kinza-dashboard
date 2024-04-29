@@ -80,6 +80,12 @@ export function NavCategories(props: NavCategoriesProperties) {
               Ethereum
             </Box>
           </MenuItem>
+          <MenuItem value={'opbnb'} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+              <Avatar alt="opbnb logo" src="/bsc.ico" sx={{ width: 25, height: 25, marginRight: 2 }} />
+              opBNB
+            </Box>
+          </MenuItem>
         </Select>
       </FormControl>
 

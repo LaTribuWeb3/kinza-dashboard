@@ -27,6 +27,16 @@ export const ETH_DATA_SOURCES_MAP = {
   Curve: 'curve',
   Balancer: 'balancer'
 };
+export const OPBNB_DATA_SOURCES = [
+  'All sources',
+  'Pancakeswap v3',
+];
+
+export const OPBNB_DATA_SOURCES_MAP = {
+  'All sources': 'all',
+  'Pancakeswap v3': 'pancakeswapv3',
+};
+
 
 export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) * 100);
 
