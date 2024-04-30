@@ -84,6 +84,8 @@ export default function DataLoadingWrapper() {
         }
         updatedOverviewData.pages.riskLevels.selectedPair = pairSet;
         updatedOverviewData.pages.riskLevels.selectedRiskParameter = kinzaRiskParameters[pairSet.base][pairSet.quote];
+        updatedOverviewData.pages.riskLevels.currentLiquidationThreshold =
+          kinzaRiskParameters[pairSet.base][pairSet.quote].liquidationThreshold * 100;
         const capUSDToSet = Math.max(
           1,
           Math.min(

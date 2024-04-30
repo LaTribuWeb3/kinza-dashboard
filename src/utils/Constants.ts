@@ -48,6 +48,7 @@ export const initialContext: appContextType = {
     pages: {
       riskLevels: {
         selectedPair: { base: '', quote: '' },
+        currentLiquidationThreshold: 0,
         selectedRiskParameter: {
           pair: { base: '', quote: '' },
           ltv: 0,

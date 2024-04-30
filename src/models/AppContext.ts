@@ -18,6 +18,7 @@ export interface AppContextProperties {
   riskParameters: KinzaRiskParameters;
   pages: {
     riskLevels: {
+      currentLiquidationThreshold: number;
       selectedPair: Pair;
       selectedRiskParameter: KinzaRiskParameter;
       capUSD: number;

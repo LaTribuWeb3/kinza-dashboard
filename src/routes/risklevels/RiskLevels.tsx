@@ -16,7 +16,7 @@ export default function RiskLevels() {
   const capInKind = riskLevelsPage.capInKind;
   const tokenPrice = riskLevelsPage.tokenPrice;
   const riskParameter = riskLevelsPage.selectedRiskParameter;
-  const liquidationThreshold = riskParameter.liquidationThreshold * 100;
+  const liquidationThreshold = riskLevelsPage.currentLiquidationThreshold;
 
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
@@ -42,16 +42,33 @@ export default function RiskLevels() {
   };
 
   const handleChangeLT = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // if (event.target && event.target.value) {
-    //   const newLT = Number(event.target.value);
-    //   if (newLT >= 1 && newLT < 100 - riskParameter!.bonus * 100) {
-    //     setLiquidationThreshold(newLT);
-    //     setAppProperties({
-    //       ...appProperties,
-    //       riskParameter: { ...appProperties.riskParameter, liquidationThreshold: newLT / 100 }
-    //     });
-    //   }
-    // }
+    console.log(event.target.value);
+    if (event.target && event.target.value) {
+      const newLT = Number(event.target.value);
+      if (newLT == 0) {
+        setAppProperties({
+          ...appProperties,
+          pages: {
+            ...appProperties.pages,
+            riskLevels: {
+              ...appProperties.pages.riskLevels,
+              currentLiquidationThreshold: newLT
+            }
+          }
+        });
+      } else if (newLT >= 1 && newLT < 100 - riskParameter.bonus * 100) {
+        setAppProperties({
+          ...appProperties,
+          pages: {
+            ...appProperties.pages,
+            riskLevels: {
+              ...appProperties.pages.riskLevels,
+              currentLiquidationThreshold: newLT
+            }
+          }
+        });
+      }
+    }
   };
 
   console.log({ appProperties });
