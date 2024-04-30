@@ -79,7 +79,7 @@ export default function DataSource() {
     // });
   };
 
-  if (!selectedPair) {
+  if (!selectedPair || isLoading || !platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`]) {
     return <DataSourceSkeleton />;
   }
   return (
