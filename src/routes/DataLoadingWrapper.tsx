@@ -8,6 +8,7 @@ import { OverviewData } from '../models/OverviewData';
 import { KinzaRiskParameters } from '../models/RiskData';
 import { Pair } from '../models/ApiData';
 import { sleep } from '../utils/Utils';
+import { initialContext } from '../utils/Constants';
 
 export default function DataLoadingWrapper() {
   const pathName = useLocation().pathname;
@@ -21,6 +22,8 @@ export default function DataLoadingWrapper() {
     async function fetchData() {
       try {
         // loading overview data
+        const updatedOverviewData = initialContext.appProperties;
+        updatedOverviewData.chain = chain;
         const overviewData = await DataService.GetOverview(chain);
         const entries = Object.entries(overviewData);
         entries.sort((a, b) => b[1].riskLevel - a[1].riskLevel);
@@ -28,9 +31,7 @@ export default function DataLoadingWrapper() {
           acc[symbol] = data;
           return acc;
         }, {} as OverviewData);
-        setAppProperties({ ...appProperties, overviewData: sortedOverviewData });
-        console.log('sortedOverviewData', sortedOverviewData);
-        console.log('appPropertiesFromOverview', appProperties);
+        updatedOverviewData.overviewData = sortedOverviewData;
 
         // loading risk levels data
         const kinzaRiskParameters = {} as KinzaRiskParameters;
@@ -53,7 +54,7 @@ export default function DataLoadingWrapper() {
             }
           });
         });
-        setAppProperties({ ...appProperties, riskParameters: kinzaRiskParameters });
+        updatedOverviewData.riskParameters = kinzaRiskParameters;
         const data = [];
         for (const symbol of Object.keys(overviewData)) {
           for (const subMarket of overviewData[symbol].subMarkets) {
@@ -64,41 +65,17 @@ export default function DataLoadingWrapper() {
           chain: [] as Pair[]
         };
         availablePairs.chain = data.sort((a, b) => a.base.localeCompare(b.base));
-        setAppProperties({ ...appProperties, availablePairs });
+        updatedOverviewData.availablePairs = availablePairs;
         const navPair = pathName.split('/')[2]
           ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
           : undefined;
+        let pairSet = {} as Pair;
         if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
-          setAppProperties({
-            ...appProperties,
-            pages: {
-              ...appProperties.pages,
-              riskLevels: { ...appProperties.pages.riskLevels, selectedPair: navPair },
-              dataSources: { ...appProperties.pages.dataSources, pair: navPair }
-            }
-          });
+          pairSet = navPair;
         } else if (data.length > 0) {
-          setAppProperties({
-            ...appProperties,
-            pages: {
-              ...appProperties.pages,
-              riskLevels: { ...appProperties.pages.riskLevels, selectedPair: data[0] },
-              dataSources: { ...appProperties.pages.dataSources, pair: data[0] }
-            }
-          });
+          pairSet = data[0];
         }
-        const pairSet = navPair ? navPair : data[0];
-        console.log('pairSet', pairSet);
-        setAppProperties({
-          ...appProperties,
-          pages: {
-            ...appProperties.pages,
-            riskLevels: {
-              ...appProperties.pages.riskLevels,
-              selectedRiskParameter: kinzaRiskParameters[pairSet.base][pairSet.quote]
-            }
-          }
-        });
+        updatedOverviewData.pages.riskLevels.selectedPair = pairSet;
         const capUSDToSet = Math.max(
           1,
           Math.min(
@@ -106,18 +83,11 @@ export default function DataLoadingWrapper() {
             kinzaRiskParameters[pairSet.base][pairSet.quote].borrowCapInUSD
           )
         );
-        setAppProperties({
-          ...appProperties,
-          pages: { ...appProperties.pages, riskLevels: { ...appProperties.pages.riskLevels, capUSD: capUSDToSet } }
-        });
+        updatedOverviewData.pages.riskLevels.capUSD = capUSDToSet;
         const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
-        setAppProperties({
-          ...appProperties,
-          pages: {
-            ...appProperties.pages,
-            riskLevels: { ...appProperties.pages.riskLevels, capInKind: capInKindToSet }
-          }
-        });
+        updatedOverviewData.pages.riskLevels.capInKind = capInKindToSet;
+        updatedOverviewData.pages.riskLevels.tokenPrice = kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
+        setAppProperties(updatedOverviewData);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
         console.error('Error fetching data:', error);
