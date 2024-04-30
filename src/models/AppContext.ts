@@ -1,8 +1,11 @@
 import { Pair } from './ApiData';
+import { OverviewData } from './OverviewData';
 import { KinzaRiskParameter } from './RiskData';
 
 export interface AppContextProperties {
   chain: string;
+  overviewData: OverviewData;
+  loading: boolean;
   availablePairs?: {
     [key: string]: Pair[];
   };

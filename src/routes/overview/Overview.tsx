@@ -1,18 +1,13 @@
 import { Grid, LinearProgress, Skeleton } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
-import DataService from '../../services/DataService';
-import { SimpleAlert } from '../../components/SimpleAlert';
+import { useContext } from 'react';
 import { BSC_DATA_SOURCES, ETH_DATA_SOURCES, OPBNB_DATA_SOURCES } from '../../utils/Constants';
-import { OverviewData } from '../../models/OverviewData';
 import { OverviewTable } from '../../components/OverviewTable';
 import { AppContext } from '../App';
+import { OverviewData } from '../../models/OverviewData';
 
-interface skeletonProps {
-  chain: string;
-}
-
-function OverviewSkeleton(props: skeletonProps) {
-  const DATA_SOURCES = props.chain === 'bsc' ? BSC_DATA_SOURCES : props.chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
+function OverviewSkeleton() {
+  const chain = useContext(AppContext).appProperties.chain;
+  const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>
@@ -27,55 +22,12 @@ function OverviewSkeleton(props: skeletonProps) {
 }
 
 export function Overview() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [overviewData, setOverviewData] = useState<OverviewData>({});
-  const [openAlert, setOpenAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState('');
-  const { appProperties } = useContext(AppContext);
-  const chain = appProperties.chain;
-
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
-
-  useEffect(() => {
-    setIsLoading(true);
-    async function fetchData() {
-      try {
-        const overviewData = await DataService.GetOverview(chain);
-        const entries = Object.entries(overviewData);
-        entries.sort((a, b) => b[1].riskLevel - a[1].riskLevel);
-        const sortedOverviewData: OverviewData = entries.reduce((acc, [symbol, data]) => {
-          acc[symbol] = data;
-          return acc;
-        }, {} as OverviewData);
-
-        setOverviewData(sortedOverviewData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setOpenAlert(true);
-        setIsLoading(false);
-        if (error instanceof Error) {
-          setAlertMsg(`Error fetching data: ${error.toString()}`);
-        } else {
-          setAlertMsg(`Unknown error`);
-        }
-      }
-    }
-
-    fetchData().catch(console.error);
-
-    return () => {
-      // Perform cleanup if necessary
-    };
-  }, [chain]);
+  const overviewData = useContext(AppContext).appProperties.overviewData as OverviewData;
+  const isLoading = useContext(AppContext).appProperties.loading as boolean;
 
   return (
     <Grid sx={{ mt: 10 }} container spacing={2}>
-      {isLoading ? <OverviewSkeleton chain={chain} /> : <OverviewTable data={overviewData} />}
-
-      <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
+      {isLoading ? <OverviewSkeleton /> : <OverviewTable data={overviewData} />}
     </Grid>
   );
 }

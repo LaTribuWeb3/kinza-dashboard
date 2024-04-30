@@ -43,6 +43,8 @@ export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) *
 export const initialContext: appContextType = {
   appProperties: {
     chain: 'bsc',
+    overviewData: {},
+    loading: true,
     riskParameter: {
       pair: { base: '', quote: '' },
       ltv: 0,
