@@ -55,28 +55,36 @@ export default function DataSource() {
     chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
   const handleChangePlatform = (event: SelectChangeEvent) => {
-    // setPlatform(event.target.value);
-    // setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, platform: event.target.value } });
+    setAppProperties({
+      ...appProperties,
+      pages: {
+        ...appProperties.pages,
+        dataSources: { ...appProperties.pages.dataSources, platform: event.target.value }
+      }
+    });
   };
 
   const handleChangeSlippage = (event: SelectChangeEvent) => {
-    // setSelectedSlippage(Number(event.target.value));
-    // setAppProperties({
-    //   ...appProperties,
-    //   dataSources: { ...appProperties.dataSources, slippage: Number(event.target.value) }
-    // });
+    setAppProperties({
+      ...appProperties,
+      pages: {
+        ...appProperties.pages,
+        dataSources: { ...appProperties.pages.dataSources, slippage: Number(event.target.value) }
+      }
+    });
   };
 
   const handleChangePair = (event: SelectChangeEvent) => {
-    // console.log(`handleChangePair: ${event.target.value}`);
-    // setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
-    // setAppProperties({
-    //   ...appProperties,
-    //   dataSources: {
-    //     ...appProperties.dataSources,
-    //     pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] }
-    //   }
-    // });
+    setAppProperties({
+      ...appProperties,
+      pages: {
+        ...appProperties.pages,
+        dataSources: {
+          ...appProperties.pages.dataSources,
+          pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] }
+        }
+      }
+    });
   };
 
   if (!selectedPair || isLoading || !platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`]) {
