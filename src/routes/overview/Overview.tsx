@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { BSC_DATA_SOURCES, ETH_DATA_SOURCES, OPBNB_DATA_SOURCES } from '../../utils/Constants';
 import { OverviewTable } from '../../components/OverviewTable';
 import { AppContext } from '../App';
-import { OverviewData } from '../../models/OverviewData';
 
 function OverviewSkeleton() {
   const chain = useContext(AppContext).appProperties.chain;
@@ -22,8 +21,8 @@ function OverviewSkeleton() {
 }
 
 export function Overview() {
-  const overviewData = useContext(AppContext).appProperties.overviewData as OverviewData;
-  const isLoading = useContext(AppContext).appProperties.loading as boolean;
+  const overviewData = useContext(AppContext).appProperties.overviewData;
+  const isLoading = useContext(AppContext).appProperties.loading;
 
   return (
     <Grid sx={{ mt: 10 }} container spacing={2}>

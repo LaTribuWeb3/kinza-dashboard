@@ -14,14 +14,14 @@ function App() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [appProperties, setAppProperties] = useState<AppContextProperties>(initialContext.appProperties);
 
-  const contextValue = useMemo(() => ({ appProperties, setAppProperties }), [appProperties, setAppProperties]);
+  console.log('appProperties', appProperties);
 
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
   };
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppContext.Provider value={contextValue}>
+      <AppContext.Provider value={{ appProperties, setAppProperties }}>
         <MainAppBar toggleDrawerFct={toggleDrawer} />
         <ResponsiveNavBar drawerWidth={drawerWidth} open={openDrawer} toggleDrawerFct={toggleDrawer} />
         <DataLoadingWrapper />

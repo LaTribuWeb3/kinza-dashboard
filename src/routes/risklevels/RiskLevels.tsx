@@ -1,7 +1,6 @@
 import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import DataService from '../../services/DataService';
-import { Pair } from '../../models/ApiData';
 import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
 import { SimpleAlert } from '../../components/SimpleAlert';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
@@ -10,19 +9,21 @@ import { useLocation } from 'react-router-dom';
 import { AppContext } from '../App';
 
 export default function RiskLevels() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [availablePairs, setAvailablePairs] = useState<Pair[]>([]);
-  const [selectedPair, setSelectedPair] = useState<Pair>();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
-  const [capUSD, setCapUSD] = useState<number>(0);
-  const [capInKind, setCapInKind] = useState<number | undefined>(undefined);
-  const [tokenPrice, setTokenPrice] = useState<number | undefined>(undefined);
-  const [parameters, setParameters] = useState<KinzaRiskParameters | undefined>(undefined);
-  const [riskParameter, setRiskParameter] = useState<KinzaRiskParameter | undefined>(undefined);
-  const [liquidationThreshold, setLiquidationThreshold] = useState<number | undefined>(undefined);
   const { appProperties, setAppProperties } = useContext(AppContext);
+  const isLoading = appProperties.loading;
+  const riskParameters = appProperties.riskParameters;
+  const riskLevelsPage = appProperties.pages.riskLevels;
   const chain = appProperties.chain;
+  const availablePairs = appProperties.availablePairs[chain];
+  const selectedPair = riskLevelsPage.selectedPair;
+  const capUSD = riskLevelsPage.capUSD;
+  const capInKind = riskLevelsPage.capInKind;
+  const tokenPrice = riskLevelsPage.tokenPrice;
+  const riskParameter = riskLevelsPage.selectedRiskParameter;
+  const liquidationThreshold = riskParameter.liquidationThreshold * 100;
+
   const pathName = useLocation().pathname;
 
   const handleCloseAlert = () => {
@@ -33,165 +34,41 @@ export default function RiskLevels() {
     const quote = event.target.value.split('/')[1];
     setAppProperties({
       ...appProperties,
-      riskParameter: { ...appProperties.riskParameter, pair: { base: base, quote: quote } }
+      pages: {
+        ...appProperties.pages,
+        riskLevels: {
+          ...appProperties.pages.riskLevels,
+          selectedPair: { base, quote },
+          selectedRiskParameter: riskParameters.base.quote
+        }
+      }
     });
-    setSelectedPair({ base: base, quote: quote });
-    if (parameters) {
-      setRiskParameter(parameters[base][quote]);
-      const updatedAppProperties = parameters[base][quote];
-      updatedAppProperties.pair = { base: base, quote: quote };
-      setAppProperties({ ...appProperties, riskParameter: updatedAppProperties });
-    }
   };
   const handleChangeCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value && tokenPrice) {
-      setCapInKind(Number(event.target.value));
-      setCapUSD(Number(event.target.value) * tokenPrice);
-      setAppProperties({
-        ...appProperties,
-        riskParameter: {
-          ...appProperties.riskParameter,
-          basePrice: tokenPrice,
-          supplyCapInUSD: Number(event.target.value) * tokenPrice
-        }
-      });
+      console.log(event.target.value, tokenPrice);
+      // setCapInKind(Number(event.target.value));
+      // setCapUSD(Number(event.target.value) * tokenPrice);
     }
   };
 
   const handleChangeLT = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target && event.target.value) {
-      const newLT = Number(event.target.value);
-      if (newLT >= 1 && newLT < 100 - riskParameter!.bonus * 100) {
-        setLiquidationThreshold(newLT);
-        setAppProperties({
-          ...appProperties,
-          riskParameter: { ...appProperties.riskParameter, liquidationThreshold: newLT / 100 }
-        });
-      }
-    }
+    // if (event.target && event.target.value) {
+    //   const newLT = Number(event.target.value);
+    //   if (newLT >= 1 && newLT < 100 - riskParameter!.bonus * 100) {
+    //     setLiquidationThreshold(newLT);
+    //     setAppProperties({
+    //       ...appProperties,
+    //       riskParameter: { ...appProperties.riskParameter, liquidationThreshold: newLT / 100 }
+    //     });
+    //   }
+    // }
   };
 
-  //// useEffect to load data
-  useEffect(() => {
-    setIsLoading(true);
-    // Define an asynchronous function
-    async function fetchData() {
-      try {
-        const overviewData = await DataService.GetOverview(chain);
-        const kinzaRiskParameters = {} as KinzaRiskParameters;
-        Object.keys(overviewData).forEach((symbol) => {
-          const riskLevelData = overviewData[symbol];
-          kinzaRiskParameters[symbol] = {};
-          riskLevelData.subMarkets.forEach((subMarket) => {
-            // Ensure the subMarket's quote does not already exist for robustness
-            if (!kinzaRiskParameters[symbol][subMarket.quote]) {
-              kinzaRiskParameters[symbol][subMarket.quote] = {
-                pair: { base: symbol, quote: subMarket.quote },
-                ltv: subMarket.LTV,
-                liquidationThreshold: subMarket.liquidationThreshold,
-                bonus: subMarket.liquidationBonus,
-                visible: true, // Set all to true as per instruction
-                supplyCapInUSD: subMarket.supplyCapUsd,
-                borrowCapInUSD: subMarket.borrowCapUsd,
-                basePrice: subMarket.basePrice
-              };
-            }
-          });
-        });
-        setParameters(kinzaRiskParameters);
-        const data = [];
-        for (const symbol of Object.keys(overviewData)) {
-          for (const subMarket of overviewData[symbol].subMarkets) {
-            data.push({ base: symbol, quote: subMarket.quote });
-          }
-        }
-        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
-        const navPair = pathName.split('/')[2]
-          ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
-          : undefined;
-        if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
-          setSelectedPair(navPair);
-          setAppProperties({ ...appProperties, riskParameter: { ...appProperties.riskParameter, pair: navPair } });
-        } else if (appProperties.riskParameter.pair.base && appProperties.riskParameter.pair.quote) {
-          setSelectedPair(appProperties.riskParameter.pair);
-        } else if (data.length > 0) {
-          setSelectedPair(data[0]);
-        }
-        const pairSet = navPair ? navPair : data[0];
-        setRiskParameter(kinzaRiskParameters[pairSet.base][pairSet.quote]);
-        setLiquidationThreshold(kinzaRiskParameters[pairSet.base][pairSet.quote].liquidationThreshold * 100);
-        const capUSDToSet = Math.max(
-          1,
-          Math.min(
-            kinzaRiskParameters[pairSet.base][pairSet.quote].supplyCapInUSD,
-            kinzaRiskParameters[pairSet.base][pairSet.quote].borrowCapInUSD
-          )
-        );
-        setCapUSD(capUSDToSet);
-        const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
-        setCapInKind(capInKindToSet);
-        await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setIsLoading(false);
-        if (error instanceof Error) {
-          setAlertMsg(`Error fetching data: ${error.toString()}`);
-        } else {
-          setAlertMsg(`Unknown error`);
-        }
-      }
-    }
-    fetchData()
-      .then(() => setIsLoading(false))
-      .catch(console.error);
-  }, [chain]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    async function getTokenPrice() {
-      try {
-        if (!selectedPair) {
-          return;
-        }
-        const data = await DataService.GetLiquidityData('all', selectedPair.base, selectedPair.quote, chain);
-        /// get token price
-        const liquidityObjectToArray = Object.keys(data.liquidity).map((_) => parseInt(_));
-        const maxBlock = liquidityObjectToArray.at(-1)!.toString();
-        const tokenPrice = data.liquidity[maxBlock].priceMedian;
-
-        if (selectedPair && capInKind && tokenPrice && parameters) {
-          const capUSDToSet = Math.max(
-            1,
-            Math.min(
-              parameters[selectedPair.base][selectedPair.quote].supplyCapInUSD,
-              parameters[selectedPair.base][selectedPair.quote].borrowCapInUSD
-            )
-          );
-          setCapUSD(capUSDToSet);
-
-          const capInKindToSet = capUSDToSet / parameters[selectedPair.base][selectedPair.quote].basePrice;
-          setTokenPrice(parameters[selectedPair.base][selectedPair.quote].basePrice);
-
-          setCapInKind(Number(capInKindToSet.toFixed(2)));
-          await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setOpenAlert(true);
-        setIsLoading(false);
-        if (error instanceof Error) {
-          setAlertMsg(`Error fetching data: ${error.toString()}`);
-        } else {
-          setAlertMsg(`Unknown error`);
-        }
-      }
-    }
-    getTokenPrice()
-      .then(() => setIsLoading(false))
-      .catch(console.error);
-  }, [selectedPair]);
+  console.log(selectedPair, tokenPrice, capInKind, isLoading);
 
   if (!selectedPair || !tokenPrice || capInKind == undefined || isLoading) {
+    console.log('firing');
     return <RiskLevelGraphsSkeleton />;
   }
   return (

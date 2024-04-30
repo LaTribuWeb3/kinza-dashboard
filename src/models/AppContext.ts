@@ -1,20 +1,29 @@
 import { Pair } from './ApiData';
 import { OverviewData } from './OverviewData';
-import { KinzaRiskParameter } from './RiskData';
+import { KinzaRiskParameter, KinzaRiskParameters } from './RiskData';
 
 export interface AppContextProperties {
   chain: string;
   overviewData: OverviewData;
   loading: boolean;
-  availablePairs?: {
+  availablePairs: {
     [key: string]: Pair[];
   };
-  riskParameter: KinzaRiskParameter;
-  dataSources: {
-    current: boolean;
-    pair: Pair;
-    platform: string;
-    slippage: number;
+  riskParameters: KinzaRiskParameters;
+  pages: {
+    riskLevels: {
+      selectedPair: Pair;
+      selectedRiskParameter: KinzaRiskParameter;
+      capUSD: number;
+      capInKind: number;
+      tokenPrice: number;
+    };
+    dataSources: {
+      current: boolean;
+      pair: Pair;
+      platform: string;
+      slippage: number;
+    };
   };
 }
 
