@@ -43,6 +43,7 @@ export const initialContext: appContextType = {
     loading: true,
     availablePairs: {},
     pairsByPlatform: {},
+    platformsByPair: {},
     riskParameters: {},
     pages: {
       riskLevels: {
@@ -66,7 +67,7 @@ export const initialContext: appContextType = {
         pair: { base: '', quote: '' },
         platform: 'all',
         platformsForPair: [],
-        slippage: 0
+        slippage: 500
       }
     }
   },
