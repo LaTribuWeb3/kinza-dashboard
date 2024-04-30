@@ -63,7 +63,8 @@ export const initialContext: appContextType = {
       dataSources: {
         current: false,
         pair: { base: '', quote: '' },
-        platform: '',
+        platform: 'all',
+        platformsForPair: [],
         slippage: 0
       }
     }

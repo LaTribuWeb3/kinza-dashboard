@@ -87,6 +87,10 @@ export default function DataLoadingWrapper() {
         const capInKindToSet = capUSDToSet / kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
         updatedOverviewData.pages.riskLevels.capInKind = capInKindToSet;
         updatedOverviewData.pages.riskLevels.tokenPrice = kinzaRiskParameters[pairSet.base][pairSet.quote].basePrice;
+
+        /// loading data sources data
+        updatedOverviewData.pages.dataSources.pair = pairSet;
+
         setAppProperties(updatedOverviewData);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {

@@ -22,6 +22,7 @@ export interface AppContextProperties {
       current: boolean;
       pair: Pair;
       platform: string;
+      platformsForPair: string[];
       slippage: number;
     };
   };
