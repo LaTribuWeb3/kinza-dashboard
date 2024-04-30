@@ -8,7 +8,15 @@ import { OverviewData } from '../models/OverviewData';
 import { KinzaRiskParameters } from '../models/RiskData';
 import { Pair } from '../models/ApiData';
 import { sleep } from '../utils/Utils';
-import { initialContext } from '../utils/Constants';
+import {
+  BSC_DATA_SOURCES,
+  BSC_DATA_SOURCES_MAP,
+  ETH_DATA_SOURCES,
+  ETH_DATA_SOURCES_MAP,
+  OPBNB_DATA_SOURCES,
+  OPBNB_DATA_SOURCES_MAP,
+  initialContext
+} from '../utils/Constants';
 
 export default function DataLoadingWrapper() {
   const pathName = useLocation().pathname;
@@ -90,6 +98,30 @@ export default function DataLoadingWrapper() {
 
         /// loading data sources data
         updatedOverviewData.pages.dataSources.pair = pairSet;
+        const DATA_SOURCES_MAP =
+          chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
+        for (const platform of Object.values(DATA_SOURCES_MAP)) {
+          const pairs = await DataService.GetAvailablePairs(platform, chain);
+          updatedOverviewData.pairsByPlatform[platform] = pairs;
+        }
+
+        const platformsForPairs: { [key: string]: string[] } = {};
+        for (const pair of data) {
+          const platformsAvailable = [];
+          if (updatedOverviewData.pairsByPlatform) {
+            for (const [platform, pairs] of Object.entries(updatedOverviewData.pairsByPlatform)) {
+              // Check if the pair exists in the current platform's list
+              const pairExists = pairs.some((pair_) => pair_.base === pair.base && pair_.quote === pair.quote);
+
+              // If the pair exists, add the platform to the list
+              if (pairExists) {
+                platformsAvailable.push(platform);
+              }
+            }
+          }
+          platformsForPairs[`${pair.base}/${pair.quote}`] = platformsAvailable;
+        }
+        updatedOverviewData.platformsByPair = platformsForPairs;
 
         setAppProperties(updatedOverviewData);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here

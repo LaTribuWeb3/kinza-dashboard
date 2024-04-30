@@ -9,6 +9,12 @@ export interface AppContextProperties {
   availablePairs: {
     [key: string]: Pair[];
   };
+  pairsByPlatform: {
+    [key: string]: Pair[];
+  };
+  platformsByPair: {
+    [key: string]: string[];
+  };
   riskParameters: KinzaRiskParameters;
   pages: {
     riskLevels: {

@@ -42,6 +42,7 @@ export const initialContext: appContextType = {
     overviewData: {},
     loading: true,
     availablePairs: {},
+    pairsByPlatform: {},
     riskParameters: {},
     pages: {
       riskLevels: {
