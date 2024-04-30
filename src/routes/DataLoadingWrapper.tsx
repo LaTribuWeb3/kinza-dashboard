@@ -61,11 +61,10 @@ export default function DataLoadingWrapper() {
             data.push({ base: symbol, quote: subMarket.quote });
           }
         }
-        const availablePairs = {
-          chain: [] as Pair[]
-        };
-        availablePairs.chain = data.sort((a, b) => a.base.localeCompare(b.base));
-        updatedOverviewData.availablePairs = availablePairs;
+        if (chain) {
+          updatedOverviewData.availablePairs[chain] = data.sort((a, b) => a.base.localeCompare(b.base));
+        }
+        console.log({ updatedOverviewData });
         const navPair = pathName.split('/')[2]
           ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
           : undefined;
@@ -76,6 +75,7 @@ export default function DataLoadingWrapper() {
           pairSet = data[0];
         }
         updatedOverviewData.pages.riskLevels.selectedPair = pairSet;
+        updatedOverviewData.pages.riskLevels.selectedRiskParameter = kinzaRiskParameters[pairSet.base][pairSet.quote];
         const capUSDToSet = Math.max(
           1,
           Math.min(

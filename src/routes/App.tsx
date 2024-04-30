@@ -13,9 +13,6 @@ export const AppContext = createContext<appContextType>(initialContext);
 function App() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [appProperties, setAppProperties] = useState<AppContextProperties>(initialContext.appProperties);
-
-  console.log('appProperties', appProperties);
-
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
   };

@@ -1,16 +1,10 @@
 import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
-import DataService from '../../services/DataService';
-import { FriendlyFormatNumber, sleep } from '../../utils/Utils';
-import { SimpleAlert } from '../../components/SimpleAlert';
+import { useContext } from 'react';
+import { FriendlyFormatNumber } from '../../utils/Utils';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
-import { KinzaRiskParameter, KinzaRiskParameters } from '../../models/RiskData';
-import { useLocation } from 'react-router-dom';
 import { AppContext } from '../App';
 
 export default function RiskLevels() {
-  const [openAlert, setOpenAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState('');
   const { appProperties, setAppProperties } = useContext(AppContext);
   const isLoading = appProperties.loading;
   const riskParameters = appProperties.riskParameters;
@@ -24,11 +18,6 @@ export default function RiskLevels() {
   const riskParameter = riskLevelsPage.selectedRiskParameter;
   const liquidationThreshold = riskParameter.liquidationThreshold * 100;
 
-  const pathName = useLocation().pathname;
-
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
@@ -65,15 +54,14 @@ export default function RiskLevels() {
     // }
   };
 
-  console.log(selectedPair, tokenPrice, capInKind, isLoading);
+  console.log({ appProperties });
 
   if (!selectedPair || !tokenPrice || capInKind == undefined || isLoading) {
-    console.log('firing');
     return <RiskLevelGraphsSkeleton />;
   }
   return (
     <Box sx={{ mt: 10 }}>
-      {isLoading || !riskParameter || !liquidationThreshold ? (
+      {isLoading || !riskParameter || !liquidationThreshold || !availablePairs ? (
         <RiskLevelGraphsSkeleton />
       ) : (
         <Grid container spacing={1} alignItems="baseline" justifyContent="center">
@@ -152,8 +140,6 @@ export default function RiskLevels() {
           </Grid>
         </Grid>
       )}
-
-      <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Box>
   );
 }
