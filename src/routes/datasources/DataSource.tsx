@@ -87,7 +87,12 @@ export default function DataSource() {
     });
   };
 
-  if (!selectedPair || isLoading || !platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`]) {
+  if (
+    !selectedPair ||
+    isLoading ||
+    !platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`] ||
+    !availablePairs
+  ) {
     return <DataSourceSkeleton />;
   }
   return (

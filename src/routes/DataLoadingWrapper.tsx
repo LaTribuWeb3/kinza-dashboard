@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import { Overview } from './overview/Overview';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
@@ -22,6 +22,8 @@ export default function DataLoadingWrapper() {
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoading(true);
+
         // loading overview data
         const updatedOverviewData = initialContext.appProperties;
         updatedOverviewData.chain = chain;
@@ -65,7 +67,6 @@ export default function DataLoadingWrapper() {
         if (chain) {
           updatedOverviewData.availablePairs[chain] = data.sort((a, b) => a.base.localeCompare(b.base));
         }
-        console.log({ updatedOverviewData });
         const navPair = pathName.split('/')[2]
           ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
           : undefined;
@@ -148,10 +149,14 @@ export default function DataLoadingWrapper() {
         direction: 'row'
       }}
     >
-      <Box sx={{ mt: 8, ml: 1.5 }}>
-        {pathName === '/' && <Overview loading={loading} />}
-        <Outlet />
-      </Box>
+      {loading ? (
+        <Skeleton height={500} variant="rectangular" />
+      ) : (
+        <Box sx={{ mt: 8, ml: 1.5 }}>
+          {pathName === '/' && <Overview />}
+          <Outlet />
+        </Box>
+      )}
     </Box>
   );
 }
