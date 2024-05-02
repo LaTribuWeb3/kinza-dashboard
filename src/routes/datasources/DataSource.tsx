@@ -1,7 +1,5 @@
 import Box from '@mui/material/Box';
-import { useContext, useEffect, useState } from 'react';
-import DataService from '../../services/DataService';
-import { Pair } from '../../models/ApiData';
+import { useContext } from 'react';
 import {
   Grid,
   LinearProgress,
@@ -13,7 +11,6 @@ import {
   FormControl,
   InputLabel
 } from '@mui/material';
-import { SimpleAlert } from '../../components/SimpleAlert';
 import {
   BSC_DATA_SOURCES,
   BSC_DATA_SOURCES_MAP,
@@ -24,7 +21,6 @@ import {
   SLIPPAGES_BPS
 } from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
-import { sleep } from '../../utils/Utils';
 import { AppContext } from '../App';
 
 function DataSourceSkeleton() {
@@ -45,165 +41,58 @@ function DataSourceSkeleton() {
 }
 
 export default function DataSource() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [availablePairs, setAvailablePairs] = useState<Pair[]>([]);
-  const [selectedSlippage, setSelectedSlippage] = useState(500);
-  const [selectedPair, setSelectedPair] = useState<Pair>();
-  const [openAlert, setOpenAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState('');
-  const [platform, setPlatform] = useState('all');
   const { appProperties, setAppProperties } = useContext(AppContext);
-  const [platformsForPairs, setPlatformsForPairs] = useState<{ [key: string]: string[] }>({});
   const chain = appProperties.chain;
+  const isLoading = appProperties.loading;
+  const selectedPair = appProperties.pages.dataSources.pair;
+  const platform = appProperties.pages.dataSources.platform;
+  const selectedSlippage = appProperties.pages.dataSources.slippage;
+  const availablePairs = appProperties.availablePairs[chain];
+  const platformsForPairs = appProperties.platformsByPair;
+
   const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
   const DATA_SOURCES_MAP =
     chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
-  function findPlatformsForPair(base: string, quote: string) {
-    const platformsAvailable = [];
-
-    if (appProperties.availablePairs) {
-      for (const [platform, pairs] of Object.entries(appProperties.availablePairs)) {
-        // Check if the pair exists in the current platform's list
-        const pairExists = pairs.some((pair) => pair.base === base && pair.quote === quote);
-
-        // If the pair exists, add the platform to the list
-        if (pairExists) {
-          platformsAvailable.push(platform);
-        }
-      }
-    }
-    return platformsAvailable;
-  }
-
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
-
   const handleChangePlatform = (event: SelectChangeEvent) => {
-    setPlatform(event.target.value);
-    setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, platform: event.target.value } });
+    setAppProperties({
+      ...appProperties,
+      pages: {
+        ...appProperties.pages,
+        dataSources: { ...appProperties.pages.dataSources, platform: event.target.value }
+      }
+    });
   };
 
   const handleChangeSlippage = (event: SelectChangeEvent) => {
-    setSelectedSlippage(Number(event.target.value));
     setAppProperties({
       ...appProperties,
-      dataSources: { ...appProperties.dataSources, slippage: Number(event.target.value) }
+      pages: {
+        ...appProperties.pages,
+        dataSources: { ...appProperties.pages.dataSources, slippage: Number(event.target.value) }
+      }
     });
   };
 
   const handleChangePair = (event: SelectChangeEvent) => {
-    console.log(`handleChangePair: ${event.target.value}`);
-    setSelectedPair({ base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] });
     setAppProperties({
       ...appProperties,
-      dataSources: {
-        ...appProperties.dataSources,
-        pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] }
+      pages: {
+        ...appProperties.pages,
+        dataSources: {
+          ...appProperties.pages.dataSources,
+          pair: { base: event.target.value.split('/')[0], quote: event.target.value.split('/')[1] }
+        }
       }
     });
   };
 
-  useEffect(() => {
-    setPlatform('all');
-  }, [DATA_SOURCES, chain]);
-
-  useEffect(
-    () => {
-      async function fetchAvailablePairs() {
-        for (const platform of Object.values(DATA_SOURCES_MAP)) {
-          const pairs = await DataService.GetAvailablePairs(platform, chain);
-          setAppProperties((prev) => ({
-            ...prev,
-            availablePairs: {
-              ...prev.availablePairs,
-              [platform]: pairs
-            }
-          }));
-        }
-      }
-      fetchAvailablePairs().catch(console.error);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [chain]
-  );
-
-  useEffect(() => {
-    setIsLoading(true);
-    // Define an asynchronous function
-    async function fetchData() {
-      try {
-        const overviewData = await DataService.GetOverview(chain);
-        const data = [];
-        for (const symbol of Object.keys(overviewData)) {
-          for (const subMarket of overviewData[symbol].subMarkets) {
-            data.push({ base: symbol, quote: subMarket.quote });
-          }
-        }
-        setAvailablePairs(data.sort((a, b) => a.base.localeCompare(b.base)));
-
-        if (!appProperties.availablePairs) {
-          for (const platform of Object.values(DATA_SOURCES_MAP)) {
-            const pairs = await DataService.GetAvailablePairs(platform, chain);
-            setAppProperties((prev) => ({
-              ...prev,
-              availablePairs: {
-                ...prev.availablePairs,
-                [platform]: pairs
-              }
-            }));
-          }
-        }
-        const platformsForPairs: { [key: string]: string[] } = {};
-        for (const pair of data) {
-          platformsForPairs[`${pair.base}/${pair.quote}`] = findPlatformsForPair(pair.base, pair.quote);
-        }
-        setPlatformsForPairs(platformsForPairs);
-
-        const oldPair = selectedPair;
-
-        if (
-          appProperties.dataSources.pair.base &&
-          appProperties.dataSources.pair.quote &&
-          data.some(
-            (_) => _.base == appProperties.dataSources.pair.base && _.quote == appProperties.dataSources.pair.quote
-          )
-        ) {
-          setSelectedPair(appProperties.dataSources.pair);
-          setSelectedSlippage(appProperties.dataSources.slippage);
-          setPlatform(appProperties.dataSources.platform);
-        } else if (oldPair && data.some((_) => _.base == oldPair.base && _.quote == oldPair.quote)) {
-          setSelectedPair(oldPair);
-          setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, pair: oldPair } });
-        } else {
-          setSelectedPair(data[0]);
-          setAppProperties({ ...appProperties, dataSources: { ...appProperties.dataSources, pair: data[0] } });
-        }
-        await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setIsLoading(false);
-        if (error instanceof Error) {
-          setAlertMsg(`Error fetching data: ${error.toString()}`);
-        } else {
-          setAlertMsg(`Unknown error`);
-        }
-      }
-    }
-
-    // Call the asynchronous function
-    fetchData()
-      .then(() => setIsLoading(false))
-      .catch(console.error);
-
-    // You can also return a cleanup function from useEffect if needed
-    return () => {
-      // Perform cleanup if necessary
-    };
-  }, [platform, chain, selectedPair]);
-
-  if (!selectedPair) {
+  if (
+    !selectedPair ||
+    isLoading ||
+    !platformsForPairs[`${selectedPair.base}/${selectedPair.quote}`] ||
+    !availablePairs
+  ) {
     return <DataSourceSkeleton />;
   }
   return (
@@ -281,8 +170,6 @@ export default function DataSource() {
           <DataSourceGraphs pair={selectedPair} platform={platform} targetSlippage={selectedSlippage} />
         </Grid>
       )}
-
-      <SimpleAlert alertMsg={alertMsg} handleCloseAlert={handleCloseAlert} openAlert={openAlert} />
     </Box>
   );
 }

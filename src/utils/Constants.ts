@@ -39,21 +39,37 @@ export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) *
 export const initialContext: appContextType = {
   appProperties: {
     chain: 'bsc',
-    riskParameter: {
-      pair: { base: '', quote: '' },
-      ltv: 0,
-      liquidationThreshold: 0,
-      bonus: 0,
-      visible: true,
-      supplyCapInUSD: 0,
-      borrowCapInUSD: 0,
-      basePrice: 0
-    },
-    dataSources: {
-      current: false,
-      pair: { base: '', quote: '' },
-      platform: 'all',
-      slippage: 500
+    overviewData: {},
+    loading: true,
+    availablePairs: {},
+    pairsByPlatform: {},
+    platformsByPair: {},
+    riskParameters: {},
+    pages: {
+      riskLevels: {
+        selectedPair: { base: '', quote: '' },
+        currentLiquidationThreshold: 0,
+        selectedRiskParameter: {
+          pair: { base: '', quote: '' },
+          ltv: 0,
+          liquidationThreshold: 0,
+          bonus: 0,
+          visible: true,
+          supplyCapInUSD: 0,
+          borrowCapInUSD: 0,
+          basePrice: 0
+        },
+        capUSD: 0,
+        capInKind: 0,
+        tokenPrice: 0
+      },
+      dataSources: {
+        current: false,
+        pair: { base: '', quote: '' },
+        platform: 'all',
+        platformsForPair: [],
+        slippage: 500
+      }
     }
   },
   setAppProperties: () => {}
