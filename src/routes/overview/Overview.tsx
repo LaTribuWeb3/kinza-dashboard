@@ -20,9 +20,9 @@ function OverviewSkeleton() {
   );
 }
 
-export function Overview() {
+export function Overview(props: { loading: boolean }) {
   const overviewData = useContext(AppContext).appProperties.overviewData;
-  const isLoading = useContext(AppContext).appProperties.loading;
+  const isLoading = props.loading;
 
   return (
     <Grid sx={{ mt: 10 }} container spacing={2}>

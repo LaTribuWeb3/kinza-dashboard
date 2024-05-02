@@ -1,30 +1,23 @@
 import { Box } from '@mui/material';
 import { Overview } from './overview/Overview';
 import { Outlet, useLocation } from 'react-router-dom';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import DataService from '../services/DataService';
 import { AppContext } from './App';
 import { OverviewData } from '../models/OverviewData';
 import { KinzaRiskParameters } from '../models/RiskData';
 import { Pair } from '../models/ApiData';
 import { sleep } from '../utils/Utils';
-import {
-  BSC_DATA_SOURCES,
-  BSC_DATA_SOURCES_MAP,
-  ETH_DATA_SOURCES,
-  ETH_DATA_SOURCES_MAP,
-  OPBNB_DATA_SOURCES,
-  OPBNB_DATA_SOURCES_MAP,
-  initialContext
-} from '../utils/Constants';
+import { BSC_DATA_SOURCES_MAP, ETH_DATA_SOURCES_MAP, OPBNB_DATA_SOURCES_MAP, initialContext } from '../utils/Constants';
 
 export default function DataLoadingWrapper() {
   const pathName = useLocation().pathname;
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
+  const [loading, setLoading] = useState(true);
 
   function setLoadingDone() {
-    setAppProperties({ ...appProperties, loading: false });
+    setLoading(false);
   }
   useEffect(() => {
     async function fetchData() {
@@ -125,6 +118,8 @@ export default function DataLoadingWrapper() {
         }
         updatedOverviewData.platformsByPair = platformsForPairs;
 
+        updatedOverviewData.loading = false;
+
         setAppProperties(updatedOverviewData);
         await sleep(1); // without this sleep, update the graph before changing the selected pair. so let it here
       } catch (error) {
@@ -136,6 +131,7 @@ export default function DataLoadingWrapper() {
         }
       }
     }
+    setLoading(true);
     fetchData().then(setLoadingDone).catch(console.error);
   }, [chain]);
 
@@ -153,7 +149,7 @@ export default function DataLoadingWrapper() {
       }}
     >
       <Box sx={{ mt: 8, ml: 1.5 }}>
-        {pathName === '/' && <Overview />}
+        {pathName === '/' && <Overview loading={loading} />}
         <Outlet />
       </Box>
     </Box>
