@@ -12,7 +12,8 @@ interface skeletonProps {
 }
 
 function OverviewSkeleton(props: skeletonProps) {
-  const DATA_SOURCES = props.chain === 'bsc' ? BSC_DATA_SOURCES : props.chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
+  const DATA_SOURCES =
+    props.chain === 'bsc' ? BSC_DATA_SOURCES : props.chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
   const nbSkeletons = DATA_SOURCES.length - 1; // -1 because "all" sources will not be displaying data
   return (
     <Grid container spacing={1}>

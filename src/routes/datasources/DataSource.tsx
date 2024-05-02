@@ -56,7 +56,8 @@ export default function DataSource() {
   const [platformsForPairs, setPlatformsForPairs] = useState<{ [key: string]: string[] }>({});
   const chain = appProperties.chain;
   const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
-  const DATA_SOURCES_MAP = chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
+  const DATA_SOURCES_MAP =
+    chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
 
   function findPlatformsForPair(base: string, quote: string) {
     const platformsAvailable = [];
