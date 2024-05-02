@@ -36,17 +36,23 @@ export default function RiskLevels() {
   };
   const handleChangeCap = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.value && tokenPrice) {
-      console.log(event.target.value, tokenPrice);
-      // setCapInKind(Number(event.target.value));
-      // setCapUSD(Number(event.target.value) * tokenPrice);
+      setAppProperties({
+        ...appProperties,
+        pages: {
+          ...appProperties.pages,
+          riskLevels: {
+            ...appProperties.pages.riskLevels,
+            capInKind: Number(event.target.value)
+          }
+        }
+      });
     }
   };
 
   const handleChangeLT = (event: React.ChangeEvent<HTMLInputElement>) => {
-
     if (event.target && event.target.value) {
       const newLT = Number(event.target.value);
-   if (newLT >= 1 && newLT < 100 - riskParameter.bonus * 100) {
+      if (newLT >= 1 && newLT < 100 - riskParameter.bonus * 100) {
         setAppProperties({
           ...appProperties,
           pages: {
@@ -59,10 +65,9 @@ export default function RiskLevels() {
         });
         setDisplayLT(newLT);
       }
+    } else if (!event.target.value) {
+      setDisplayLT('');
     }
-    else if(!event.target.value) {
-      setDisplayLT('')
-  }
   };
 
   console.log({ appProperties });
