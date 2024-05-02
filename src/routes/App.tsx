@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useState } from 'react';
 import { ResponsiveNavBar } from '../components/ResponsiveNavBar';
 import { MainAppBar } from '../components/MainAppBar';
 import { AppContextProperties, appContextType } from '../models/AppContext';
