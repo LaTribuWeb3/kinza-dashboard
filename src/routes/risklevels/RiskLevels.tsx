@@ -1,5 +1,5 @@
 import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { FriendlyFormatNumber } from '../../utils/Utils';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { AppContext } from '../App';
@@ -17,6 +17,7 @@ export default function RiskLevels() {
   const tokenPrice = riskLevelsPage.tokenPrice;
   const riskParameter = riskLevelsPage.selectedRiskParameter;
   const liquidationThreshold = riskLevelsPage.currentLiquidationThreshold;
+  const [displayLT, setDisplayLT] = useState<number | string>(liquidationThreshold);
 
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
@@ -42,10 +43,10 @@ export default function RiskLevels() {
   };
 
   const handleChangeLT = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
+
     if (event.target && event.target.value) {
       const newLT = Number(event.target.value);
-      if (newLT == 0) {
+   if (newLT >= 1 && newLT < 100 - riskParameter.bonus * 100) {
         setAppProperties({
           ...appProperties,
           pages: {
@@ -56,19 +57,12 @@ export default function RiskLevels() {
             }
           }
         });
-      } else if (newLT >= 1 && newLT < 100 - riskParameter.bonus * 100) {
-        setAppProperties({
-          ...appProperties,
-          pages: {
-            ...appProperties.pages,
-            riskLevels: {
-              ...appProperties.pages.riskLevels,
-              currentLiquidationThreshold: newLT
-            }
-          }
-        });
+        setDisplayLT(newLT);
       }
     }
+    else if(!event.target.value) {
+      setDisplayLT('')
+  }
   };
 
   console.log({ appProperties });
@@ -118,7 +112,7 @@ export default function RiskLevels() {
               type="number"
               label={`Must be < ${100 - riskParameter.bonus * 100}%`}
               onChange={handleChangeLT}
-              value={liquidationThreshold}
+              value={displayLT}
               InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>
               }}
