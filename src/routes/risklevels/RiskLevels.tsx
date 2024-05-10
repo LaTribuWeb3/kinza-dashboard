@@ -22,6 +22,7 @@ export default function RiskLevels() {
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
+    console.log
     setAppProperties({
       ...appProperties,
       pages: {
@@ -29,7 +30,7 @@ export default function RiskLevels() {
         riskLevels: {
           ...appProperties.pages.riskLevels,
           selectedPair: { base, quote },
-          selectedRiskParameter: riskParameters.base.quote
+          selectedRiskParameter: riskParameters[base][quote]
         }
       }
     });
