@@ -1,8 +1,10 @@
 import { Box, Grid, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FriendlyFormatNumber } from '../../utils/Utils';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { AppContext } from '../App';
+import { useLocation } from 'react-router-dom';
+import { Pair } from '../../models/ApiData';
 
 export default function RiskLevels() {
   const { appProperties, setAppProperties } = useContext(AppContext);
@@ -18,11 +20,37 @@ export default function RiskLevels() {
   const riskParameter = riskLevelsPage.selectedRiskParameter;
   const liquidationThreshold = riskLevelsPage.currentLiquidationThreshold;
   const [displayLT, setDisplayLT] = useState<number | string>(liquidationThreshold);
+  const pathName = useLocation().pathname;
+  const navPair = pathName.split('/')[2]
+    ? { base: pathName.split('/')[2].split('-')[0], quote: pathName.split('/')[2].split('-')[1] }
+    : undefined;
+
+  useEffect(() => {
+    if (navPair) {
+      updateNavPair(navPair);
+    }
+  });
+
+  const updateNavPair = (pair: Pair) => {
+    const base = pair.base;
+    const quote = pair.quote;
+    setAppProperties({
+      ...appProperties,
+      pages: {
+        ...appProperties.pages,
+        riskLevels: {
+          ...appProperties.pages.riskLevels,
+          selectedPair: { base, quote },
+          selectedRiskParameter: riskParameters[base][quote]
+        }
+      }
+    });
+  };
 
   const handleChangePair = (event: SelectChangeEvent) => {
     const base = event.target.value.split('/')[0];
     const quote = event.target.value.split('/')[1];
-    console.log
+    console.log;
     setAppProperties({
       ...appProperties,
       pages: {
@@ -70,8 +98,6 @@ export default function RiskLevels() {
       setDisplayLT('');
     }
   };
-
-  console.log({ appProperties });
 
   if (!selectedPair || !tokenPrice || capInKind == undefined || isLoading) {
     return <RiskLevelGraphsSkeleton />;
