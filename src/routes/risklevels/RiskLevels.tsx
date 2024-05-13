@@ -10,15 +10,14 @@ export default function RiskLevels() {
   const { appProperties, setAppProperties } = useContext(AppContext);
   const isLoading = appProperties.loading;
   const riskParameters = appProperties.riskParameters;
-  const riskLevelsPage = appProperties.pages.riskLevels;
   const chain = appProperties.chain;
   const availablePairs = appProperties.availablePairs[chain];
-  const selectedPair = riskLevelsPage.selectedPair;
-  const capUSD = riskLevelsPage.capUSD;
-  const capInKind = riskLevelsPage.capInKind;
-  const tokenPrice = riskLevelsPage.tokenPrice;
-  const riskParameter = riskLevelsPage.selectedRiskParameter;
-  const liquidationThreshold = riskLevelsPage.currentLiquidationThreshold;
+  const selectedPair = appProperties.pages.riskLevels.selectedPair;
+  const capUSD = appProperties.pages.riskLevels.capUSD;
+  const capInKind = appProperties.pages.riskLevels.capInKind;
+  const tokenPrice =appProperties.pages.riskLevels.tokenPrice;
+  const riskParameter = appProperties.pages.riskLevels.selectedRiskParameter;
+  const liquidationThreshold = appProperties.pages.riskLevels.currentLiquidationThreshold;
   const [displayLT, setDisplayLT] = useState<number | string>(liquidationThreshold);
   const pathName = useLocation().pathname;
   const navPair = pathName.split('/')[2]
@@ -29,22 +28,30 @@ export default function RiskLevels() {
     if (navPair) {
       updateNavPair(navPair);
     }
-  });
+  }, []);
 
   const updateNavPair = (pair: Pair) => {
     const base = pair.base;
     const quote = pair.quote;
+    const newRiskParameters = riskParameters[base][quote];
+    const newCapInUsd = Math.min(newRiskParameters.borrowCapInUSD, newRiskParameters.supplyCapInUSD);
+    const newCapInKind = newCapInUsd / newRiskParameters.basePrice;
+    const newLiquidationThreshold = newRiskParameters.liquidationThreshold * 100;
     setAppProperties({
       ...appProperties,
       pages: {
         ...appProperties.pages,
         riskLevels: {
           ...appProperties.pages.riskLevels,
-          selectedPair: { base, quote },
-          selectedRiskParameter: riskParameters[base][quote]
+          selectedPair: { base, quote }, 
+          capInKind: newCapInKind,
+          capUSD : newCapInUsd,
+          selectedRiskParameter: newRiskParameters,
+          currentLiquidationThreshold: newLiquidationThreshold
         }
       }
     });
+    setDisplayLT(newLiquidationThreshold);
   };
 
   const handleChangePair = (event: SelectChangeEvent) => {
