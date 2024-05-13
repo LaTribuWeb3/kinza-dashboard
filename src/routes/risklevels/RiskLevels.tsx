@@ -32,7 +32,7 @@ export default function RiskLevels() {
 
   const updateNavPair = (pair: Pair) => {
     // check if pair exists for chain, in case chain was changed while on a nav pair;
-    if (availablePairs.includes(pair)) {
+    if (pair && availablePairs.some((_) => _.base == pair.base && _.quote == pair.quote)) {
       const base = pair.base;
       const quote = pair.quote;
       const newRiskParameters = riskParameters[base][quote];
