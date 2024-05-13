@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { FriendlyFormatNumber } from '../../utils/Utils';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { AppContext } from '../App';
-import { useLocation } from 'react-router-dom';
+import { redirect, useLocation, useNavigate } from 'react-router-dom';
 import { Pair } from '../../models/ApiData';
 
 export default function RiskLevels() {
@@ -31,27 +31,32 @@ export default function RiskLevels() {
   }, []);
 
   const updateNavPair = (pair: Pair) => {
-    const base = pair.base;
-    const quote = pair.quote;
-    const newRiskParameters = riskParameters[base][quote];
-    const newCapInUsd = Math.min(newRiskParameters.borrowCapInUSD, newRiskParameters.supplyCapInUSD);
-    const newCapInKind = newCapInUsd / newRiskParameters.basePrice;
-    const newLiquidationThreshold = newRiskParameters.liquidationThreshold * 100;
-    setAppProperties({
-      ...appProperties,
-      pages: {
-        ...appProperties.pages,
-        riskLevels: {
-          ...appProperties.pages.riskLevels,
-          selectedPair: { base, quote },
-          capInKind: newCapInKind,
-          capUSD: newCapInUsd,
-          selectedRiskParameter: newRiskParameters,
-          currentLiquidationThreshold: newLiquidationThreshold
+    // check if pair exists for chain, in case chain was changed while on a nav pair;
+    if (availablePairs.includes(pair)) {
+      const base = pair.base;
+      const quote = pair.quote;
+      const newRiskParameters = riskParameters[base][quote];
+      const newCapInUsd = Math.min(newRiskParameters.borrowCapInUSD, newRiskParameters.supplyCapInUSD);
+      const newCapInKind = newCapInUsd / newRiskParameters.basePrice;
+      const newLiquidationThreshold = newRiskParameters.liquidationThreshold * 100;
+      setAppProperties({
+        ...appProperties,
+        pages: {
+          ...appProperties.pages,
+          riskLevels: {
+            ...appProperties.pages.riskLevels,
+            selectedPair: { base, quote },
+            capInKind: newCapInKind,
+            capUSD: newCapInUsd,
+            selectedRiskParameter: newRiskParameters,
+            currentLiquidationThreshold: newLiquidationThreshold
+          }
         }
-      }
-    });
-    setDisplayLT(newLiquidationThreshold);
+      });
+      setDisplayLT(newLiquidationThreshold);
+    } else {
+      window.location.href = '/';
+    }
   };
 
   const handleChangePair = (event: SelectChangeEvent) => {
