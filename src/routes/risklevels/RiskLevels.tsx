@@ -15,7 +15,7 @@ export default function RiskLevels() {
   const selectedPair = appProperties.pages.riskLevels.selectedPair;
   const capUSD = appProperties.pages.riskLevels.capUSD;
   const capInKind = appProperties.pages.riskLevels.capInKind;
-  const tokenPrice =appProperties.pages.riskLevels.tokenPrice;
+  const tokenPrice = appProperties.pages.riskLevels.tokenPrice;
   const riskParameter = appProperties.pages.riskLevels.selectedRiskParameter;
   const liquidationThreshold = appProperties.pages.riskLevels.currentLiquidationThreshold;
   const [displayLT, setDisplayLT] = useState<number | string>(liquidationThreshold);
@@ -43,9 +43,9 @@ export default function RiskLevels() {
         ...appProperties.pages,
         riskLevels: {
           ...appProperties.pages.riskLevels,
-          selectedPair: { base, quote }, 
+          selectedPair: { base, quote },
           capInKind: newCapInKind,
-          capUSD : newCapInUsd,
+          capUSD: newCapInUsd,
           selectedRiskParameter: newRiskParameters,
           currentLiquidationThreshold: newLiquidationThreshold
         }
