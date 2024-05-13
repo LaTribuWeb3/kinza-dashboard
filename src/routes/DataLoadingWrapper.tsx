@@ -1,6 +1,6 @@
 import { Box, Skeleton } from '@mui/material';
 import { Overview } from './overview/Overview';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import DataService from '../services/DataService';
 import { AppContext } from './App';
@@ -15,6 +15,7 @@ export default function DataLoadingWrapper() {
   const { appProperties, setAppProperties } = useContext(AppContext);
   const chain = appProperties.chain;
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   function setLoadingDone() {
     setLoading(false);
@@ -73,6 +74,9 @@ export default function DataLoadingWrapper() {
         let pairSet = {} as Pair;
         if (navPair && data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
           pairSet = navPair;
+        } else if (navPair && !data.some((_) => _.base == navPair.base && _.quote == navPair.quote)) {
+          pairSet = data[0];
+          navigate('/');
         } else if (data.length > 0) {
           pairSet = data[0];
         }

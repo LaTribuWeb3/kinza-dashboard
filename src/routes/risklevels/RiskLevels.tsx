@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { FriendlyFormatNumber } from '../../utils/Utils';
 import { RiskLevelGraphs, RiskLevelGraphsSkeleton } from './RiskLevelGraph';
 import { AppContext } from '../App';
-import { redirect, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Pair } from '../../models/ApiData';
 
 export default function RiskLevels() {
@@ -54,8 +54,6 @@ export default function RiskLevels() {
         }
       });
       setDisplayLT(newLiquidationThreshold);
-    } else {
-      window.location.href = '/';
     }
   };
 
