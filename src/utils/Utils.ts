@@ -6,20 +6,20 @@ export async function sleep(ms: number) {
 
 export function getChainAPIUrl(chain: string): string {
   const bscAPIUrl: string = import.meta.env.VITE_BSC_API_URL as string;
-const mainnetAPIUrl: string = import.meta.env.VITE_MAINNET_API_URL as string;
-const opbnbAPIUrl: string = import.meta.env.VITE_OPBNB_API_URL as string;
-const mantleAPIUrl: string = import.meta.env.VITE_MANTLE_API_URL as string;
+  const mainnetAPIUrl: string = import.meta.env.VITE_MAINNET_API_URL as string;
+  const opbnbAPIUrl: string = import.meta.env.VITE_OPBNB_API_URL as string;
+  const mantleAPIUrl: string = import.meta.env.VITE_MANTLE_API_URL as string;
 
-if (chain === 'bsc') {
-  return bscAPIUrl;
-} else if (chain === 'mainnet') {
-  return mainnetAPIUrl;
-} else if (chain === 'opbnb') {
-  return opbnbAPIUrl;
-} else if (chain === 'mantle') {
-  return mantleAPIUrl;
-}
-return 'unknown';
+  if (chain === 'bsc') {
+    return bscAPIUrl;
+  } else if (chain === 'mainnet') {
+    return mainnetAPIUrl;
+  } else if (chain === 'opbnb') {
+    return opbnbAPIUrl;
+  } else if (chain === 'mantle') {
+    return mantleAPIUrl;
+  }
+  return 'unknown';
 }
 
 export function roundTo(num: number, dec: number): number {
