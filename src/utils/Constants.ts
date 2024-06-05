@@ -1,15 +1,26 @@
 import { appContextType } from '../models/AppContext';
 
-export function GetDataSourcesOrDataSourcesMap(chain: string, sourceOrMap: string): string[] | Record<string, string> {
+export function GetDataSourcesOrDataSourcesMap<T extends 'sources' | 'map'>(
+  chain: string,
+  sourceOrMap: T
+): T extends 'map' ? Record<string, string> : string[] {
   switch (chain) {
     case 'bsc':
-      return sourceOrMap === 'map' ? BSC_DATA_SOURCES_MAP : BSC_DATA_SOURCES;
+      return (sourceOrMap === 'map' ? BSC_DATA_SOURCES_MAP : BSC_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
     case 'eth':
-      return sourceOrMap === 'map' ? ETH_DATA_SOURCES_MAP : ETH_DATA_SOURCES;
+      return (sourceOrMap === 'map' ? ETH_DATA_SOURCES_MAP : ETH_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
     case 'opbnb':
-      return sourceOrMap === 'map' ? OPBNB_DATA_SOURCES_MAP : OPBNB_DATA_SOURCES;
+      return (sourceOrMap === 'map' ? OPBNB_DATA_SOURCES_MAP : OPBNB_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
     case 'mantle':
-      return sourceOrMap === 'map' ? MANTLE_DATA_SOURCES_MAP : MANTLE_DATA_SOURCES;
+      return (sourceOrMap === 'map' ? MANTLE_DATA_SOURCES_MAP : MANTLE_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
     default:
       throw new Error(`Unsupported chain: ${chain}`);
   }
