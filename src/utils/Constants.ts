@@ -1,5 +1,20 @@
 import { appContextType } from '../models/AppContext';
 
+export function GetDataSourcesOrDataSourcesMap(chain: string, sourceOrMap: string): string[] | Record<string, string> {
+  switch (chain) {
+    case 'bsc':
+      return sourceOrMap === 'map' ? BSC_DATA_SOURCES_MAP : BSC_DATA_SOURCES;
+    case 'eth':
+      return sourceOrMap === 'map' ? ETH_DATA_SOURCES_MAP : ETH_DATA_SOURCES;
+    case 'opbnb':
+      return sourceOrMap === 'map' ? OPBNB_DATA_SOURCES_MAP : OPBNB_DATA_SOURCES;
+    case 'mantle':
+      return sourceOrMap === 'map' ? MANTLE_DATA_SOURCES_MAP : MANTLE_DATA_SOURCES;
+    default:
+      throw new Error(`Unsupported chain: ${chain}`);
+  }
+}
+
 export const BSC_DATA_SOURCES = [
   'All sources',
   'Pancakeswap StableSwaps',
@@ -32,6 +47,12 @@ export const OPBNB_DATA_SOURCES = ['All sources', 'Pancakeswap v3'];
 export const OPBNB_DATA_SOURCES_MAP = {
   'All sources': 'all',
   'Pancakeswap v3': 'pancakeswapv3'
+};
+
+export const MANTLE_DATA_SOURCES = ['All sources'];
+
+export const MANTLE_DATA_SOURCES_MAP = {
+  'All sources': 'all'
 };
 
 export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) * 100);

@@ -11,15 +11,7 @@ import {
   FormControl,
   InputLabel
 } from '@mui/material';
-import {
-  BSC_DATA_SOURCES,
-  BSC_DATA_SOURCES_MAP,
-  ETH_DATA_SOURCES,
-  ETH_DATA_SOURCES_MAP,
-  OPBNB_DATA_SOURCES,
-  OPBNB_DATA_SOURCES_MAP,
-  SLIPPAGES_BPS
-} from '../../utils/Constants';
+import { GetDataSourcesOrDataSourcesMap, SLIPPAGES_BPS } from '../../utils/Constants';
 import { DataSourceGraphs } from './DataSourceGraphs';
 import { AppContext } from '../App';
 
@@ -50,9 +42,8 @@ export default function DataSource() {
   const availablePairs = appProperties.availablePairs[chain];
   const platformsForPairs = appProperties.platformsByPair;
 
-  const DATA_SOURCES = chain === 'bsc' ? BSC_DATA_SOURCES : chain === 'opbnb' ? OPBNB_DATA_SOURCES : ETH_DATA_SOURCES;
-  const DATA_SOURCES_MAP =
-    chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
+  const DATA_SOURCES = GetDataSourcesOrDataSourcesMap(chain, 'sources');
+  const DATA_SOURCES_MAP = GetDataSourcesOrDataSourcesMap(chain, 'map');
 
   const handleChangePlatform = (event: SelectChangeEvent) => {
     setAppProperties({
