@@ -60,10 +60,14 @@ export const OPBNB_DATA_SOURCES_MAP = {
   'Pancakeswap v3': 'pancakeswapv3'
 };
 
-export const MANTLE_DATA_SOURCES = ['All sources'];
-
+export const MANTLE_DATA_SOURCES = ['All sources', 'Butter.xyz', 'Merchant Moe', 'Merchant Moe Classic', 'Agni Finance', 'Fusion X'];
 export const MANTLE_DATA_SOURCES_MAP = {
-  'All sources': 'all'
+  'All sources': 'all',
+  'Butter.xyz': 'butter',
+  'Merchant Moe': 'merchantmoe',
+  'Merchant Moe Classic': 'merchantmoeclassic',
+  'Agni Finance': 'agnifinance',
+  'Fusion X': 'fusionx'
 };
 
 export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) * 100);
