@@ -60,11 +60,11 @@ export const OPBNB_DATA_SOURCES_MAP = {
   'Pancakeswap v3': 'pancakeswapv3'
 };
 
-export const MANTLE_DATA_SOURCES = ['All sources', 'Butter.xyz', 'Merchant Moe', 'Merchant Moe Classic', 'Agni Finance', 'Fusion X'];
+export const MANTLE_DATA_SOURCES = ['All sources', 'Butter.xyz', 'Merchant Moe V2', 'Merchant Moe Classic', 'Agni Finance', 'Fusion X'];
 export const MANTLE_DATA_SOURCES_MAP = {
   'All sources': 'all',
   'Butter.xyz': 'butter',
-  'Merchant Moe': 'merchantmoe',
+  'Merchant Moe V2': 'merchantmoev2',
   'Merchant Moe Classic': 'merchantmoeclassic',
   'Agni Finance': 'agnifinance',
   'Fusion X': 'fusionx'
