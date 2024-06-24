@@ -74,16 +74,22 @@ export function NavCategories(props: NavCategoriesProperties) {
               BSC
             </Box>
           </MenuItem>
+          <MenuItem value={'opbnb'} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+              <Avatar alt="opbnb logo" src="/bsc.ico" sx={{ width: 25, height: 25, marginRight: 2 }} />
+              opBNB
+            </Box>
+          </MenuItem>
           <MenuItem value={'ethereum'} sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
               <Avatar alt="Ethereum logo" src="/eth.png" sx={{ width: 25, height: 25, marginRight: 2 }} />
               Ethereum
             </Box>
           </MenuItem>
-          <MenuItem value={'opbnb'} sx={{ display: 'flex', alignItems: 'center' }}>
+          <MenuItem value={'mantle'} sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-              <Avatar alt="opbnb logo" src="/bsc.ico" sx={{ width: 25, height: 25, marginRight: 2 }} />
-              opBNB
+              <Avatar alt="mantle logo" src="/mantle.svg" sx={{ width: 25, height: 25, marginRight: 2 }} />
+              Mantle
             </Box>
           </MenuItem>
         </Select>

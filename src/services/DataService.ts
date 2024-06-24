@@ -3,13 +3,11 @@ import { LiquidityData, Pair } from '../models/ApiData';
 import { LastUpdateData } from '../models/LastUpdateData';
 import SimpleCacheService from './CacheService';
 import { OverviewData } from '../models/OverviewData';
+import { getChainAPIUrl } from '../utils/Utils';
 
-const bscAPIUrl: string = import.meta.env.VITE_BSC_API_URL as string;
-const mainnetAPIUrl: string = import.meta.env.VITE_MAINNET_API_URL as string;
-const opbnbAPIUrl: string = import.meta.env.VITE_OPBNB_API_URL as string;
 export default class DataService {
   static async GetLastUpdate(chain: string): Promise<LastUpdateData[]> {
-    const apiUrl = chain === 'bsc' ? bscAPIUrl : chain === 'opbnb' ? opbnbAPIUrl : mainnetAPIUrl;
+    const apiUrl = getChainAPIUrl(chain);
     const lastUpdateData = await SimpleCacheService.GetAndCache(
       `GetLastUpdate-${chain}`,
       async () => {
@@ -37,7 +35,7 @@ export default class DataService {
   }
 
   static async GetOverview(chain: string): Promise<OverviewData> {
-    const apiUrl = chain === 'bsc' ? bscAPIUrl : chain === 'opbnb' ? opbnbAPIUrl : mainnetAPIUrl;
+    const apiUrl = getChainAPIUrl(chain);
     const overviewData = await SimpleCacheService.GetAndCache(
       `GetOverview-${chain}`,
       async () => {
@@ -65,7 +63,7 @@ export default class DataService {
   }
 
   static async GetAvailablePairs(platform: string, chain: string): Promise<Pair[]> {
-    const apiUrl = chain === 'bsc' ? bscAPIUrl : chain === 'opbnb' ? opbnbAPIUrl : mainnetAPIUrl;
+    const apiUrl = getChainAPIUrl(chain);
     console.log(`getting available pairs for ${platform} on ${chain} chain`);
     const pairLoadingFunction = async () => {
       // await sleep(500); // add sleep to simulate waiting
@@ -95,7 +93,7 @@ export default class DataService {
   }
 
   static async GetLiquidityData(platform: string, base: string, quote: string, chain: string): Promise<LiquidityData> {
-    const apiUrl = chain === 'bsc' ? bscAPIUrl : chain === 'opbnb' ? opbnbAPIUrl : mainnetAPIUrl;
+    const apiUrl = getChainAPIUrl(chain);
     console.log(`getting liquidity data for for ${platform} ${base} ${quote} on ${chain} chain`);
 
     const liquidityDataLoadingFunction = async () => {

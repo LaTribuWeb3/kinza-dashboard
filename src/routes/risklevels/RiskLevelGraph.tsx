@@ -58,7 +58,7 @@ export function RiskLevelGraphs(props: RiskLevelGraphsInterface) {
   const [graphData, setGraphData] = useState<GraphDataAtTimestamp[]>([]);
   const screenBigEnough = useMediaQuery('(min-width:600px)');
 
-  const slippageBps = props.pair.base.toLowerCase() == 'wbeth' ? 700 : 800;
+  const slippageBps = props.parameters.bonus * 1e4;
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };

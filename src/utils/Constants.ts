@@ -1,5 +1,31 @@
 import { appContextType } from '../models/AppContext';
 
+export function GetDataSourcesOrDataSourcesMap<T extends 'sources' | 'map'>(
+  chain: string,
+  sourceOrMap: T
+): T extends 'map' ? Record<string, string> : string[] {
+  switch (chain) {
+    case 'bsc':
+      return (sourceOrMap === 'map' ? BSC_DATA_SOURCES_MAP : BSC_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
+    case 'eth':
+      return (sourceOrMap === 'map' ? ETH_DATA_SOURCES_MAP : ETH_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
+    case 'opbnb':
+      return (sourceOrMap === 'map' ? OPBNB_DATA_SOURCES_MAP : OPBNB_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
+    case 'mantle':
+      return (sourceOrMap === 'map' ? MANTLE_DATA_SOURCES_MAP : MANTLE_DATA_SOURCES) as T extends 'map'
+        ? Record<string, string>
+        : string[];
+    default:
+      throw new Error(`Unsupported chain: ${chain}`);
+  }
+}
+
 export const BSC_DATA_SOURCES = [
   'All sources',
   'Pancakeswap StableSwaps',
@@ -32,6 +58,16 @@ export const OPBNB_DATA_SOURCES = ['All sources', 'Pancakeswap v3'];
 export const OPBNB_DATA_SOURCES_MAP = {
   'All sources': 'all',
   'Pancakeswap v3': 'pancakeswapv3'
+};
+
+export const MANTLE_DATA_SOURCES = ['All sources', 'Butter.xyz', 'Merchant Moe V2', 'Merchant Moe Classic', 'Agni Finance', 'Fusion X'];
+export const MANTLE_DATA_SOURCES_MAP = {
+  'All sources': 'all',
+  'Butter.xyz': 'butter',
+  'Merchant Moe V2': 'merchantmoev2',
+  'Merchant Moe Classic': 'merchantmoeclassic',
+  'Agni Finance': 'agnifinance',
+  'Fusion X': 'fusionx'
 };
 
 export const SLIPPAGES_BPS = Array.from({ length: 20 }).map((_v, i) => (i + 1) * 100);

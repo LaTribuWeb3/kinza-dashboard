@@ -8,7 +8,7 @@ import { OverviewData } from '../models/OverviewData';
 import { KinzaRiskParameters } from '../models/RiskData';
 import { Pair } from '../models/ApiData';
 import { sleep } from '../utils/Utils';
-import { BSC_DATA_SOURCES_MAP, ETH_DATA_SOURCES_MAP, OPBNB_DATA_SOURCES_MAP, initialContext } from '../utils/Constants';
+import { GetDataSourcesOrDataSourcesMap, initialContext } from '../utils/Constants';
 
 export default function DataLoadingWrapper() {
   const pathName = useLocation().pathname;
@@ -98,8 +98,7 @@ export default function DataLoadingWrapper() {
 
         /// loading data sources data
         updatedOverviewData.pages.dataSources.pair = pairSet;
-        const DATA_SOURCES_MAP =
-          chain === 'bsc' ? BSC_DATA_SOURCES_MAP : chain === 'opbnb' ? OPBNB_DATA_SOURCES_MAP : ETH_DATA_SOURCES_MAP;
+        const DATA_SOURCES_MAP = GetDataSourcesOrDataSourcesMap(chain, 'map');
         for (const platform of Object.values(DATA_SOURCES_MAP)) {
           const pairs = await DataService.GetAvailablePairs(platform, chain);
           updatedOverviewData.pairsByPlatform[platform] = pairs;
