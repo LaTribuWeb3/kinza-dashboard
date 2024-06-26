@@ -4,6 +4,7 @@ import {
   Grid,
   IconButton,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -28,8 +29,6 @@ export interface OverviewProperties {
 function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
   const screenBigEnough = useMediaQuery('(min-width:600px)');
-
-  console.log('bug in prod only:',row.subMarkets);
 
   row.subMarkets.sort((s1, s2) => s2.riskLevel - s1.riskLevel);
 
@@ -122,27 +121,33 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
 
 export function OverviewTable(props: OverviewProperties) {
   return (
-    <Grid sx={{ mt: 1 }} container spacing={2}>
-      <Grid item xs={0} lg={1} />
-      <Grid item xs={12} lg={10}>
-        <TableContainer component={Paper}>
-          <Table aria-label="collapsible table">
-            <TableHead>
-              <TableRow>
-                <TableCell />
-                <TableCell align="center">Market</TableCell>
-                <TableCell align="center">Risk level</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {Object.keys(props.data).map((baseSymbol) => (
-                <Row key={baseSymbol} baseSymbol={baseSymbol} row={props.data[baseSymbol]} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-      <Grid item xs={0} lg={1} />
-    </Grid>
+    <>
+      {props.data ? (
+        <Grid sx={{ mt: 1 }} container spacing={2}>
+          <Grid item xs={0} lg={1} />
+          <Grid item xs={12} lg={10}>
+            <TableContainer component={Paper}>
+              <Table aria-label="collapsible table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    <TableCell align="center">Market</TableCell>
+                    <TableCell align="center">Risk level</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(props.data).map((baseSymbol) => (
+                    <Row key={baseSymbol} baseSymbol={baseSymbol} row={props.data[baseSymbol]} />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+          <Grid item xs={0} lg={1} />
+        </Grid>
+      ) : (
+        <Skeleton height={500} variant="rectangular" />
+      )}
+    </>
   );
 }
