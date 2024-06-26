@@ -80,7 +80,7 @@ export function NavCategories(props: NavCategoriesProperties) {
               opBNB
             </Box>
           </MenuItem>
-          <MenuItem value={'ethereum'} sx={{ display: 'flex', alignItems: 'center' }}>
+          <MenuItem value={'eth'} sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
               <Avatar alt="Ethereum logo" src="/eth.png" sx={{ width: 25, height: 25, marginRight: 2 }} />
               Ethereum

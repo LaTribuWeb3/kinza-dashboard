@@ -12,7 +12,7 @@ export function getChainAPIUrl(chain: string): string {
 
   if (chain === 'bsc') {
     return bscAPIUrl;
-  } else if (chain === 'mainnet') {
+  } else if (chain === 'eth') {
     return mainnetAPIUrl;
   } else if (chain === 'opbnb') {
     return opbnbAPIUrl;
