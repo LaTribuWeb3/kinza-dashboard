@@ -29,6 +29,8 @@ function Row(props: { baseSymbol: string; row: RiskLevelData }) {
   const { baseSymbol, row } = props;
   const screenBigEnough = useMediaQuery('(min-width:600px)');
 
+  console.log('bug in prod only:',row.subMarkets);
+
   row.subMarkets.sort((s1, s2) => s2.riskLevel - s1.riskLevel);
 
   const [open, setOpen] = React.useState(false);
